@@ -3,9 +3,7 @@ package com.example.demo.security.entity;
 import com.example.demo.security.enumeration.Roles;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
 @Getter
 @Entity
 @Table(name = "users")
