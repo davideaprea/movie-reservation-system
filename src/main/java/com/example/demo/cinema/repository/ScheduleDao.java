@@ -1,7 +1,23 @@
 package com.example.demo.cinema.repository;
 
 import com.example.demo.cinema.entity.Schedule;
+import com.example.demo.cinema.response.UpcomingSchedule;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface ScheduleDao extends CrudRepository<Schedule, Long> {
+    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END " +
+            "FROM Schedule s " +
+            "WHERE s.hall.id = :hallId AND " +
+            "(:startTime BETWEEN s.startTime AND s.endTime OR :endTime BETWEEN s.startTime AND s.endTime)")
+    boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
+
+    @Query("SELECT s FROM Schedule s " +
+            "WHERE s.movie.id = :movieId AND " +
+            "s.startTime > CURRENT_TIMESTAMP " +
+            "ORDER BY s.startTime ASC")
+    List<UpcomingSchedule> findUpcomingMovieSchedules(long movieId);
 }

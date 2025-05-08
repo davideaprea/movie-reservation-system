@@ -24,19 +24,24 @@ public class Schedule {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Hall hall;
 
-    @Column(updatable = false)
-    private LocalDateTime time;
+    @Column(nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
 
     public static Schedule create(
             long movieId,
             long hallId,
-            LocalDateTime time
+            LocalDateTime startTime,
+            LocalDateTime endTime
     ) {
         return Schedule
                 .builder()
                 .movie(Movie.create(movieId))
                 .hall(Hall.create(hallId))
-                .time(time)
+                .startTime(startTime)
+                .endTime(endTime)
                 .build();
     }
 }

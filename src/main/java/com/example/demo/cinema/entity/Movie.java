@@ -16,7 +16,7 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @Column(nullable = false)
@@ -32,6 +32,21 @@ public class Movie {
         return Movie
                 .builder()
                 .id(id)
+                .build();
+    }
+
+    public static Movie create(
+            String title,
+            short duration,
+            String description,
+            String cover
+    ) {
+        return Movie
+                .builder()
+                .title(title)
+                .duration(duration)
+                .description(description)
+                .cover(cover)
                 .build();
     }
 }
