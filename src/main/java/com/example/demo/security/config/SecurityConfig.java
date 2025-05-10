@@ -1,6 +1,7 @@
 package com.example.demo.security.config;
 
-import com.example.demo.security.enumeration.Routes;
+import com.example.demo.core.enumeration.Routes;
+import com.example.demo.security.enumeration.Roles;
 import com.example.demo.security.filter.JWTFilter;
 import com.example.demo.security.service.AuthUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.*;
+
 @AllArgsConstructor
 @Configuration
 @EnableWebSecurity
@@ -31,12 +34,13 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
-                        .requestMatchers(
-                                Routes.AUTH + Routes.REGISTER,
-                                Routes.AUTH + Routes.LOGIN,
-                                Routes.SWAGGER + "/**"
-                        )
-                        .permitAll()
+                        .requestMatchers(Routes.AUTH + Routes.REGISTER).permitAll()
+                        .requestMatchers(Routes.AUTH + Routes.LOGIN).permitAll()
+                        .requestMatchers(Routes.SWAGGER + "/**").permitAll()
+                        .requestMatchers(GET, Routes.MOVIES + "/**").permitAll()
+                        .requestMatchers(GET, Routes.SCHEDULES + "/**").permitAll()
+                        .requestMatchers(Routes.MOVIES + "/**").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers(Routes.SCHEDULES + "/**").hasRole(Roles.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

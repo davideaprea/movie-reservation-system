@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;
 import com.example.demo.security.entity.User;
-import com.example.demo.security.enumeration.Routes;
+import com.example.demo.core.enumeration.Routes;
 import com.example.demo.security.dto.LoginDto;
 import com.example.demo.security.dto.RegisterDto;
 import com.example.demo.security.repository.UserDao;

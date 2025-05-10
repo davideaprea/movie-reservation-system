@@ -19,5 +19,5 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private Roles role = Roles.USER;
+    private Roles role;
 }

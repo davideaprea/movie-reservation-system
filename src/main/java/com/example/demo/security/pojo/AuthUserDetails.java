@@ -2,7 +2,6 @@ package com.example.demo.security.pojo;
 
 import com.example.demo.security.entity.User;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,7 +13,7 @@ public class AuthUserDetails implements UserDetails {
     private User user;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<SimpleGrantedAuthority> getAuthorities() {
         return List.of(
                 new SimpleGrantedAuthority(user.getRole().toString())
         );

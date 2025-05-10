@@ -3,7 +3,7 @@ package com.example.demo.security.controller;
 import com.example.demo.security.doc.AuthControllerDocs;
 import com.example.demo.security.dto.RegisterResponse;
 import com.example.demo.security.entity.User;
-import com.example.demo.security.enumeration.Routes;
+import com.example.demo.core.enumeration.Routes;
 import com.example.demo.security.dto.LoginDto;
 import com.example.demo.security.dto.RegisterDto;
 import com.example.demo.security.service.AuthService;
