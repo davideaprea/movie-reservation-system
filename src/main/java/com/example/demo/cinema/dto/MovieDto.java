@@ -12,7 +12,7 @@ public record MovieDto(
         @Positive
         short duration,
 
-        @Min(20) @Max(500)
+        @NotBlank @Min(20) @Max(500)
         String description,
 
         @NotBlank

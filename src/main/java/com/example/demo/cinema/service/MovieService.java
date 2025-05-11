@@ -14,13 +14,11 @@ public class MovieService {
     private final MovieDao movieDao;
 
     public Movie create(MovieDto dto) {
-        //TODO: save cover on S3
-
         return movieDao.save(Movie.create(
                 dto.title(),
                 dto.duration(),
                 dto.description(),
-                "cover-url"
+                dto.cover()
         ));
     }
 
