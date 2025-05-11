@@ -22,12 +22,10 @@ public class AuthService {
     private final PasswordEncoder encoder;
 
     public User register(RegisterDto credentials) {
-        User user = new User();
-
-        user.setEmail(credentials.email());
-        user.setPassword(encoder.encode(credentials.password()));
-
-        return userDao.save(user);
+        return userDao.save(User.create(
+                credentials.email(),
+                encoder.encode(credentials.password())
+        ));
     }
 
     public String login(LoginDto credentials) {

@@ -2,8 +2,12 @@ package com.example.demo.security.entity;
 
 import com.example.demo.security.enumeration.Roles;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "users")
@@ -18,6 +22,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roles role;
+
+    public static User create(String email, String password) {
+        return new User(null, email, password, Roles.USER);
+    }
 }

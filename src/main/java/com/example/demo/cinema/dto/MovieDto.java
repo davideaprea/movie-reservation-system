@@ -10,7 +10,7 @@ public record MovieDto(
         String title,
 
         @Positive
-        short duration,
+        int duration,
 
         @NotBlank @Min(20) @Max(500)
         String description,

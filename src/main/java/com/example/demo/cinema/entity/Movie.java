@@ -1,11 +1,12 @@
 package com.example.demo.cinema.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @ToString
 @Getter
@@ -20,13 +21,16 @@ public class Movie {
     private String title;
 
     @Column(nullable = false)
-    private Short duration;
+    private Integer duration;
 
     @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     private String cover;
+
+    @OneToMany(mappedBy = Schedule.Fields.movie, fetch = FetchType.LAZY)
+    private List<Schedule> schedules;
 
     public static Movie create(long id) {
         return Movie
@@ -37,7 +41,7 @@ public class Movie {
 
     public static Movie create(
             String title,
-            short duration,
+            int duration,
             String description,
             String cover
     ) {

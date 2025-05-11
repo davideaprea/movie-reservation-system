@@ -10,7 +10,7 @@ public interface MovieDao extends CrudRepository<Movie, Long> {
     @Query("""
         SELECT DISTINCT m FROM Movie m
         JOIN m.schedules s
-        WHERE s.startTime >= :today
+        WHERE s.startTime >= CURRENT_TIMESTAMP
     """)
-    List<Movie> getSchduledMovies();
+    List<Movie> getScheduledMovies();
 }

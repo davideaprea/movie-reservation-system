@@ -9,10 +9,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ScheduleDao extends CrudRepository<Schedule, Long> {
-    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END " +
-            "FROM Schedule s " +
-            "WHERE s.hall.id = :hallId AND " +
-            "(:startTime BETWEEN s.startTime AND s.endTime OR :endTime BETWEEN s.startTime AND s.endTime)")
+    @Query("""
+        SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+        FROM Schedule s
+        WHERE s.hall.id = :hallId AND
+        :startTime < s.endTime AND
+        :endTime > s.startTime
+    """)
     boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
 
     @Query("SELECT s FROM Schedule s " +

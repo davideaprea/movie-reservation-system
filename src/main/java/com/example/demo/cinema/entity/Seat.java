@@ -2,12 +2,11 @@ package com.example.demo.cinema.entity;
 
 import com.example.demo.cinema.enumeration.SeatType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @FieldNameConstants
 @ToString

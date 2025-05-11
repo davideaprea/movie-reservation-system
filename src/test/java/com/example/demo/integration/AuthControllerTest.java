@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.integration;
 
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;

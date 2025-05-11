@@ -1,18 +1,22 @@
 package com.example.demo.cinema.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
+@FieldNameConstants
+@AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @ToString
 @Getter
 @Entity
-@Table(name = "schedules")
+@Table(name = "schedules", indexes = {
+        @Index(columnList = "hall_id, start_time, end_time"),
+        @Index(columnList = "movie_id, start_time")
+})
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
