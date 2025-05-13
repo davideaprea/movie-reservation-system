@@ -4,6 +4,6 @@ import java.time.LocalDateTime;
 
 public record UpcomingSchedule(
         long id,
-        LocalDateTime time
+        LocalDateTime startTime
 ) {
 }

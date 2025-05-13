@@ -4,6 +4,7 @@ import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.response.UpcomingSchedule;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,9 +19,9 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     """)
     boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
 
-    @Query("SELECT s FROM Schedule s " +
+    @Query("SELECT new com.example.demo.cinema.response.UpcomingSchedule(s.id, s.startTime) FROM Schedule s " +
             "WHERE s.movie.id = :movieId AND " +
             "s.startTime > CURRENT_TIMESTAMP " +
             "ORDER BY s.startTime ASC")
-    List<UpcomingSchedule> findUpcomingMovieSchedules(long movieId);
+    List<UpcomingSchedule> findUpcomingMovieSchedules(@Param("movieId") long movieId);
 }

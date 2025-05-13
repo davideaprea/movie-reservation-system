@@ -28,7 +28,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<List<DaySchedule>> getUpcomingMovieSchedules(long movieId) {
+    public ResponseEntity<List<DaySchedule>> getUpcomingMovieSchedules(@PathVariable long movieId) {
         return new ResponseEntity<>(
                 scheduleService.findUpcomingMovieSchedules(movieId),
                 HttpStatus.OK

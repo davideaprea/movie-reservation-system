@@ -8,6 +8,7 @@ import com.example.demo.cinema.enumeration.HallStatus;
 import com.example.demo.cinema.repository.HallDao;
 import com.example.demo.cinema.repository.MovieDao;
 import com.example.demo.cinema.repository.ScheduleDao;
+import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;
 import com.example.demo.core.enumeration.Routes;
@@ -15,6 +16,7 @@ import com.example.demo.security.component.JWTManager;
 import com.example.demo.security.entity.User;
 import com.example.demo.security.enumeration.Roles;
 import com.example.demo.security.repository.UserDao;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,9 +32,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -69,7 +73,7 @@ public class ScheduleControllerTest {
     private ScheduleDao scheduleDao;
 
     @BeforeEach
-    void beforeAll() {
+    void beforeEach() {
         signUser();
         createHall();
         createMovie();
@@ -108,6 +112,36 @@ public class ScheduleControllerTest {
         Assertions.assertEquals(1, scheduleDao.count());
     }
 
+    @Test
+    void whenGettingScheduledMovies_thenStatusOk() throws Exception {
+        createSchedules();
+
+        String json = mockMvc
+                .perform(get(Routes.SCHEDULES + "/" + movieId))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<DaySchedule> upcomingSchedules = objMapper.readValue(json, new TypeReference<>() {
+        });
+
+        final LocalDateTime now = LocalDateTime.now();
+
+        Assertions.assertEquals(5, upcomingSchedules.size());
+
+        for(DaySchedule daySchedule : upcomingSchedules) {
+            Assertions.assertNotEquals(0, daySchedule.schedules().size());
+
+            boolean areSchedulesNext = daySchedule
+                    .schedules()
+                    .stream()
+                    .allMatch(schedule -> schedule.startTime().isAfter(now));
+
+            Assertions.assertTrue(areSchedulesNext);
+        }
+    }
+
     private void signUser() {
         User newUser = new User(
                 null,
@@ -135,6 +169,25 @@ public class ScheduleControllerTest {
                 "Description",
                 "cover"
         )).getId();
+    }
+
+    private void createSchedules() {
+        final LocalDateTime now = LocalDateTime.now();
+
+        List<Schedule> schedules = new ArrayList<>();
+
+        for (int i = -5; i <= 5; i++) {
+            final LocalDateTime date = now.plusDays(i);
+
+            schedules.add(Schedule.create(
+                    movieId,
+                    hallId,
+                    date,
+                    date.plusHours(2)
+            ));
+        }
+
+        scheduleDao.saveAll(schedules);
     }
 
     private ResultActions postScheduleApi(ScheduleDto dto) throws Exception {

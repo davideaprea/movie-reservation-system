@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,24 +46,33 @@ public class ScheduleService {
     public List<DaySchedule> findUpcomingMovieSchedules(long movieId) {
         List<UpcomingSchedule> schedules = scheduleDao.findUpcomingMovieSchedules(movieId);
 
-        List<DaySchedule> daySchedules = new ArrayList<>();
-        List<UpcomingSchedule> currList = new ArrayList<>();
+        return groupSchedulesByDay(schedules);
+    }
 
-        for(int i = 0; i < schedules.size(); i++) {
-            UpcomingSchedule schedule = schedules.get(i);
+    private List<DaySchedule> groupSchedulesByDay(List<UpcomingSchedule> schedules) {
+        List<DaySchedule> daySchedules = new ArrayList<>();
+
+        if (schedules == null || schedules.isEmpty()) {
+            return daySchedules;
+        }
+
+        List<UpcomingSchedule> currList = new ArrayList<>();
+        LocalDate currentDay = schedules.getFirst().startTime().toLocalDate();
+
+        for (UpcomingSchedule schedule : schedules) {
+            LocalDate scheduleDay = schedule.startTime().toLocalDate();
+
+            if (!scheduleDay.equals(currentDay)) {
+                daySchedules.add(new DaySchedule(currentDay, currList));
+                currList = new ArrayList<>();
+                currentDay = scheduleDay;
+            }
 
             currList.add(schedule);
+        }
 
-            UpcomingSchedule next = schedules.get(i + 1);
-
-            if(next == null || next.time() != schedule.time()) {
-                daySchedules.add(new DaySchedule(
-                        schedule.time().toLocalDate(),
-                        currList
-                ));
-
-                currList = new ArrayList<>();
-            }
+        if (!currList.isEmpty()) {
+            daySchedules.add(new DaySchedule(currentDay, currList));
         }
 
         return daySchedules;
