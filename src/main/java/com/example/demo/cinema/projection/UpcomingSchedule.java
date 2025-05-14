@@ -1,4 +1,4 @@
-package com.example.demo.cinema.response;
+package com.example.demo.cinema.projection;
 
 import java.time.LocalDateTime;
 

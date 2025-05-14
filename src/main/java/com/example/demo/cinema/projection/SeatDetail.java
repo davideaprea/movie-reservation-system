@@ -1,4 +1,4 @@
-package com.example.demo.booking.response;
+package com.example.demo.cinema.projection;
 
 import com.example.demo.cinema.enumeration.SeatType;
 

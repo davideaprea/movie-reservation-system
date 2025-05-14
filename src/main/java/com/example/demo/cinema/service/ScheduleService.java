@@ -5,7 +5,7 @@ import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.response.DaySchedule;
-import com.example.demo.cinema.response.UpcomingSchedule;
+import com.example.demo.cinema.projection.UpcomingSchedule;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

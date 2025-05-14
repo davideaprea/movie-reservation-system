@@ -3,9 +3,7 @@ package com.example.demo.booking.service;
 import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
-import com.example.demo.booking.response.SeatDetail;
-import com.example.demo.cinema.entity.Schedule;
-import com.example.demo.cinema.entity.Seat;
+import com.example.demo.cinema.projection.SeatDetail;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
@@ -16,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
