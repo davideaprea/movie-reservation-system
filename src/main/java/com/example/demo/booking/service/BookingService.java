@@ -9,6 +9,7 @@ import com.example.demo.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class BookingService {
     private final SeatDao seatDao;
     private final ScheduleDao scheduleDao;
 
+    @Transactional
     public List<Booking> create(BookingDto dto, long userId, long scheduleId) {
         List<Long> seatIds = dto.seatIds();
         List<SeatDetail> selectedSeats = seatDao.findAll(seatIds);
