@@ -3,6 +3,7 @@ package com.example.demo.booking.service;
 import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
+import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.projection.SeatDetail;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.repository.SeatDao;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -31,9 +32,13 @@ public class BookingService {
         checkRow(selectedSeats);
         checkSeatsAdjacency(selectedSeats);
 
-        long hallId = getScheduleById(scheduleId);
+        BookingSchedule schedule = getScheduleById(scheduleId);
 
-        checkSeatHall(selectedSeats, hallId);
+        if(LocalDateTime.now().isAfter(schedule.getStartTime())) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
+        }
+
+        checkSeatHall(selectedSeats, schedule.getHall().getId());
 
         List<Booking> bookings = selectedSeats
                 .stream()
@@ -80,9 +85,9 @@ public class BookingService {
         }
     }
 
-    private long getScheduleById(long id) {
+    private BookingSchedule getScheduleById(long id) {
         return scheduleDao
-                .findScheduleHallId(id)
+                .getProjectionById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 

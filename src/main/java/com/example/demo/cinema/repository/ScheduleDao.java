@@ -1,6 +1,7 @@
 package com.example.demo.cinema.repository;
 
 import com.example.demo.cinema.entity.Schedule;
+import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.projection.UpcomingSchedule;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -26,6 +27,5 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             "ORDER BY s.startTime ASC")
     List<UpcomingSchedule> findUpcomingMovieSchedules(@Param("movieId") long movieId);
 
-    @Query("SELECT s.hall.id FROM Schedule s WHERE s.id = :scheduleId")
-    Optional<Long> findScheduleHallId(long scheduleId);
+    Optional<BookingSchedule> getProjectionById(long scheduleId);
 }
