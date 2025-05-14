@@ -1,6 +1,7 @@
 package com.example.demo.booking.service;
 
 import com.example.demo.booking.dto.OrderDto;
+import com.example.demo.booking.response.PayPalOrder;
 import com.example.demo.booking.response.PayPalTokenDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -90,7 +91,7 @@ public class PayPalService {
                 .body(PayPalTokenDetails.class);
     }
 
-    public Map<String, Object> createOrder(OrderDto dto) {
+    public PayPalOrder createOrder(OrderDto dto) {
         return restClient.post()
                 .uri("/v2/checkout/orders")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
