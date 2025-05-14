@@ -50,6 +50,14 @@ public class PaymentService {
         ));
     }
 
+    public void confirm(String orderId, String captureId, long userId) {
+        int updatedRows = paymentDao.confirm(orderId, captureId, userId);
+
+        if(updatedRows != 1) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
+        }
+    }
+
     private List<SeatDetail> getSelectedSeats(List<Long> seatIds) {
         List<SeatDetail> selectedSeats = seatDao.findAll(seatIds);
 
