@@ -28,4 +28,8 @@ public class AuthUserDetails implements UserDetails {
     public String getUsername() {
         return user.getEmail();
     }
+
+    public Long getId() {
+        return user.getId();
+    }
 }

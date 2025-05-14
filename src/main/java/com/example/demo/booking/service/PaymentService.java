@@ -30,9 +30,9 @@ public class PaymentService {
     private final SeatDao seatDao;
 
     @Transactional
-    public Payment create(BookingDto dto, long userId, long scheduleId) {
+    public Payment create(BookingDto dto, long userId) {
         List<SeatDetail> seatDetails = getSelectedSeats(dto.seatIds());
-        List<Booking> bookings = bookingService.create(seatDetails, userId, scheduleId);
+        List<Booking> bookings = bookingService.create(seatDetails, userId, dto.scheduleId());
         BigDecimal totalPrice = calculatePrice(seatDetails);
 
         Amount amount = new Amount("EUR", String.valueOf(totalPrice));
@@ -52,7 +52,7 @@ public class PaymentService {
         ));
     }
 
-    public void confirm(String orderId, String captureId, long userId) {
+    public void confirm(String orderId, long userId) {
         int updatedRows = paymentDao.confirm(orderId, captureId, userId);
 
         if(updatedRows != 1) {

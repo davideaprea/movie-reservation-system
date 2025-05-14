@@ -7,4 +7,5 @@ public class Routes {
     public static final String SWAGGER = "/swagger";
     public static final String MOVIES = "/movies";
     public static final String SCHEDULES = "/schedules";
+    public static final String PAYMENTS = "/payments";
 }
