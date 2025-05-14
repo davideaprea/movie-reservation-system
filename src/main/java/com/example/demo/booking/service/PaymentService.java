@@ -14,6 +14,7 @@ import com.example.demo.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -28,6 +29,7 @@ public class PaymentService {
     private final PaymentDao paymentDao;
     private final SeatDao seatDao;
 
+    @Transactional
     public Payment create(BookingDto dto, long userId, long scheduleId) {
         List<SeatDetail> seatDetails = getSelectedSeats(dto.seatIds());
         List<Booking> bookings = bookingService.create(seatDetails, userId, scheduleId);
