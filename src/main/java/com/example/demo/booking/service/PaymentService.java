@@ -53,6 +53,7 @@ public class PaymentService {
     }
 
     public void confirm(String orderId, long userId) {
+        String captureId = payPalService.captureOrder(orderId);
         int updatedRows = paymentDao.confirm(orderId, captureId, userId);
 
         if(updatedRows != 1) {

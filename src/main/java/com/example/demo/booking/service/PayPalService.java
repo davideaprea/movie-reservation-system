@@ -15,6 +15,7 @@ import org.springframework.web.client.RestClient;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
+import java.util.List;
 
 @Service
 public class PayPalService {
@@ -101,18 +102,34 @@ public class PayPalService {
                 });
     }
 
-    public Map<String, Object> captureOrder(String orderId) {
-        return restClient.post()
+    public String captureOrder(String orderId) {
+        Object response = restClient.post()
                 .uri("/v2/checkout/orders/" + orderId + "/capture")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });
+
+        return getCaptureIdFromResponse(response);
     }
 
     public void refundOrder(String captureId) {
         restClient.post()
                 .uri("/v2/payments/captures/" + captureId + "/refund")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getCaptureIdFromResponse(Object response) {
+        Map<String, Object> map = (Map<String, Object>) response;
+
+        List<Map<String, Object>> purchaseUnits = (List<Map<String, Object>>) map.get("purchase_units");
+        Map<String, Object> firstPurchaseUnit = purchaseUnits.getFirst();
+
+        Map<String, Object> payments = (Map<String, Object>) firstPurchaseUnit.get("payments");
+        List<Map<String, Object>> captures = (List<Map<String, Object>>) payments.get("captures");
+        Map<String, Object> firstCapture = captures.getFirst();
+
+        return (String) firstCapture.get("id");
     }
 }
