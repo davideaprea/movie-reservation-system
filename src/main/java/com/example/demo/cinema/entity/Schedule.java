@@ -48,4 +48,11 @@ public class Schedule {
                 .endTime(endTime)
                 .build();
     }
+
+    public static Schedule create(long id) {
+        return Schedule
+                .builder()
+                .id(id)
+                .build();
+    }
 }

@@ -29,4 +29,8 @@ public class User {
     public static User create(String email, String password) {
         return new User(null, email, password, Roles.USER);
     }
+
+    public static User create(long id) {
+        return new User(id, null, null, null);
+    }
 }

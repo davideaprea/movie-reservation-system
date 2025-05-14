@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     @Query("""
@@ -24,4 +25,7 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             "s.startTime > CURRENT_TIMESTAMP " +
             "ORDER BY s.startTime ASC")
     List<UpcomingSchedule> findUpcomingMovieSchedules(@Param("movieId") long movieId);
+
+    @Query("SELECT s.hall.id FROM Schedule s WHERE s.id = :scheduleId")
+    Optional<Long> findScheduleHallId(long scheduleId);
 }

@@ -42,4 +42,11 @@ public class Seat {
                 .seatNumber(seatNumber)
                 .build();
     }
+
+    public static Seat create(long id) {
+        return Seat
+                .builder()
+                .id(id)
+                .build();
+    }
 }
