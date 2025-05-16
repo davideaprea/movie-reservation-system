@@ -53,6 +53,10 @@ public class PaymentService {
     }
 
     public void confirm(String orderId, long userId) {
+        if(!paymentDao.isPaymentUncaptured(orderId, userId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already captured.");
+        }
+
         String captureId = payPalService.captureOrder(orderId);
         int updatedRows = paymentDao.confirm(orderId, captureId, userId);
 
