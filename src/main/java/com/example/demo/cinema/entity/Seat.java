@@ -33,13 +33,15 @@ public class Seat {
     public static Seat create(
             SeatType seatType,
             int rowNumber,
-            int seatNumber
+            int seatNumber,
+            long hallId
     ) {
         return Seat
                 .builder()
                 .seatType(seatType)
                 .rowNumber(rowNumber)
                 .seatNumber(seatNumber)
+                .hall(Hall.create(hallId))
                 .build();
     }
 

@@ -157,8 +157,7 @@ public class ScheduleControllerTest {
 
     private void createHall() {
         hallId = hallDao.save(Hall.create(
-                HallStatus.AVAILABLE,
-                List.of()
+                HallStatus.AVAILABLE
         )).getId();
     }
 

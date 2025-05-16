@@ -30,14 +30,10 @@ public class Hall {
     )
     private List<Seat> seats;
 
-    public static Hall create(
-            HallStatus hallStatus,
-            List<Seat> seats
-    ) {
+    public static Hall create(HallStatus hallStatus) {
         return Hall
                 .builder()
                 .hallStatus(hallStatus)
-                .seats(seats)
                 .build();
     }
 

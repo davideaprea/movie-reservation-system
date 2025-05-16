@@ -11,7 +11,7 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
             UPDATE Payment p
             SET p.captureId = :captureId
             WHERE p.orderId = :orderId AND
-            p.userId = :userId AND
+            p.user.id = :userId AND
             p.captureId IS NULL
             """)
     int confirm(String orderId, String captureId, long userId);

@@ -85,6 +85,4 @@ public class BookingService {
                 .getProjectionById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
-
-
 }

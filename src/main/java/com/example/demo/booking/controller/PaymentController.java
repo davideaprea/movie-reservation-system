@@ -31,7 +31,7 @@ public class PaymentController {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> confirm(
-            String orderId,
+            @PathVariable String orderId,
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
         paymentService.confirm(orderId, userDetails.getId());

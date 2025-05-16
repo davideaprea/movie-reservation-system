@@ -7,6 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+@ToString
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter

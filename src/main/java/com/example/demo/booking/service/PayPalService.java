@@ -32,13 +32,13 @@ public class PayPalService {
     private volatile Instant tokenExpiryTime;
 
     public PayPalService(
-            @Value("paypal.base-url")
+            @Value("${paypal.base-url}")
             String baseUrl,
 
-            @Value("paypal.client-id")
+            @Value("${paypal.client-id}")
             String clientId,
 
-            @Value("paypal.secret")
+            @Value("${paypal.secret}")
             String clientSecret,
 
             RestClient.Builder builder
@@ -48,9 +48,11 @@ public class PayPalService {
         this.restClient = builder
                 .baseUrl(baseUrl)
                 .requestInterceptor((request, body, execution) -> {
-                    refreshAccessToken();
+                    if (!request.getURI().getPath().contains("/v1/oauth2/token")) {
+                        refreshAccessToken();
 
-                    request.getHeaders().setBearerAuth(accessToken);
+                        request.getHeaders().setBearerAuth(accessToken);
+                    }
 
                     return execution.execute(request, body);
                 })
