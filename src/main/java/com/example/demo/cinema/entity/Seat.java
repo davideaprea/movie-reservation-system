@@ -22,18 +22,18 @@ public class Seat {
     private SeatType seatType;
 
     @Column(nullable = false, updatable = false)
-    private Byte rowNumber;
+    private Integer rowNumber;
 
     @Column(nullable = false, updatable = false)
-    private Byte seatNumber;
+    private Integer seatNumber;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Hall hall;
 
     public static Seat create(
             SeatType seatType,
-            byte rowNumber,
-            byte seatNumber
+            int rowNumber,
+            int seatNumber
     ) {
         return Seat
                 .builder()
