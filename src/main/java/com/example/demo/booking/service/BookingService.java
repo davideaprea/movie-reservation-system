@@ -23,13 +23,11 @@ public class BookingService {
 
     @Transactional
     public List<Booking> create(List<SeatDetail> selectedSeats, long userId, long scheduleId) {
-
-        checkRow(selectedSeats);
         checkSeatsAdjacency(selectedSeats);
 
         BookingSchedule schedule = getScheduleById(scheduleId);
 
-        if(LocalDateTime.now().isAfter(schedule.getStartTime())) {
+        if (LocalDateTime.now().isAfter(schedule.getStartTime())) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
         }
 
@@ -51,22 +49,15 @@ public class BookingService {
 
     private void checkSeatsAdjacency(List<SeatDetail> selectedSeats) {
         for (int i = 1; i < selectedSeats.size(); i++) {
-            int curr = selectedSeats.get(i).seatNumber();
-            int prev = selectedSeats.get(i - 1).seatNumber();
+            SeatDetail curr = selectedSeats.get(i);
+            SeatDetail prev = selectedSeats.get(i - 1);
 
-            if (curr - prev != 1) {
+            boolean areAdjacent = curr.seatNumber() - prev.seatNumber() == 1;
+            boolean areOnTheSameRow = curr.rowNumber() == prev.rowNumber();
+
+            if (!areAdjacent || !areOnTheSameRow) {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Seats must be distinct and adjacent.");
             }
-        }
-    }
-
-    private void checkRow(List<SeatDetail> selectedSeats) {
-        boolean areSeatsOnTheSameRow = selectedSeats
-                .stream()
-                .allMatch(seat -> seat.rowNumber() == selectedSeats.getFirst().rowNumber());
-
-        if (!areSeatsOnTheSameRow) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Seats must be on the same row.");
         }
     }
 
