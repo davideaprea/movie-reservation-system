@@ -25,6 +25,7 @@ import com.example.demo.security.entity.User;
 import com.example.demo.security.enumeration.Roles;
 import com.example.demo.security.repository.UserDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,9 +43,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -80,6 +79,8 @@ public class PaymentControllerTest {
     @Autowired
     private SeatDao seatDao;
 
+    private long userId;
+
     private String jwt;
 
     private Schedule schedule;
@@ -99,12 +100,14 @@ public class PaymentControllerTest {
     @MockitoBean
     private PayPalService payPalService;
 
+    private final Faker faker = new Faker();
+
     @BeforeEach
     void beforeEach() {
-        jwt = signUser();
+        User user = createUser();
+        userId = user.getId();
+        jwt = signUser(user.getEmail());
 
-        final int rowsNumber = 10;
-        final int seatsPerRow = 30;
         hall = hallDao.save(Hall.create(HallStatus.AVAILABLE));
         hallSeats = createSeats(10, 30, hall.getId());
         movie = createMovie();
@@ -155,17 +158,64 @@ public class PaymentControllerTest {
         Assertions.assertNotNull(updatePayment.getCaptureId());
     }
 
-    private String signUser() {
-        User newUser = new User(
-                null,
-                "email@.gmail.com",
-                "psw",
-                Roles.USER
+    @Test
+    void givenAlreadyBookedSeats_whenBookingSeats_thenStatusConflict() throws Exception {
+        User user = createUser();
+        Seat seat = hallSeats.getFirst();
+
+        bookingDao.save(Booking.create(
+                user.getId(),
+                seat.getId(),
+                schedule.getId()
+        ));
+
+        BookingDto dto = new BookingDto(List.of(seat.getId()), schedule.getId());
+
+        postPaymentApi(dto).andExpect(status().isConflict());
+
+        Assertions.assertEquals(1, bookingDao.count());
+        Assertions.assertEquals(0, paymentDao.count());
+    }
+
+    @Test
+    void givenNonAdjacentSeats_whenBookingSeats_thenStatusUnprocessableEntity() throws Exception {
+        BookingDto dto = new BookingDto(
+                List.of(
+                        hallSeats.getFirst().getId(),
+                        hallSeats.getLast().getId()
+                ),
+                schedule.getId()
         );
 
-        userDao.save(newUser);
+        postPaymentApi(dto).andExpect(status().isUnprocessableEntity());
 
-        return "Bearer " + jwtManager.generateToken(newUser.getEmail());
+        Assertions.assertEquals(0, bookingDao.count());
+        Assertions.assertEquals(0, paymentDao.count());
+    }
+
+    @Test
+    void givenAlreadyCapturedOrderId_whenCapturingOrder_thenStatusIsConflict() throws Exception {
+        Booking booking = bookingDao.save(Booking.create(
+                userId,
+                hallSeats.getFirst().getId(),
+                schedule.getId()
+        ));
+
+        Payment payment = paymentDao.save(new Payment(
+                null,
+                "ORDER_ID",
+                "CAPTURE_ID",
+                BigDecimal.valueOf(20),
+                User.create(userId),
+                List.of(booking)
+        ));
+
+        patchPaymentApi(payment.getOrderId())
+                .andExpect(status().isConflict());
+    }
+
+    private String signUser(String email) {
+        return "Bearer " + jwtManager.generateToken(email);
     }
 
     private List<Seat> createSeats(int rowsNumber, int seatsPerRow, long hallId) {
@@ -222,17 +272,14 @@ public class PaymentControllerTest {
                 .header("Authorization", jwt));
     }
 
-    private Map<Integer, Map<Integer, Seat>> createSeatsMap(List<Seat> seats) {
-        Map<Integer, Map<Integer, Seat>> map = new HashMap<>();
+    private User createUser() {
+        User newUser = new User(
+                null,
+                faker.internet().emailAddress(),
+                "psw",
+                Roles.USER
+        );
 
-        for (Seat seat : seats) {
-            final Integer row = seat.getRowNumber();
-
-            map.putIfAbsent(row, new HashMap<>());
-
-            map.get(row).put(seat.getRowNumber(), seat);
-        }
-
-        return map;
+        return userDao.save(newUser);
     }
 }
