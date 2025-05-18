@@ -1,6 +1,7 @@
 package com.example.demo.cinema.dto;
 
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public record ScheduleDto(
         @Positive
         long hallId,
 
-        @Future
+        @NotNull @Future
         LocalDateTime startTime
 ) {
 }

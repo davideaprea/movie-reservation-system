@@ -4,7 +4,6 @@ import com.example.demo.booking.dto.Amount;
 import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.dto.OrderDto;
 import com.example.demo.booking.dto.PurchaseUnit;
-import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.enumeration.PayPalOrderIntent;
 import com.example.demo.booking.repository.PaymentDao;
