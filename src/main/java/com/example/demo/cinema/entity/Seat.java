@@ -19,6 +19,7 @@ public class Seat {
     private Long id;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SeatType seatType;
 
     @Column(nullable = false, updatable = false)

@@ -31,21 +31,30 @@ public class Payment {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = Booking.Fields.payment,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
     private List<Booking> items;
 
     public static Payment create(
             String orderId,
             BigDecimal price,
-            List<Booking> items,
             long userId
     ) {
         return Payment
                 .builder()
                 .orderId(orderId)
                 .price(price)
-                .items(items)
                 .user(User.create(userId))
+                .build();
+    }
+
+    public static Payment create(long id) {
+        return Payment
+                .builder()
+                .id(id)
                 .build();
     }
 }

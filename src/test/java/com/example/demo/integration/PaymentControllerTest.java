@@ -160,11 +160,25 @@ public class PaymentControllerTest {
 
     @Test
     void givenAlreadyBookedSeats_whenBookingSeats_thenStatusConflict() throws Exception {
+        Mockito
+                .when(payPalService.createOrder(Mockito.any()))
+                .thenReturn(new PayPalOrder("PP_ORDER_2"));
+
+        Mockito
+                .when(payPalService.captureOrder(Mockito.any()))
+                .thenReturn("PP_CAPTURE_2");
+
         User user = createUser();
         Seat seat = hallSeats.getFirst();
 
+        Payment payment = paymentDao.save(Payment.create(
+                "PP_ORDER_1",
+                BigDecimal.valueOf(10),
+                user.getId()
+        ));
+
         bookingDao.save(Booking.create(
-                user.getId(),
+                payment.getId(),
                 seat.getId(),
                 schedule.getId()
         ));
@@ -174,7 +188,7 @@ public class PaymentControllerTest {
         postPaymentApi(dto).andExpect(status().isConflict());
 
         Assertions.assertEquals(1, bookingDao.count());
-        Assertions.assertEquals(0, paymentDao.count());
+        Assertions.assertEquals(1, paymentDao.count());
     }
 
     @Test
@@ -195,11 +209,13 @@ public class PaymentControllerTest {
 
     @Test
     void givenAlreadyCapturedOrderId_whenCapturingOrder_thenStatusIsConflict() throws Exception {
-        Booking booking = bookingDao.save(Booking.create(
-                userId,
-                hallSeats.getFirst().getId(),
-                schedule.getId()
-        ));
+        Mockito
+                .when(payPalService.createOrder(Mockito.any()))
+                .thenReturn(new PayPalOrder("PP_ORDER_2"));
+
+        Mockito
+                .when(payPalService.captureOrder(Mockito.any()))
+                .thenReturn("PP_CAPTURE_2");
 
         Payment payment = paymentDao.save(new Payment(
                 null,
@@ -207,7 +223,13 @@ public class PaymentControllerTest {
                 "CAPTURE_ID",
                 BigDecimal.valueOf(20),
                 User.create(userId),
-                List.of(booking)
+                null
+        ));
+
+        Booking booking = bookingDao.save(Booking.create(
+                payment.getId(),
+                hallSeats.getFirst().getId(),
+                schedule.getId()
         ));
 
         patchPaymentApi(payment.getOrderId())

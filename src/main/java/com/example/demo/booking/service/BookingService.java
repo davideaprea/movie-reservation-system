@@ -22,7 +22,7 @@ public class BookingService {
     private final ScheduleDao scheduleDao;
 
     @Transactional
-    public List<Booking> create(List<SeatDetail> selectedSeats, long userId, long scheduleId) {
+    public List<Booking> create(List<SeatDetail> selectedSeats, long scheduleId, long paymentId) {
         checkSeatsAdjacency(selectedSeats);
 
         BookingSchedule schedule = getScheduleById(scheduleId);
@@ -36,7 +36,7 @@ public class BookingService {
         List<Booking> bookings = selectedSeats
                 .stream()
                 .map(seat -> Booking.create(
-                        userId,
+                        paymentId,
                         seat.id(),
                         scheduleId
                 ))

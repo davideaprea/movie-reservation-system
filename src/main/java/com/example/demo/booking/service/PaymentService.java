@@ -32,7 +32,6 @@ public class PaymentService {
     @Transactional
     public Payment create(BookingDto dto, long userId) {
         List<SeatDetail> seatDetails = getSelectedSeats(dto.seatIds());
-        List<Booking> bookings = bookingService.create(seatDetails, userId, dto.scheduleId());
         BigDecimal totalPrice = calculatePrice(seatDetails);
 
         Amount amount = new Amount("EUR", String.valueOf(totalPrice));
@@ -44,24 +43,27 @@ public class PaymentService {
 
         PayPalOrder order = payPalService.createOrder(orderDto);
 
-        return paymentDao.save(Payment.create(
+        Payment payment = paymentDao.save(Payment.create(
                 order.id(),
                 totalPrice,
-                bookings,
                 userId
         ));
+
+        bookingService.create(seatDetails, dto.scheduleId(), payment.getId());
+
+        return payment;
     }
 
     @Transactional
     public void confirm(String orderId, long userId) {
-        if(!paymentDao.isPaymentUncaptured(orderId, userId)) {
+        if (!paymentDao.isPaymentUncaptured(orderId, userId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already captured.");
         }
 
         String captureId = payPalService.captureOrder(orderId);
         int updatedRows = paymentDao.confirm(orderId, captureId, userId);
 
-        if(updatedRows != 1) {
+        if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
         }
     }
