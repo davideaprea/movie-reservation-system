@@ -17,7 +17,7 @@ public class MovieController {
     private final MovieService movieService;
 
     @PostMapping
-    public ResponseEntity<Movie> create(@Valid MovieDto dto) {
+    public ResponseEntity<Movie> create(@Valid @RequestBody MovieDto dto) {
         return new ResponseEntity<>(
                 movieService.create(dto),
                 HttpStatus.CREATED
