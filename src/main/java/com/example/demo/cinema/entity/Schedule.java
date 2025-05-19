@@ -35,15 +35,15 @@ public class Schedule {
     private LocalDateTime endTime;
 
     public static Schedule create(
-            long movieId,
-            long hallId,
+            Movie movie,
+            Hall hall,
             LocalDateTime startTime,
             LocalDateTime endTime
     ) {
         return Schedule
                 .builder()
-                .movie(Movie.create(movieId))
-                .hall(Hall.create(hallId))
+                .movie(movie)
+                .hall(hall)
                 .startTime(startTime)
                 .endTime(endTime)
                 .build();

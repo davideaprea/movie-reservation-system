@@ -10,6 +10,7 @@ import com.example.demo.booking.repository.PaymentDao;
 import com.example.demo.booking.response.PayPalOrder;
 import com.example.demo.cinema.projection.SeatDetail;
 import com.example.demo.cinema.repository.SeatDao;
+import com.example.demo.security.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class PaymentService {
         Payment payment = paymentDao.save(Payment.create(
                 order.id(),
                 totalPrice,
-                userId
+                User.create(userId)
         ));
 
         bookingService.create(seatDetails, dto.scheduleId(), payment.getId());

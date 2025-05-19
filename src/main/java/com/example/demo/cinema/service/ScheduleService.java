@@ -1,6 +1,7 @@
 package com.example.demo.cinema.service;
 
 import com.example.demo.cinema.dto.ScheduleDto;
+import com.example.demo.cinema.entity.Hall;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.repository.ScheduleDao;
@@ -36,8 +37,8 @@ public class ScheduleService {
         )) throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
 
         return scheduleDao.save(Schedule.create(
-                dto.movieId(),
-                dto.hallId(),
+                Movie.create(dto.movieId()),
+                Hall.create(dto.hallId()),
                 dto.startTime(),
                 endTime
         ));

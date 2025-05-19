@@ -41,13 +41,13 @@ public class Payment {
     public static Payment create(
             String orderId,
             BigDecimal price,
-            long userId
+            User user
     ) {
         return Payment
                 .builder()
                 .orderId(orderId)
                 .price(price)
-                .user(User.create(userId))
+                .user(user)
                 .build();
     }
 

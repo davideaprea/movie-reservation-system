@@ -31,15 +31,15 @@ public class Booking {
     private Payment payment;
 
     public static Booking create(
-            long paymentId,
-            long seatId,
-            long scheduleId
+            Payment payment,
+            Seat seat,
+            Schedule schedule
     ) {
         return Booking
                 .builder()
-                .schedule(Schedule.create(scheduleId))
-                .seat(Seat.create(seatId))
-                .payment(Payment.create(paymentId))
+                .schedule(schedule)
+                .seat(seat)
+                .payment(payment)
                 .build();
     }
 }

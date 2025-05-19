@@ -1,7 +1,10 @@
 package com.example.demo.booking.service;
 
 import com.example.demo.booking.entity.Booking;
+import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.BookingDao;
+import com.example.demo.cinema.entity.Schedule;
+import com.example.demo.cinema.entity.Seat;
 import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.projection.SeatDetail;
 import com.example.demo.cinema.repository.ScheduleDao;
@@ -36,9 +39,9 @@ public class BookingService {
         List<Booking> bookings = selectedSeats
                 .stream()
                 .map(seat -> Booking.create(
-                        paymentId,
-                        seat.id(),
-                        scheduleId
+                        Payment.create(paymentId),
+                        Seat.create(seat.id()),
+                        Schedule.create(scheduleId)
                 ))
                 .toList();
 

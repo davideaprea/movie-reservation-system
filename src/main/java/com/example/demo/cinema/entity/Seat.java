@@ -35,14 +35,14 @@ public class Seat {
             SeatType seatType,
             int rowNumber,
             int seatNumber,
-            long hallId
+            Hall hall
     ) {
         return Seat
                 .builder()
                 .seatType(seatType)
                 .rowNumber(rowNumber)
                 .seatNumber(seatNumber)
-                .hall(Hall.create(hallId))
+                .hall(hall)
                 .build();
     }
 
