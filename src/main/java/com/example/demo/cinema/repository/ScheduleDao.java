@@ -13,12 +13,12 @@ import java.util.Optional;
 
 public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     @Query("""
-        SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
-        FROM Schedule s
-        WHERE s.hall.id = :hallId AND
-        :startTime < s.endTime AND
-        :endTime > s.startTime
-    """)
+                SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+                FROM Schedule s
+                WHERE s.hall.id = :hallId AND
+                :startTime < s.endTime AND
+                :endTime > s.startTime
+            """)
     boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
 
     @Query("SELECT new com.example.demo.cinema.projection.UpcomingSchedule(s.id, s.startTime) FROM Schedule s " +
@@ -27,5 +27,5 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             "ORDER BY s.startTime ASC")
     List<UpcomingSchedule> findUpcomingMovieSchedules(@Param("movieId") long movieId);
 
-    Optional<BookingSchedule> getProjectionById(long scheduleId);
+    <T> Optional<T> findProjectionById(long id, Class<T> type);
 }

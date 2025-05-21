@@ -115,12 +115,6 @@ public class PayPalService {
         return getCaptureIdFromResponse(response);
     }
 
-    public void refundOrder(String captureId) {
-        restClient.post()
-                .uri("/v2/payments/captures/" + captureId + "/refund")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-    }
-
     @SuppressWarnings("unchecked")
     private String getCaptureIdFromResponse(Object response) {
         Map<String, Object> map = (Map<String, Object>) response;

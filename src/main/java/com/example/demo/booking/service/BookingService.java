@@ -2,9 +2,10 @@ package com.example.demo.booking.service;
 
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
+import com.example.demo.booking.validator.BookingValidator;
 import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.projection.SeatDetail;
-import com.example.demo.cinema.repository.ScheduleDao;
+import com.example.demo.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,19 +20,20 @@ import java.util.stream.StreamSupport;
 @Service
 public class BookingService {
     private final BookingDao bookingDao;
-    private final ScheduleDao scheduleDao;
+    private final ScheduleService scheduleService;
+    private final BookingValidator bookingValidator;
 
     @Transactional
     public List<Booking> create(List<SeatDetail> selectedSeats, long scheduleId, long paymentId) {
-        checkSeatsAdjacency(selectedSeats);
+        bookingValidator.checkSeatsAdjacency(selectedSeats);
 
-        BookingSchedule schedule = getScheduleById(scheduleId);
+        BookingSchedule schedule = scheduleService.findProjectionById(scheduleId, BookingSchedule.class);
 
         if (LocalDateTime.now().isAfter(schedule.getStartTime())) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
         }
 
-        checkSeatHall(selectedSeats, schedule.getHall().getId());
+        bookingValidator.checkSeatHall(selectedSeats, schedule.getHall().getId());
 
         List<Booking> bookings = selectedSeats
                 .stream()
@@ -45,35 +47,5 @@ public class BookingService {
         return StreamSupport
                 .stream(bookingDao.saveAll(bookings).spliterator(), false)
                 .toList();
-    }
-
-    private void checkSeatsAdjacency(List<SeatDetail> selectedSeats) {
-        for (int i = 1; i < selectedSeats.size(); i++) {
-            SeatDetail curr = selectedSeats.get(i);
-            SeatDetail prev = selectedSeats.get(i - 1);
-
-            boolean areAdjacent = curr.seatNumber() - prev.seatNumber() == 1;
-            boolean areOnTheSameRow = curr.rowNumber() == prev.rowNumber();
-
-            if (!areAdjacent || !areOnTheSameRow) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Seats must be distinct and adjacent.");
-            }
-        }
-    }
-
-    private void checkSeatHall(List<SeatDetail> selectedSeats, long hallId) {
-        boolean areSeatsFromScheduleHall = selectedSeats
-                .stream()
-                .allMatch(seat -> seat.hallId() == hallId);
-
-        if (!areSeatsFromScheduleHall) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Seats must be in the schedule hall.");
-        }
-    }
-
-    private BookingSchedule getScheduleById(long id) {
-        return scheduleDao
-                .getProjectionById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 }

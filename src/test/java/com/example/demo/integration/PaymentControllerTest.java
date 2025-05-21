@@ -193,6 +193,14 @@ public class PaymentControllerTest {
 
     @Test
     void givenNonAdjacentSeats_whenBookingSeats_thenStatusUnprocessableEntity() throws Exception {
+        Mockito
+                .when(payPalService.createOrder(Mockito.any()))
+                .thenReturn(new PayPalOrder("PP_ORDER_2"));
+
+        Mockito
+                .when(payPalService.captureOrder(Mockito.any()))
+                .thenReturn("PP_CAPTURE_2");
+
         BookingDto dto = new BookingDto(
                 List.of(
                         hallSeats.getFirst().getId(),

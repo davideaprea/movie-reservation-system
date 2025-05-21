@@ -77,4 +77,10 @@ public class ScheduleService {
 
         return daySchedules;
     }
+
+    public <T> T findProjectionById(long id, Class<T> type) {
+        return scheduleDao
+                .findProjectionById(id, type)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
+    }
 }

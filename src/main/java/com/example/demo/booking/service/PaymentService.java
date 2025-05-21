@@ -9,7 +9,7 @@ import com.example.demo.booking.enumeration.PayPalOrderIntent;
 import com.example.demo.booking.repository.PaymentDao;
 import com.example.demo.booking.response.PayPalOrder;
 import com.example.demo.cinema.projection.SeatDetail;
-import com.example.demo.cinema.repository.SeatDao;
+import com.example.demo.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,19 +25,14 @@ public class PaymentService {
     private final PayPalService payPalService;
     private final BookingService bookingService;
     private final PaymentDao paymentDao;
-    private final SeatDao seatDao;
+    private final SeatService seatService;
 
     @Transactional
     public Payment create(BookingDto dto, long userId) {
-        List<SeatDetail> seatDetails = getSelectedSeats(dto.seatIds());
+        List<SeatDetail> seatDetails = seatService.findAll(dto.seatIds());
+
         BigDecimal totalPrice = calculatePrice(seatDetails);
-
-        Amount amount = new Amount("EUR", String.valueOf(totalPrice));
-
-        OrderDto orderDto = new OrderDto(
-                PayPalOrderIntent.CAPTURE,
-                List.of(new PurchaseUnit(amount))
-        );
+        OrderDto orderDto = new OrderDto(totalPrice);
 
         PayPalOrder order = payPalService.createOrder(orderDto);
 
@@ -65,18 +59,6 @@ public class PaymentService {
         if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
         }
-    }
-
-    private List<SeatDetail> getSelectedSeats(List<Long> seatIds) {
-        List<SeatDetail> selectedSeats = seatDao.findAll(seatIds);
-
-        if (selectedSeats.size() != seatIds.size()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found.");
-        }
-
-        selectedSeats.sort(Comparator.comparingInt(SeatDetail::seatNumber));
-
-        return selectedSeats;
     }
 
     private BigDecimal calculatePrice(List<SeatDetail> seatDetails) {
