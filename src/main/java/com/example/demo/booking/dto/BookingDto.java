@@ -1,16 +1,12 @@
 package com.example.demo.booking.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import com.example.demo.cinema.projection.SeatProjection;
 
 import java.util.List;
 
 public record BookingDto(
-        @NotNull @Size(min = 1, max = 10)
-        List<Long> seatIds,
-
-        @Positive
-        long scheduleId
+        List<SeatProjection> selectedSeats,
+        long scheduleId,
+        long paymentId
 ) {
 }

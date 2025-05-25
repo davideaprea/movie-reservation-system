@@ -1,6 +1,7 @@
 package com.example.demo.booking.service;
 
 import com.example.demo.booking.dto.BookingDto;
+import com.example.demo.booking.dto.PaymentDto;
 import com.example.demo.booking.dto.OrderDto;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.PaymentDao;
@@ -25,7 +26,7 @@ public class PaymentService {
     private final SeatService seatService;
 
     @Transactional
-    public Payment create(BookingDto dto, long userId) {
+    public Payment create(PaymentDto dto, long userId) {
         List<SeatProjection> selectedSeats = seatService.findAll(dto.seatIds());
 
         BigDecimal totalPrice = calculatePrice(selectedSeats);
@@ -39,7 +40,11 @@ public class PaymentService {
                 userId
         ));
 
-        bookingService.create(selectedSeats, dto.scheduleId(), payment.getId());
+        bookingService.create(new BookingDto(
+                selectedSeats,
+                dto.scheduleId(),
+                payment.getId()
+        ));
 
         return payment;
     }

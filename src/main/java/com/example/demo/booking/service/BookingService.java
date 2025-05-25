@@ -1,10 +1,10 @@
 package com.example.demo.booking.service;
 
+import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
 import com.example.demo.booking.validator.SeatsValidator;
 import com.example.demo.cinema.projection.BookingSchedule;
-import com.example.demo.cinema.projection.SeatProjection;
 import com.example.demo.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,23 +24,22 @@ public class BookingService {
     private final SeatsValidator seatsValidator;
 
     @Transactional
-    public List<Booking> create(List<SeatProjection> selectedSeats, long scheduleId, long paymentId) {
-        seatsValidator.checkAdjacency(selectedSeats);
-
-        BookingSchedule schedule = scheduleService.findProjectionById(scheduleId, BookingSchedule.class);
+    public List<Booking> create(BookingDto dto) {
+        BookingSchedule schedule = scheduleService.findProjectionById(dto.scheduleId(), BookingSchedule.class);
 
         if (LocalDateTime.now().isAfter(schedule.getStartTime())) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
         }
 
-        seatsValidator.checkHall(selectedSeats, schedule.getHall().getId());
+        seatsValidator.checkHall(dto.selectedSeats(), schedule.getHall().getId());
+        seatsValidator.checkAdjacency(dto.selectedSeats());
 
-        List<Booking> bookings = selectedSeats
+        List<Booking> bookings = dto.selectedSeats()
                 .stream()
                 .map(seat -> Booking.create(
-                        paymentId,
+                        dto.paymentId(),
                         seat.id(),
-                        scheduleId
+                        dto.scheduleId()
                 ))
                 .toList();
 

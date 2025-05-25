@@ -1,6 +1,6 @@
 package com.example.demo.integration;
 
-import com.example.demo.booking.dto.BookingDto;
+import com.example.demo.booking.dto.PaymentDto;
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.BookingDao;
@@ -133,7 +133,7 @@ public class PaymentControllerTest {
                 .map(Seat::getId)
                 .toList();
 
-        BookingDto dto = new BookingDto(
+        PaymentDto dto = new PaymentDto(
                 seatIds,
                 schedule.getId()
         );
@@ -183,7 +183,7 @@ public class PaymentControllerTest {
                 schedule.getId()
         ));
 
-        BookingDto dto = new BookingDto(List.of(seat.getId()), schedule.getId());
+        PaymentDto dto = new PaymentDto(List.of(seat.getId()), schedule.getId());
 
         postPaymentApi(dto).andExpect(status().isConflict());
 
@@ -201,7 +201,7 @@ public class PaymentControllerTest {
                 .when(payPalService.captureOrder(Mockito.any()))
                 .thenReturn("PP_CAPTURE_2");
 
-        BookingDto dto = new BookingDto(
+        PaymentDto dto = new PaymentDto(
                 List.of(
                         hallSeats.getFirst().getId(),
                         hallSeats.getLast().getId()
@@ -288,7 +288,7 @@ public class PaymentControllerTest {
         ));
     }
 
-    private ResultActions postPaymentApi(BookingDto dto) throws Exception {
+    private ResultActions postPaymentApi(PaymentDto dto) throws Exception {
         String json = objectMapper.writeValueAsString(dto);
 
         return mockMvc.perform(post(Routes.PAYMENTS)
