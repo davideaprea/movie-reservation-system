@@ -117,7 +117,7 @@ public class ScheduleControllerTest {
         createSchedules();
 
         String json = mockMvc
-                .perform(get(Routes.SCHEDULES + "/" + movieId))
+                .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
