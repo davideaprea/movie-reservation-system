@@ -1,6 +1,6 @@
 package com.example.demo.cinema.service;
 
-import com.example.demo.cinema.projection.SeatDetail;
+import com.example.demo.cinema.projection.SeatProjection;
 import com.example.demo.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,15 +15,15 @@ import java.util.List;
 public class SeatService {
     private final SeatDao seatDao;
 
-    public List<SeatDetail> findAll(List<Long> seatIds) {
-        List<SeatDetail> selectedSeats = seatDao.findAll(seatIds);
+    public List<SeatProjection> findAll(List<Long> seatIds) {
+        List<SeatProjection> seats = seatDao.findAll(seatIds);
 
-        if (selectedSeats.size() != seatIds.size()) {
+        if (seats.size() != seatIds.size()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found.");
         }
 
-        selectedSeats.sort(Comparator.comparingInt(SeatDetail::seatNumber));
+        seats.sort(Comparator.comparingInt(SeatProjection::seatNumber));
 
-        return selectedSeats;
+        return seats;
     }
 }

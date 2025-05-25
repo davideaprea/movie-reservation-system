@@ -20,7 +20,7 @@ public class Hall {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private HallStatus hallStatus;
+    private HallStatus status;
 
     @OneToMany(
             mappedBy = Seat.Fields.hall,
@@ -30,10 +30,10 @@ public class Hall {
     )
     private List<Seat> seats;
 
-    public static Hall create(HallStatus hallStatus) {
+    public static Hall create(HallStatus status) {
         return Hall
                 .builder()
-                .hallStatus(hallStatus)
+                .status(status)
                 .build();
     }
 

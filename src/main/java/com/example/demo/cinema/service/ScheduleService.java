@@ -23,11 +23,11 @@ public class ScheduleService {
     private final MovieService movieService;
 
     public Schedule create(ScheduleDto dto) {
-        Movie movie = movieService.getById(dto.movieId());
+        Movie movieToSchedule = movieService.getById(dto.movieId());
 
         LocalDateTime endTime = dto
                 .startTime()
-                .plusMinutes(movie.getDuration());
+                .plusMinutes(movieToSchedule.getDuration());
 
         if (scheduleDao.isHallTaken(
                 dto.hallId(),
@@ -56,23 +56,23 @@ public class ScheduleService {
             return daySchedules;
         }
 
-        List<UpcomingSchedule> currList = new ArrayList<>();
+        List<UpcomingSchedule> currDaySchedules = new ArrayList<>();
         LocalDate currentDay = schedules.getFirst().startTime().toLocalDate();
 
         for (UpcomingSchedule schedule : schedules) {
             LocalDate scheduleDay = schedule.startTime().toLocalDate();
 
             if (!scheduleDay.equals(currentDay)) {
-                daySchedules.add(new DaySchedule(currentDay, currList));
-                currList = new ArrayList<>();
+                daySchedules.add(new DaySchedule(currentDay, currDaySchedules));
+                currDaySchedules = new ArrayList<>();
                 currentDay = scheduleDay;
             }
 
-            currList.add(schedule);
+            currDaySchedules.add(schedule);
         }
 
-        if (!currList.isEmpty()) {
-            daySchedules.add(new DaySchedule(currentDay, currList));
+        if (!currDaySchedules.isEmpty()) {
+            daySchedules.add(new DaySchedule(currentDay, currDaySchedules));
         }
 
         return daySchedules;

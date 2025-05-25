@@ -1,6 +1,6 @@
 package com.example.demo.cinema.repository;
 
-import com.example.demo.cinema.projection.SeatDetail;
+import com.example.demo.cinema.projection.SeatProjection;
 import com.example.demo.cinema.entity.Seat;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -15,5 +15,5 @@ public interface SeatDao extends CrudRepository<Seat, Long> {
         FROM Seat s
         WHERE s.id IN :seatIds
     """)
-    List<SeatDetail> findAll(List<Long> seatIds);
+    List<SeatProjection> findAll(List<Long> seatIds);
 }

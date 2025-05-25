@@ -14,7 +14,7 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
             p.user.id = :userId AND
             p.captureId IS NULL
             """)
-    int confirm(String orderId, String captureId, long userId);
+    int capture(String orderId, String captureId, long userId);
 
     @Query("""
         SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END

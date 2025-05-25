@@ -1,14 +1,11 @@
 package com.example.demo.booking.service;
 
-import com.example.demo.booking.dto.Amount;
 import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.dto.OrderDto;
-import com.example.demo.booking.dto.PurchaseUnit;
 import com.example.demo.booking.entity.Payment;
-import com.example.demo.booking.enumeration.PayPalOrderIntent;
 import com.example.demo.booking.repository.PaymentDao;
 import com.example.demo.booking.response.PayPalOrder;
-import com.example.demo.cinema.projection.SeatDetail;
+import com.example.demo.cinema.projection.SeatProjection;
 import com.example.demo.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,40 +26,40 @@ public class PaymentService {
 
     @Transactional
     public Payment create(BookingDto dto, long userId) {
-        List<SeatDetail> seatDetails = seatService.findAll(dto.seatIds());
+        List<SeatProjection> selectedSeats = seatService.findAll(dto.seatIds());
 
-        BigDecimal totalPrice = calculatePrice(seatDetails);
+        BigDecimal totalPrice = calculatePrice(selectedSeats);
         OrderDto orderDto = new OrderDto(totalPrice);
 
-        PayPalOrder order = payPalService.createOrder(orderDto);
+        PayPalOrder payPalOrder = payPalService.createOrder(orderDto);
 
         Payment payment = paymentDao.save(Payment.create(
-                order.id(),
+                payPalOrder.id(),
                 totalPrice,
                 userId
         ));
 
-        bookingService.create(seatDetails, dto.scheduleId(), payment.getId());
+        bookingService.create(selectedSeats, dto.scheduleId(), payment.getId());
 
         return payment;
     }
 
     @Transactional
-    public void confirm(String orderId, long userId) {
+    public void capture(String orderId, long userId) {
         if (!paymentDao.isPaymentUncaptured(orderId, userId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already captured.");
         }
 
         String captureId = payPalService.captureOrder(orderId);
-        int updatedRows = paymentDao.confirm(orderId, captureId, userId);
+        int updatedRows = paymentDao.capture(orderId, captureId, userId);
 
         if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
         }
     }
 
-    private BigDecimal calculatePrice(List<SeatDetail> seatDetails) {
-        return seatDetails
+    private BigDecimal calculatePrice(List<SeatProjection> seats) {
+        return seats
                 .stream()
                 .reduce(
                         BigDecimal.ZERO,

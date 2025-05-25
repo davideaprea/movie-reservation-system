@@ -20,7 +20,7 @@ public class Seat {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private SeatType seatType;
+    private SeatType type;
 
     @Column(nullable = false, updatable = false)
     private Integer rowNumber;
@@ -32,14 +32,14 @@ public class Seat {
     private Hall hall;
 
     public static Seat create(
-            SeatType seatType,
+            SeatType type,
             int rowNumber,
             int seatNumber,
             long hallId
     ) {
         return Seat
                 .builder()
-                .seatType(seatType)
+                .type(type)
                 .rowNumber(rowNumber)
                 .seatNumber(seatNumber)
                 .hall(Hall.create(hallId))

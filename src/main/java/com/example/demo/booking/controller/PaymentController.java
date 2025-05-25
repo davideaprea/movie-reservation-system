@@ -34,7 +34,7 @@ public class PaymentController {
             @PathVariable String orderId,
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
-        paymentService.confirm(orderId, userDetails.getId());
+        paymentService.capture(orderId, userDetails.getId());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

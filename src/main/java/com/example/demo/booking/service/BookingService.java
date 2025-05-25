@@ -2,9 +2,9 @@ package com.example.demo.booking.service;
 
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
-import com.example.demo.booking.validator.BookingValidator;
+import com.example.demo.booking.validator.SeatsValidator;
 import com.example.demo.cinema.projection.BookingSchedule;
-import com.example.demo.cinema.projection.SeatDetail;
+import com.example.demo.cinema.projection.SeatProjection;
 import com.example.demo.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,11 +21,11 @@ import java.util.stream.StreamSupport;
 public class BookingService {
     private final BookingDao bookingDao;
     private final ScheduleService scheduleService;
-    private final BookingValidator bookingValidator;
+    private final SeatsValidator seatsValidator;
 
     @Transactional
-    public List<Booking> create(List<SeatDetail> selectedSeats, long scheduleId, long paymentId) {
-        bookingValidator.checkSeatsAdjacency(selectedSeats);
+    public List<Booking> create(List<SeatProjection> selectedSeats, long scheduleId, long paymentId) {
+        seatsValidator.checkAdjacency(selectedSeats);
 
         BookingSchedule schedule = scheduleService.findProjectionById(scheduleId, BookingSchedule.class);
 
@@ -33,7 +33,7 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
         }
 
-        bookingValidator.checkSeatHall(selectedSeats, schedule.getHall().getId());
+        seatsValidator.checkHall(selectedSeats, schedule.getHall().getId());
 
         List<Booking> bookings = selectedSeats
                 .stream()

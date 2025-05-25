@@ -25,7 +25,7 @@ public class PayPalService {
 
     private final RestClient restClient;
 
-    private final Object lock = new Object();
+    private final Object threadLock = new Object();
 
     private volatile String accessToken;
 
@@ -41,11 +41,11 @@ public class PayPalService {
             @Value("${paypal.secret}")
             String clientSecret,
 
-            RestClient.Builder builder
+            RestClient.Builder restClientBuilder
     ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.restClient = builder
+        this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .requestInterceptor((request, body, execution) -> {
                     if (!request.getURI().getPath().contains("/v1/oauth2/token")) {
@@ -62,7 +62,7 @@ public class PayPalService {
     private void refreshAccessToken() {
         if (accessToken != null && isTokenValid()) return;
 
-        synchronized (lock) {
+        synchronized (threadLock) {
             if (accessToken != null && isTokenValid()) return;
 
             PayPalTokenDetails tokenDetails = getAccessToken();
@@ -78,18 +78,18 @@ public class PayPalService {
     }
 
     private PayPalTokenDetails getAccessToken() {
-        String auth = clientId + ":" + clientSecret;
-        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+        String plainCredentials = clientId + ":" + clientSecret;
+        String encodedCredentials = Base64.getEncoder().encodeToString(plainCredentials.getBytes());
 
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> reqBody = new LinkedMultiValueMap<>();
 
-        formData.add("grant_type", "client_credentials");
+        reqBody.add("grant_type", "client_credentials");
 
         return restClient.post()
                 .uri("/v1/oauth2/token")
-                .header(HttpHeaders.AUTHORIZATION, "Basic " + encodedAuth)
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + encodedCredentials)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .body(formData)
+                .body(reqBody)
                 .retrieve()
                 .body(PayPalTokenDetails.class);
     }
