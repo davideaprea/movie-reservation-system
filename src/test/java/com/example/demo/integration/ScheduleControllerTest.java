@@ -142,6 +142,17 @@ public class ScheduleControllerTest {
         }
     }
 
+    void givenScheduleId_whenGettingScheduleSeats_thenStatusOk() {
+        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
+
+        long scheduleId = scheduleDao.save(Schedule.create(
+                movieId,
+                hallId,
+                startTime,
+                startTime.plusHours(2)
+        )).getId();
+    }
+
     private void signUser() {
         User newUser = new User(
                 null,
