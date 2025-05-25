@@ -30,7 +30,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/{scheduleId}" + Routes.SEATS)
-    public ResponseEntity<List<ScheduleSeatDetails>> findScheduleSeats(long scheduleId) {
+    public ResponseEntity<List<ScheduleSeatDetails>> findScheduleSeats(@PathVariable long scheduleId) {
         return new ResponseEntity<>(
                 seatService.findScheduleSeats(scheduleId),
                 HttpStatus.OK

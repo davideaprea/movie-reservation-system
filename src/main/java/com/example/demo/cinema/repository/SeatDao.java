@@ -28,9 +28,8 @@ public interface SeatDao extends CrudRepository<Seat, Long> {
                     WHEN b.id IS NULL THEN true ELSE false
                 END
             )
-            FROM Booking b
-            RIGHT JOIN Seat s ON b.seat.id = s.id
-            WHERE b.schedule.id = :scheduleId
+            FROM Seat s
+            LEFT JOIN Booking b ON b.seat.id = s.id AND b.schedule.id = :scheduleId
             """)
     List<ScheduleSeatDetails> findScheduleSeats(long scheduleId);
 }
