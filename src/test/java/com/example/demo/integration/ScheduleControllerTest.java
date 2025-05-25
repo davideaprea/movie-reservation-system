@@ -175,7 +175,18 @@ public class ScheduleControllerTest {
 
         List<Schedule> schedules = new ArrayList<>();
 
-        for (int i = -5; i <= 5; i++) {
+        for (int i = -5; i < 0; i++) {
+            final LocalDateTime date = now.plusDays(i);
+
+            schedules.add(Schedule.create(
+                    movieId,
+                    hallId,
+                    date,
+                    date.plusHours(2)
+            ));
+        }
+
+        for (int i = 1; i <= 5; i++) {
             final LocalDateTime date = now.plusDays(i);
 
             schedules.add(Schedule.create(
