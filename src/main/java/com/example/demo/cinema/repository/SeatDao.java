@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface SeatDao extends CrudRepository<Seat, Long> {
     @Query("""
-        SELECT new com.example.demo.cinema.projection.SeatDetail(
-            s.id, s.seatType, s.rowNumber, s.seatNumber, s.hall.id
+        SELECT new com.example.demo.cinema.projection.SeatProjection(
+            s.id, s.type, s.rowNumber, s.seatNumber, s.hall.id
         )
         FROM Seat s
         WHERE s.id IN :seatIds

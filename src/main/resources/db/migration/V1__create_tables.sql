@@ -7,7 +7,7 @@ CREATE TABLE users (
 
 CREATE TABLE halls (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    hall_status VARCHAR(255) NOT NULL
+    status VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE movies (
@@ -20,7 +20,7 @@ CREATE TABLE movies (
 
 CREATE TABLE seats (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    seat_type VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL,
     row_number INT NOT NULL,
     seat_number INT NOT NULL,
     hall_id BIGINT NOT NULL,
