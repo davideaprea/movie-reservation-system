@@ -2,11 +2,11 @@ package com.example.demo.cinema.projection;
 
 import com.example.demo.cinema.enumeration.SeatType;
 
-public record SeatProjection(
+public record ScheduleSeatDetails(
         long id,
         SeatType type,
         int rowNumber,
         int seatNumber,
-        long hallId
+        boolean isAvailable
 ) {
 }

@@ -68,7 +68,7 @@ public class PaymentService {
                 .stream()
                 .reduce(
                         BigDecimal.ZERO,
-                        (sub, tot) -> sub.add(BigDecimal.valueOf(tot.seatType().getPrice())),
+                        (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
                         BigDecimal::add
                 );
     }

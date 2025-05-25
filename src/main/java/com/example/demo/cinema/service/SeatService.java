@@ -1,5 +1,6 @@
 package com.example.demo.cinema.service;
 
+import com.example.demo.cinema.projection.ScheduleSeatDetails;
 import com.example.demo.cinema.projection.SeatProjection;
 import com.example.demo.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,15 @@ public class SeatService {
         seats.sort(Comparator.comparingInt(SeatProjection::seatNumber));
 
         return seats;
+    }
+
+    public List<ScheduleSeatDetails> findScheduleSeats(long scheduleId) {
+        List<ScheduleSeatDetails> scheduleSeats = seatDao.findScheduleSeats(scheduleId);
+
+        if(scheduleSeats.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found.");
+        }
+
+        return scheduleSeats;
     }
 }

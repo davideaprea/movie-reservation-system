@@ -8,4 +8,5 @@ public class Routes {
     public static final String MOVIES = "/movies";
     public static final String SCHEDULES = "/schedules";
     public static final String PAYMENTS = "/payments";
+    public static final String SEATS = "/seats";
 }
