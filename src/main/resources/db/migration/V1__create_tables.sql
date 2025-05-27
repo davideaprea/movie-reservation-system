@@ -24,7 +24,8 @@ CREATE TABLE seats (
     row_number INT NOT NULL,
     seat_number INT NOT NULL,
     hall_id BIGINT NOT NULL,
-    CONSTRAINT fk_seat_hall FOREIGN KEY (hall_id) REFERENCES halls(id)
+    CONSTRAINT fk_seat_hall FOREIGN KEY (hall_id) REFERENCES halls(id),
+    CONSTRAINT uc_seat UNIQUE (hall_id, row_number, seat_number)
 );
 
 CREATE TABLE schedules (
@@ -57,5 +58,5 @@ CREATE TABLE bookings (
     CONSTRAINT fk_booking_seat FOREIGN KEY (seat_id) REFERENCES seats(id),
     CONSTRAINT fk_booking_schedule FOREIGN KEY (schedule_id) REFERENCES schedules(id),
     CONSTRAINT fk_booking_payment FOREIGN KEY (payment_id) REFERENCES payments(id),
-    CONSTRAINT uc_booking UNIQUE (seat_id, schedule_id)
+    CONSTRAINT uc_booking UNIQUE (schedule_id, seat_id)
 );

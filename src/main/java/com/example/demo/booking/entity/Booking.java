@@ -14,7 +14,7 @@ import lombok.experimental.FieldNameConstants;
 @Getter
 @Entity
 @Table(name = "bookings", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"seat_id", "schedule_id"})
+        @UniqueConstraint(columnNames = {"schedule_id", "seat_id"})
 })
 public class Booking {
     @Id

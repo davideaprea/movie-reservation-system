@@ -12,7 +12,9 @@ import lombok.experimental.FieldNameConstants;
 @ToString
 @Getter
 @Entity
-@Table(name = "seats")
+@Table(name = "seats", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "hall_id, row_number, seat_number")
+})
 public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
