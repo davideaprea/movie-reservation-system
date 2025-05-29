@@ -39,11 +39,13 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -104,11 +106,14 @@ public class PaymentControllerTest {
 
     @BeforeEach
     void beforeEach() {
+        mockPayPalOrderCreation();
+        mockPayPalOrderCapture();
+
         User user = createUser();
         userId = user.getId();
         jwt = signUser(user.getEmail());
 
-        hall = hallDao.save(Hall.create(HallStatus.AVAILABLE));
+        hall = hallDao.save(Hall.create());
         hallSeats = createSeats(10, 30, hall.getId());
         movie = createMovie();
         schedule = createSchedule(
@@ -119,22 +124,8 @@ public class PaymentControllerTest {
 
     @Test
     void givenBookingDto_whenBookingSeats_thenStatusOk() throws Exception {
-        Mockito
-                .when(payPalService.createOrder(Mockito.any()))
-                .thenReturn(new PayPalOrder("PP_ORDER_1"));
-
-        Mockito
-                .when(payPalService.captureOrder(Mockito.any()))
-                .thenReturn("PP_CAPTURE_1");
-
-        List<Long> seatIds = hallSeats
-                .subList(0, 5)
-                .stream()
-                .map(Seat::getId)
-                .toList();
-
         PaymentDto dto = new PaymentDto(
-                seatIds,
+                getRandomAdjacentSeatIds(),
                 schedule.getId()
         );
 
@@ -160,14 +151,6 @@ public class PaymentControllerTest {
 
     @Test
     void givenAlreadyBookedSeats_whenBookingSeats_thenStatusConflict() throws Exception {
-        Mockito
-                .when(payPalService.createOrder(Mockito.any()))
-                .thenReturn(new PayPalOrder("PP_ORDER_2"));
-
-        Mockito
-                .when(payPalService.captureOrder(Mockito.any()))
-                .thenReturn("PP_CAPTURE_2");
-
         User user = createUser();
         Seat seat = hallSeats.getFirst();
 
@@ -193,14 +176,6 @@ public class PaymentControllerTest {
 
     @Test
     void givenNonAdjacentSeats_whenBookingSeats_thenStatusUnprocessableEntity() throws Exception {
-        Mockito
-                .when(payPalService.createOrder(Mockito.any()))
-                .thenReturn(new PayPalOrder("PP_ORDER_2"));
-
-        Mockito
-                .when(payPalService.captureOrder(Mockito.any()))
-                .thenReturn("PP_CAPTURE_2");
-
         PaymentDto dto = new PaymentDto(
                 List.of(
                         hallSeats.getFirst().getId(),
@@ -216,15 +191,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    void givenAlreadyCapturedOrderId_whenCapturingOrder_thenStatusIsConflict() throws Exception {
-        Mockito
-                .when(payPalService.createOrder(Mockito.any()))
-                .thenReturn(new PayPalOrder("PP_ORDER_2"));
-
-        Mockito
-                .when(payPalService.captureOrder(Mockito.any()))
-                .thenReturn("PP_CAPTURE_2");
-
+    void givenAlreadyCapturedOrderId_whenCapturingOrder_thenStatusConflict() throws Exception {
         Payment payment = paymentDao.save(new Payment(
                 null,
                 "ORDER_ID",
@@ -311,5 +278,25 @@ public class PaymentControllerTest {
         );
 
         return userDao.save(newUser);
+    }
+
+    private void mockPayPalOrderCreation() {
+        Mockito
+                .when(payPalService.createOrder(Mockito.any()))
+                .thenReturn(new PayPalOrder(UUID.randomUUID().toString()));
+    }
+
+    private void mockPayPalOrderCapture() {
+        Mockito
+                .when(payPalService.captureOrder(Mockito.any()))
+                .thenReturn(UUID.randomUUID().toString());
+    }
+
+    private List<Long> getRandomAdjacentSeatIds() {
+        return hallSeats
+                .subList(0, 5)
+                .stream()
+                .map(Seat::getId)
+                .toList();
     }
 }

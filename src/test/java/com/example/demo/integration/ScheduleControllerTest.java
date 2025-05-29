@@ -126,7 +126,7 @@ public class ScheduleControllerTest {
         ScheduleDto dto = new ScheduleDto(
                 movieId,
                 hallId,
-                starTime.plusMinutes(30)
+                starTime
         );
 
         postScheduleApi(dto).andExpect(status().isConflict());
@@ -168,31 +168,13 @@ public class ScheduleControllerTest {
     void givenScheduleId_whenGettingScheduleSeats_thenStatusOk() throws Exception {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
 
-        long scheduleId = scheduleDao.save(Schedule.create(
-                movieId,
-                hallId,
-                startTime,
-                startTime.plusHours(2)
-        )).getId();
+        long scheduleId = saveSchedule(startTime).getId();
 
         List<Seat> seats = createSeats(10, 20, hallId);
 
-        Payment payment = paymentDao.save(new Payment(
-                null,
-                "ORDER_ID",
-                "CAPTURE_ID",
-                BigDecimal.valueOf(20),
-                User.create(createUser().getId()),
-                null
-        ));
-
         final long seatId = seats.getFirst().getId();
 
-        Booking booking = bookingDao.save(Booking.create(
-                payment.getId(),
-                seatId,
-                scheduleId
-        ));
+        saveFakeBooking(seatId, scheduleId);
 
         String res = mockMvc
                 .perform(get(Routes.SCHEDULES + "/" + scheduleId + Routes.SEATS))
@@ -231,9 +213,7 @@ public class ScheduleControllerTest {
     }
 
     private void createHall() {
-        hallId = hallDao.save(Hall.create(
-                HallStatus.AVAILABLE
-        )).getId();
+        hallId = hallDao.save(Hall.create()).getId();
     }
 
     private void createMovie() {
@@ -302,5 +282,31 @@ public class ScheduleControllerTest {
         return StreamSupport
                 .stream(seatDao.saveAll(seats).spliterator(), false)
                 .toList();
+    }
+
+    private Schedule saveSchedule(LocalDateTime starTime) {
+        return scheduleDao.save(Schedule.create(
+                movieId,
+                hallId,
+                starTime,
+                starTime.plusHours(2)
+        ));
+    }
+
+    private void saveFakeBooking(long seatId, long scheduleId) {
+        Payment payment = paymentDao.save(new Payment(
+                null,
+                "ORDER_ID",
+                "CAPTURE_ID",
+                BigDecimal.valueOf(20),
+                User.create(createUser().getId()),
+                null
+        ));
+
+        bookingDao.save(Booking.create(
+                payment.getId(),
+                seatId,
+                scheduleId
+        ));
     }
 }
