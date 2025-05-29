@@ -1,32 +1,19 @@
 package com.example.demo.integration;
 
-import com.example.demo.booking.entity.Booking;
-import com.example.demo.booking.entity.Payment;
-import com.example.demo.booking.repository.BookingDao;
-import com.example.demo.booking.repository.PaymentDao;
 import com.example.demo.cinema.dto.ScheduleDto;
-import com.example.demo.cinema.entity.Hall;
-import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.entity.Seat;
-import com.example.demo.cinema.enumeration.HallStatus;
-import com.example.demo.cinema.enumeration.SeatType;
 import com.example.demo.cinema.projection.ScheduleSeatDetails;
-import com.example.demo.cinema.repository.HallDao;
-import com.example.demo.cinema.repository.MovieDao;
 import com.example.demo.cinema.repository.ScheduleDao;
-import com.example.demo.cinema.repository.SeatDao;
 import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;
 import com.example.demo.core.enumeration.Routes;
-import com.example.demo.security.component.JWTManager;
 import com.example.demo.security.entity.User;
 import com.example.demo.security.enumeration.Roles;
-import com.example.demo.security.repository.UserDao;
+import com.example.demo.util.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,11 +27,8 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -60,19 +44,7 @@ public class ScheduleControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private MovieDao movieDao;
-
-    @Autowired
-    private HallDao hallDao;
-
-    @Autowired
     private ObjectMapper objMapper;
-
-    @Autowired
-    private JWTManager jwtManager;
 
     private String jwt;
 
@@ -84,21 +56,25 @@ public class ScheduleControllerTest {
     private ScheduleDao scheduleDao;
 
     @Autowired
-    private BookingDao bookingDao;
+    private AuthUtil authUtil;
 
     @Autowired
-    private PaymentDao paymentDao;
+    private HallUtil hallUtil;
 
     @Autowired
-    private SeatDao seatDao;
+    private MovieUtil movieUtil;
 
-    private final Faker faker = new Faker();
+    @Autowired
+    private ScheduleUtil scheduleUtil;
+
+    @Autowired
+    private BookingUtil bookingUtil;
 
     @BeforeEach
     void beforeEach() {
         signUser();
-        createHall();
-        createMovie();
+        hallId = hallUtil.createFakeHall().getId();
+        movieId = movieUtil.createFakeMovie().getId();
     }
 
     @Test
@@ -136,7 +112,11 @@ public class ScheduleControllerTest {
 
     @Test
     void whenGettingScheduledMovies_thenStatusOk() throws Exception {
-        createSchedules();
+        scheduleUtil.createFakeSchedules(
+                5,
+                movieId,
+                hallId
+        );
 
         String json = mockMvc
                 .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES))
@@ -168,13 +148,13 @@ public class ScheduleControllerTest {
     void givenScheduleId_whenGettingScheduleSeats_thenStatusOk() throws Exception {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
 
-        long scheduleId = saveSchedule(startTime).getId();
+        long scheduleId = scheduleUtil.createFakeSchedule(movieId, hallId).getId();
 
-        List<Seat> seats = createSeats(10, 20, hallId);
+        List<Seat> seats = hallUtil.createSeats(10, 20, hallId);
 
         final long seatId = seats.getFirst().getId();
 
-        saveFakeBooking(seatId, scheduleId);
+        bookingUtil.createFakeBooking(seatId, scheduleId);
 
         String res = mockMvc
                 .perform(get(Routes.SCHEDULES + "/" + scheduleId + Routes.SEATS))
@@ -196,63 +176,9 @@ public class ScheduleControllerTest {
     }
 
     private void signUser() {
-        User newUser = createUser();
+        User newUser = authUtil.createFakeUser(Roles.ADMIN);
 
-        jwt = "Bearer " + jwtManager.generateToken(newUser.getEmail());
-    }
-
-    private User createUser() {
-        User newUser = new User(
-                null,
-                faker.internet().emailAddress(),
-                "psw",
-                Roles.ADMIN
-        );
-
-        return userDao.save(newUser);
-    }
-
-    private void createHall() {
-        hallId = hallDao.save(Hall.create()).getId();
-    }
-
-    private void createMovie() {
-        movieId = movieDao.save(Movie.create(
-                "Title",
-                110,
-                "Description",
-                "cover"
-        )).getId();
-    }
-
-    private void createSchedules() {
-        final LocalDateTime now = LocalDateTime.now();
-
-        List<Schedule> schedules = new ArrayList<>();
-
-        for (int i = -5; i < 0; i++) {
-            final LocalDateTime date = now.plusDays(i);
-
-            schedules.add(Schedule.create(
-                    movieId,
-                    hallId,
-                    date,
-                    date.plusHours(2)
-            ));
-        }
-
-        for (int i = 1; i <= 5; i++) {
-            final LocalDateTime date = now.plusDays(i);
-
-            schedules.add(Schedule.create(
-                    movieId,
-                    hallId,
-                    date,
-                    date.plusHours(2)
-            ));
-        }
-
-        scheduleDao.saveAll(schedules);
+        jwt = authUtil.generateAuthHeader(newUser.getEmail());
     }
 
     private ResultActions postScheduleApi(ScheduleDto dto) throws Exception {
@@ -263,50 +189,5 @@ public class ScheduleControllerTest {
                         .header("Authorization", jwt)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body));
-    }
-
-    private List<Seat> createSeats(int rowsNumber, int seatsPerRow, long hallId) {
-        List<Seat> seats = new ArrayList<>();
-
-        for (int row = 1; row <= rowsNumber; row++) {
-            for (int seat = 1; seat <= seatsPerRow; seat++) {
-                seats.add(Seat.create(
-                        SeatType.REGULAR,
-                        row,
-                        seat,
-                        hallId
-                ));
-            }
-        }
-
-        return StreamSupport
-                .stream(seatDao.saveAll(seats).spliterator(), false)
-                .toList();
-    }
-
-    private Schedule saveSchedule(LocalDateTime starTime) {
-        return scheduleDao.save(Schedule.create(
-                movieId,
-                hallId,
-                starTime,
-                starTime.plusHours(2)
-        ));
-    }
-
-    private void saveFakeBooking(long seatId, long scheduleId) {
-        Payment payment = paymentDao.save(new Payment(
-                null,
-                "ORDER_ID",
-                "CAPTURE_ID",
-                BigDecimal.valueOf(20),
-                User.create(createUser().getId()),
-                null
-        ));
-
-        bookingDao.save(Booking.create(
-                payment.getId(),
-                seatId,
-                scheduleId
-        ));
     }
 }

@@ -1,7 +1,6 @@
 package com.example.demo.integration;
 
 import com.example.demo.booking.dto.PaymentDto;
-import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.BookingDao;
 import com.example.demo.booking.repository.PaymentDao;
@@ -11,21 +10,13 @@ import com.example.demo.cinema.entity.Hall;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.entity.Seat;
-import com.example.demo.cinema.enumeration.HallStatus;
-import com.example.demo.cinema.enumeration.SeatType;
-import com.example.demo.cinema.repository.HallDao;
-import com.example.demo.cinema.repository.MovieDao;
-import com.example.demo.cinema.repository.ScheduleDao;
-import com.example.demo.cinema.repository.SeatDao;
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;
 import com.example.demo.core.enumeration.Routes;
-import com.example.demo.security.component.JWTManager;
 import com.example.demo.security.entity.User;
 import com.example.demo.security.enumeration.Roles;
-import com.example.demo.security.repository.UserDao;
+import com.example.demo.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,14 +30,10 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -61,25 +48,13 @@ public class PaymentControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private MovieDao movieDao;
-
-    @Autowired
-    private ScheduleDao scheduleDao;
-
-    @Autowired
-    private HallDao hallDao;
+    private AuthUtil authUtil;
 
     @Autowired
     private BookingDao bookingDao;
 
     @Autowired
     private PaymentDao paymentDao;
-
-    @Autowired
-    private SeatDao seatDao;
 
     private long userId;
 
@@ -94,29 +69,36 @@ public class PaymentControllerTest {
     private List<Seat> hallSeats;
 
     @Autowired
-    private JWTManager jwtManager;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     @MockitoBean
     private PayPalService payPalService;
 
-    private final Faker faker = new Faker();
+    @Autowired
+    private HallUtil hallUtil;
+
+    @Autowired
+    private MovieUtil movieUtil;
+
+    @Autowired
+    private ScheduleUtil scheduleUtil;
+
+    @Autowired
+    private BookingUtil bookingUtil;
 
     @BeforeEach
     void beforeEach() {
         mockPayPalOrderCreation();
         mockPayPalOrderCapture();
 
-        User user = createUser();
+        User user = authUtil.createFakeUser(Roles.USER);
         userId = user.getId();
-        jwt = signUser(user.getEmail());
+        jwt = authUtil.generateAuthHeader(user.getEmail());
 
-        hall = hallDao.save(Hall.create());
-        hallSeats = createSeats(10, 30, hall.getId());
-        movie = createMovie();
-        schedule = createSchedule(
+        hall = hallUtil.createFakeHall();
+        hallSeats = hallUtil.createSeats(10, 30, hall.getId());
+        movie = movieUtil.createFakeMovie();
+        schedule = scheduleUtil.createFakeSchedule(
                 movie.getId(),
                 hall.getId()
         );
@@ -151,20 +133,9 @@ public class PaymentControllerTest {
 
     @Test
     void givenAlreadyBookedSeats_whenBookingSeats_thenStatusConflict() throws Exception {
-        User user = createUser();
         Seat seat = hallSeats.getFirst();
 
-        Payment payment = paymentDao.save(Payment.create(
-                "PP_ORDER_1",
-                BigDecimal.valueOf(10),
-                user.getId()
-        ));
-
-        bookingDao.save(Booking.create(
-                payment.getId(),
-                seat.getId(),
-                schedule.getId()
-        ));
+        bookingUtil.createFakeBooking(seat.getId(), schedule.getId());
 
         PaymentDto dto = new PaymentDto(List.of(seat.getId()), schedule.getId());
 
@@ -192,67 +163,13 @@ public class PaymentControllerTest {
 
     @Test
     void givenAlreadyCapturedOrderId_whenCapturingOrder_thenStatusConflict() throws Exception {
-        Payment payment = paymentDao.save(new Payment(
-                null,
-                "ORDER_ID",
-                "CAPTURE_ID",
-                BigDecimal.valueOf(20),
-                User.create(userId),
-                null
-        ));
-
-        Booking booking = bookingDao.save(Booking.create(
-                payment.getId(),
+        Payment payment = bookingUtil.createFakeBooking(
                 hallSeats.getFirst().getId(),
                 schedule.getId()
-        ));
+        );
 
         patchPaymentApi(payment.getOrderId())
                 .andExpect(status().isConflict());
-    }
-
-    private String signUser(String email) {
-        return "Bearer " + jwtManager.generateToken(email);
-    }
-
-    private List<Seat> createSeats(int rowsNumber, int seatsPerRow, long hallId) {
-        List<Seat> seats = new ArrayList<>();
-
-        for (int row = 1; row < rowsNumber; row++) {
-            for (int seat = 1; seat < seatsPerRow; seat++) {
-                seats.add(Seat.create(
-                        SeatType.REGULAR,
-                        row,
-                        seat,
-                        hallId
-                ));
-            }
-        }
-
-        return StreamSupport
-                .stream(seatDao.saveAll(seats).spliterator(), false)
-                .toList();
-    }
-
-    private Movie createMovie() {
-        return movieDao.save(Movie.create(
-                "Title",
-                110,
-                "Description",
-                "cover"
-        ));
-    }
-
-    private Schedule createSchedule(long movieId, long hallId) {
-        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        LocalDateTime endTime = startTime.plusHours(2);
-
-        return scheduleDao.save(Schedule.create(
-                movieId,
-                hallId,
-                startTime,
-                endTime
-        ));
     }
 
     private ResultActions postPaymentApi(PaymentDto dto) throws Exception {
@@ -267,17 +184,6 @@ public class PaymentControllerTest {
     private ResultActions patchPaymentApi(String orderId) throws Exception {
         return mockMvc.perform(patch(Routes.PAYMENTS + "/" + orderId)
                 .header("Authorization", jwt));
-    }
-
-    private User createUser() {
-        User newUser = new User(
-                null,
-                faker.internet().emailAddress(),
-                "psw",
-                Roles.USER
-        );
-
-        return userDao.save(newUser);
     }
 
     private void mockPayPalOrderCreation() {
