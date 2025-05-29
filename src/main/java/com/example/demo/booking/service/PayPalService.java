@@ -19,9 +19,7 @@ import java.util.List;
 
 @Service
 public class PayPalService {
-    private final String clientId;
-
-    private final String clientSecret;
+    private final String encodedCredentials;
 
     private final RestClient restClient;
 
@@ -43,8 +41,8 @@ public class PayPalService {
 
             RestClient.Builder restClientBuilder
     ) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
+        this.encodedCredentials = encodeCredentials(clientId, clientSecret);
+
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .requestInterceptor((request, body, execution) -> {
@@ -78,9 +76,6 @@ public class PayPalService {
     }
 
     private PayPalTokenDetails getAccessToken() {
-        String plainCredentials = clientId + ":" + clientSecret;
-        String encodedCredentials = Base64.getEncoder().encodeToString(plainCredentials.getBytes());
-
         MultiValueMap<String, String> reqBody = new LinkedMultiValueMap<>();
 
         reqBody.add("grant_type", "client_credentials");
@@ -127,5 +122,10 @@ public class PayPalService {
         Map<String, Object> firstCapture = captures.getFirst();
 
         return (String) firstCapture.get("id");
+    }
+
+    private String encodeCredentials(String clientId, String clientSecret) {
+        String plainCredentials = clientId + ":" + clientSecret;
+        return Base64.getEncoder().encodeToString(plainCredentials.getBytes());
     }
 }

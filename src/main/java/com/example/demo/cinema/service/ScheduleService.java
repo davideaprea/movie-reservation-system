@@ -25,21 +25,21 @@ public class ScheduleService {
     public Schedule create(ScheduleDto dto) {
         Movie movieToSchedule = movieService.getById(dto.movieId());
 
-        LocalDateTime endTime = dto
+        LocalDateTime scheduleEndTime = dto
                 .startTime()
                 .plusMinutes(movieToSchedule.getDuration());
 
         if (scheduleDao.isHallTaken(
                 dto.hallId(),
                 dto.startTime(),
-                endTime
+                scheduleEndTime
         )) throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
 
         return scheduleDao.save(Schedule.create(
                 dto.movieId(),
                 dto.hallId(),
                 dto.startTime(),
-                endTime
+                scheduleEndTime
         ));
     }
 

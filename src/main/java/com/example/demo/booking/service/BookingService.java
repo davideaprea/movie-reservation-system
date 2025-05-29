@@ -37,8 +37,8 @@ public class BookingService {
         return saveBookings(bookings);
     }
 
-    private void validateBookingTime(LocalDateTime startTime) {
-        if (LocalDateTime.now().isAfter(startTime)) {
+    private void validateBookingTime(LocalDateTime scheduleStartTime) {
+        if (LocalDateTime.now().isAfter(scheduleStartTime)) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
         }
     }
