@@ -27,14 +27,24 @@ public class BookingService {
     public List<Booking> create(BookingDto dto) {
         BookingSchedule schedule = scheduleService.findProjectionById(dto.scheduleId(), BookingSchedule.class);
 
-        if (LocalDateTime.now().isAfter(schedule.getStartTime())) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
-        }
+        validateBookingTime(schedule.getStartTime());
 
         seatsValidator.checkHall(dto.selectedSeats(), schedule.getHall().getId());
         seatsValidator.checkAdjacency(dto.selectedSeats());
 
-        List<Booking> bookings = dto.selectedSeats()
+        List<Booking> bookings = buildBookings(dto);
+
+        return saveBookings(bookings);
+    }
+
+    private void validateBookingTime(LocalDateTime startTime) {
+        if (LocalDateTime.now().isAfter(startTime)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
+        }
+    }
+
+    public List<Booking> buildBookings(BookingDto dto) {
+        return dto.selectedSeats()
                 .stream()
                 .map(seat -> Booking.create(
                         dto.paymentId(),
@@ -42,7 +52,9 @@ public class BookingService {
                         dto.scheduleId()
                 ))
                 .toList();
+    }
 
+    private List<Booking> saveBookings(List<Booking> bookings) {
         return StreamSupport
                 .stream(bookingDao.saveAll(bookings).spliterator(), false)
                 .toList();
