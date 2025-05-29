@@ -30,10 +30,10 @@ public class Hall {
     )
     private List<Seat> seats;
 
-    public static Hall create(HallStatus status) {
+    public static Hall create() {
         return Hall
                 .builder()
-                .status(status)
+                .status(HallStatus.AVAILABLE)
                 .build();
     }
 

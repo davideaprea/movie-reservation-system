@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(GET, Routes.SCHEDULES + "/**").permitAll()
                         .requestMatchers(Routes.MOVIES + "/**").hasRole(Roles.ADMIN.toString())
                         .requestMatchers(Routes.SCHEDULES + "/**").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers(Routes.HALLS + "/**").hasRole(Roles.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
