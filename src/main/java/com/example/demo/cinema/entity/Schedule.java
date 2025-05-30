@@ -42,14 +42,14 @@ public class Schedule {
     ) {
         return Schedule
                 .builder()
-                .movie(Movie.create(movieId))
-                .hall(Hall.create(hallId))
+                .movie(Movie.createWithId(movieId))
+                .hall(Hall.createWithId(hallId))
                 .startTime(startTime)
                 .endTime(endTime)
                 .build();
     }
 
-    public static Schedule create(long id) {
+    public static Schedule createWithId(long id) {
         return Schedule
                 .builder()
                 .id(id)

@@ -2,7 +2,6 @@ package com.example.demo.booking.entity;
 
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.entity.Seat;
-import com.example.demo.security.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
@@ -37,9 +36,9 @@ public class Booking {
     ) {
         return Booking
                 .builder()
-                .schedule(Schedule.create(scheduleId))
-                .seat(Seat.create(seatId))
-                .payment(Payment.create(paymentId))
+                .schedule(Schedule.createWithId(scheduleId))
+                .seat(Seat.createWithId(seatId))
+                .payment(Payment.createWithId(paymentId))
                 .build();
     }
 }

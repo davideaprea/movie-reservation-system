@@ -47,11 +47,11 @@ public class Payment {
                 .builder()
                 .orderId(orderId)
                 .price(price)
-                .user(User.create(userId))
+                .user(User.createWithId(userId))
                 .build();
     }
 
-    public static Payment create(long id) {
+    public static Payment createWithId(long id) {
         return Payment
                 .builder()
                 .id(id)

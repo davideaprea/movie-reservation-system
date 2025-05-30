@@ -44,11 +44,11 @@ public class Seat {
                 .type(type)
                 .rowNumber(rowNumber)
                 .seatNumber(seatNumber)
-                .hall(Hall.create(hallId))
+                .hall(Hall.createWithId(hallId))
                 .build();
     }
 
-    public static Seat create(long id) {
+    public static Seat createWithId(long id) {
         return Seat
                 .builder()
                 .id(id)

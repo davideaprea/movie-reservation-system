@@ -30,7 +30,7 @@ public class User {
         return new User(null, email, password, Roles.USER);
     }
 
-    public static User create(long id) {
+    public static User createWithId(long id) {
         return new User(id, null, null, null);
     }
 }

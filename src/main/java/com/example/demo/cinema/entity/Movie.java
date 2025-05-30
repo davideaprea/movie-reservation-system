@@ -32,7 +32,7 @@ public class Movie {
     @OneToMany(mappedBy = Schedule.Fields.movie, fetch = FetchType.LAZY)
     private List<Schedule> schedules;
 
-    public static Movie create(long id) {
+    public static Movie createWithId(long id) {
         return Movie
                 .builder()
                 .id(id)

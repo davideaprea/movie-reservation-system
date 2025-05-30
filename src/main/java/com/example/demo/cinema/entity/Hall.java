@@ -37,7 +37,7 @@ public class Hall {
                 .build();
     }
 
-    public static Hall create(long id) {
+    public static Hall createWithId(long id) {
         return Hall
                 .builder()
                 .id(id)

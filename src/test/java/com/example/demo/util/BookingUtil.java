@@ -26,7 +26,7 @@ public class BookingUtil {
                 "ORDER_ID",
                 "CAPTURE_ID",
                 BigDecimal.valueOf(20),
-                User.create(user.getId()),
+                User.createWithId(user.getId()),
                 null
         ));
 
