@@ -22,7 +22,7 @@ public class MovieService {
         ));
     }
 
-    public Movie getById(long id) {
+    public Movie findById(long id) {
         return movieDao
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found."));

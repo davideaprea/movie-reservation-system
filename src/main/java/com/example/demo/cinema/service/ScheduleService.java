@@ -23,7 +23,7 @@ public class ScheduleService {
     private final MovieService movieService;
 
     public Schedule create(ScheduleDto dto) {
-        Movie movieToSchedule = movieService.getById(dto.movieId());
+        Movie movieToSchedule = movieService.findById(dto.movieId());
 
         LocalDateTime scheduleEndTime = dto
                 .startTime()

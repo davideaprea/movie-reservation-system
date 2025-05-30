@@ -30,15 +30,15 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> getById(@PathVariable long id) {
+    public ResponseEntity<Movie> findById(@PathVariable long id) {
         return new ResponseEntity<>(
-                movieService.getById(id),
+                movieService.findById(id),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/{id}" + Routes.SCHEDULES)
-    public ResponseEntity<List<DaySchedule>> getUpcomingMovieSchedules(@PathVariable long id) {
+    public ResponseEntity<List<DaySchedule>> findUpcomingMovieSchedules(@PathVariable long id) {
         return new ResponseEntity<>(
                 scheduleService.findUpcomingMovieSchedules(id),
                 HttpStatus.OK

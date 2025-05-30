@@ -12,5 +12,5 @@ public interface MovieDao extends CrudRepository<Movie, Long> {
         JOIN m.schedules s
         WHERE s.startTime >= CURRENT_TIMESTAMP
     """)
-    List<Movie> getNextScheduledMovies();
+    List<Movie> findNextScheduledMovies();
 }
