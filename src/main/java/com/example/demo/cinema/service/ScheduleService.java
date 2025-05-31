@@ -3,6 +3,7 @@ package com.example.demo.cinema.service;
 import com.example.demo.cinema.dto.ScheduleDto;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Schedule;
+import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.cinema.projection.UpcomingSchedule;
@@ -78,9 +79,9 @@ public class ScheduleService {
         return daySchedules;
     }
 
-    public <T> T findProjectionById(long id, Class<T> type) {
+    public BookingSchedule findBookingScheduleById(long id) {
         return scheduleDao
-                .findProjectionById(id, type)
+                .findBookingScheduleById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 }

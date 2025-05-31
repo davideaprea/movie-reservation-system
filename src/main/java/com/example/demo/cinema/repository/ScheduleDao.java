@@ -27,5 +27,6 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             "ORDER BY s.startTime ASC")
     List<UpcomingSchedule> findUpcomingMovieSchedules(@Param("movieId") long movieId);
 
-    <T> Optional<T> findProjectionById(long id, Class<T> type);
+    @Query("SELECT new com.example.demo.cinema.projection.BookingSchedule(s.startTime, s.hall.id) FROM Schedule s WHERE s.id = :id")
+    Optional<BookingSchedule> findBookingScheduleById(long id);
 }

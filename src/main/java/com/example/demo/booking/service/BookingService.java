@@ -25,11 +25,11 @@ public class BookingService {
 
     @Transactional
     public List<Booking> create(BookingDto dto) {
-        BookingSchedule schedule = scheduleService.findProjectionById(dto.scheduleId(), BookingSchedule.class);
+        BookingSchedule schedule = scheduleService.findBookingScheduleById(dto.scheduleId());
 
-        validateBookingTime(schedule.getStartTime());
+        validateBookingTime(schedule.startTime());
 
-        seatsValidator.checkHall(dto.selectedSeats(), schedule.getHall().getId());
+        seatsValidator.checkHall(dto.selectedSeats(), schedule.hallId());
         seatsValidator.checkAdjacency(dto.selectedSeats());
 
         List<Booking> bookings = buildBookings(dto);
