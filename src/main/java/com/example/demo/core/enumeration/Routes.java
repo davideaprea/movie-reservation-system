@@ -10,4 +10,5 @@ public class Routes {
     public static final String PAYMENTS = "/payments";
     public static final String SEATS = "/seats";
     public static final String HALLS = "/halls";
+    public static final String SCHEDULES_DATES = "/schedules-dates";
 }

@@ -4,6 +4,7 @@ import com.example.demo.cinema.dto.ScheduleDto;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.projection.BookingSchedule;
+import com.example.demo.cinema.projection.ScheduleDate;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.cinema.projection.UpcomingSchedule;
@@ -44,39 +45,15 @@ public class ScheduleService {
         ));
     }
 
-    public List<DaySchedule> findUpcomingMovieSchedules(long movieId) {
-        List<UpcomingSchedule> schedules = scheduleDao.findUpcomingMovieSchedules(movieId);
-
-        return groupSchedulesByDay(schedules);
+    public List<ScheduleDate> findUpcomingMovieScheduleDates(long movieId) {
+        return scheduleDao.findUpcomingMovieScheduleDates(movieId);
     }
 
-    private List<DaySchedule> groupSchedulesByDay(List<UpcomingSchedule> schedules) {
-        List<DaySchedule> daySchedules = new ArrayList<>();
+    public List<UpcomingSchedule> findMovieSchedulesByDate(long movieId, LocalDate date) {
+        LocalDateTime startOfTheDay = date.atStartOfDay();
+        LocalDateTime endOfTheDay = startOfTheDay.plusDays(1);
 
-        if (schedules == null || schedules.isEmpty()) {
-            return daySchedules;
-        }
-
-        List<UpcomingSchedule> currDaySchedules = new ArrayList<>();
-        LocalDate currentDay = schedules.getFirst().startTime().toLocalDate();
-
-        for (UpcomingSchedule schedule : schedules) {
-            LocalDate scheduleDay = schedule.startTime().toLocalDate();
-
-            if (!scheduleDay.equals(currentDay)) {
-                daySchedules.add(new DaySchedule(currentDay, currDaySchedules));
-                currDaySchedules = new ArrayList<>();
-                currentDay = scheduleDay;
-            }
-
-            currDaySchedules.add(schedule);
-        }
-
-        if (!currDaySchedules.isEmpty()) {
-            daySchedules.add(new DaySchedule(currentDay, currDaySchedules));
-        }
-
-        return daySchedules;
+        return scheduleDao.findMovieSchedulesByDateRange(movieId, startOfTheDay, endOfTheDay);
     }
 
     public BookingSchedule findBookingScheduleById(long id) {

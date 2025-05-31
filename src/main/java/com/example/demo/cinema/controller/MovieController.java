@@ -2,16 +2,20 @@ package com.example.demo.cinema.controller;
 
 import com.example.demo.cinema.dto.MovieDto;
 import com.example.demo.cinema.entity.Movie;
+import com.example.demo.cinema.projection.ScheduleDate;
+import com.example.demo.cinema.projection.UpcomingSchedule;
 import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.cinema.service.MovieService;
 import com.example.demo.cinema.service.ScheduleService;
 import com.example.demo.core.enumeration.Routes;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
@@ -37,10 +41,21 @@ public class MovieController {
         );
     }
 
-    @GetMapping("/{id}" + Routes.SCHEDULES)
-    public ResponseEntity<List<DaySchedule>> findUpcomingMovieSchedules(@PathVariable long id) {
+    @GetMapping("/{id}" + Routes.SCHEDULES_DATES)
+    public ResponseEntity<List<ScheduleDate>> findUpcomingMovieScheduleDates(@PathVariable long id) {
         return new ResponseEntity<>(
-                scheduleService.findUpcomingMovieSchedules(id),
+                scheduleService.findUpcomingMovieScheduleDates(id),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}" + Routes.SCHEDULES_DATES + "/{date}")
+    public ResponseEntity<List<UpcomingSchedule>> findMovieSchedulesByDate(
+            @PathVariable long id,
+            @PathVariable @Valid @FutureOrPresent LocalDate date
+    ) {
+        return new ResponseEntity<>(
+                scheduleService.findMovieSchedulesByDate(id, date),
                 HttpStatus.OK
         );
     }

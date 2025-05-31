@@ -2,10 +2,10 @@ package com.example.demo.cinema.repository;
 
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.projection.BookingSchedule;
+import com.example.demo.cinema.projection.ScheduleDate;
 import com.example.demo.cinema.projection.UpcomingSchedule;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,16 +16,25 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
                 SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
                 FROM Schedule s
                 WHERE s.hall.id = :hallId AND
-                :startTime < s.endTime AND
-                :endTime > s.startTime
+                :endTime > s.startTime AND
+                :startTime < s.endTime
             """)
     boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
 
     @Query("SELECT new com.example.demo.cinema.projection.UpcomingSchedule(s.id, s.startTime) FROM Schedule s " +
             "WHERE s.movie.id = :movieId AND " +
-            "s.startTime > CURRENT_TIMESTAMP " +
+            "s.startTime BETWEEN :minDate AND :maxDate AND " +
+            "s.startTime >= CURRENT_TIMESTAMP" +
             "ORDER BY s.startTime ASC")
-    List<UpcomingSchedule> findUpcomingMovieSchedules(@Param("movieId") long movieId);
+    List<UpcomingSchedule> findMovieSchedulesByDateRange(long movieId, LocalDateTime minDate, LocalDateTime maxDate);
+
+    @Query("""
+            SELECT DISTINCT new com.example.demo.cinema.projection.ScheduleDate(DATE(s.startTime))
+            FROM Schedule s
+            WHERE s.movie.id = :movieId AND s.startTime > CURRENT_TIMESTAMP
+            ORDER BY s.startTime
+            """)
+    List<ScheduleDate> findUpcomingMovieScheduleDates(long movieId);
 
     @Query("SELECT new com.example.demo.cinema.projection.BookingSchedule(s.startTime, s.hall.id) FROM Schedule s WHERE s.id = :id")
     Optional<BookingSchedule> findBookingScheduleById(long id);

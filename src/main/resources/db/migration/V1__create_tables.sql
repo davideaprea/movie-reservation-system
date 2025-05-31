@@ -39,7 +39,7 @@ CREATE TABLE schedules (
 );
 
 CREATE INDEX idx_schedule_hall_time ON schedules(hall_id, start_time, end_time);
-CREATE INDEX idx_schedule_movie_time ON schedules(movie_id, start_time);
+CREATE INDEX idx_schedule_movie_time ON schedules(movie_id, start_time, end_time);
 
 CREATE TABLE payments (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
