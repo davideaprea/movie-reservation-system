@@ -46,7 +46,11 @@ public class ScheduleService {
     }
 
     public List<ScheduleDate> findUpcomingMovieScheduleDates(long movieId) {
-        return scheduleDao.findUpcomingMovieScheduleDates(movieId);
+        return scheduleDao
+                .findUpcomingMovieScheduleDates(movieId)
+                .stream()
+                .map(startTime -> new ScheduleDate(startTime.toLocalDate()))
+                .toList();
     }
 
     public List<UpcomingSchedule> findMovieSchedulesByDate(long movieId, LocalDate date) {

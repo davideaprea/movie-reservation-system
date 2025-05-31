@@ -3,6 +3,7 @@ package com.example.demo.integration;
 import com.example.demo.cinema.dto.ScheduleDto;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.entity.Seat;
+import com.example.demo.cinema.projection.ScheduleDate;
 import com.example.demo.cinema.projection.ScheduleSeatDetails;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.response.DaySchedule;
@@ -27,6 +28,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -111,7 +113,7 @@ public class ScheduleControllerTest {
     }
 
     @Test
-    void whenGettingScheduledMovies_thenStatusOk() throws Exception {
+    void whenFindingMovieSchedule_thenStatusOk() throws Exception {
         scheduleUtil.createFakeSchedules(
                 5,
                 movieId,
@@ -119,28 +121,25 @@ public class ScheduleControllerTest {
         );
 
         String json = mockMvc
-                .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES))
+                .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES_DATES))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        List<DaySchedule> upcomingSchedules = objMapper.readValue(json, new TypeReference<>() {
+        List<ScheduleDate> upcomingScheduleDates = objMapper.readValue(json, new TypeReference<>() {
         });
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDate now = LocalDate.now();
 
-        Assertions.assertEquals(5, upcomingSchedules.size());
+        Assertions.assertEquals(5, upcomingScheduleDates.size());
 
-        for (DaySchedule daySchedule : upcomingSchedules) {
-            Assertions.assertNotEquals(0, daySchedule.schedules().size());
+        for(int i = 1; i < upcomingScheduleDates.size(); i++) {
+            LocalDate curr = upcomingScheduleDates.get(i).date();
+            LocalDate prev = upcomingScheduleDates.get(i - 1).date();
 
-            boolean areSchedulesNext = daySchedule
-                    .schedules()
-                    .stream()
-                    .allMatch(schedule -> schedule.startTime().isAfter(now));
-
-            Assertions.assertTrue(areSchedulesNext);
+            Assertions.assertFalse(curr.isBefore(now));
+            Assertions.assertTrue(curr.isAfter(prev));
         }
     }
 
@@ -173,6 +172,11 @@ public class ScheduleControllerTest {
             }
             else Assertions.assertTrue(seat.isAvailable());
         }
+    }
+
+    @Test
+    void givenScheduleDate_whenFindingDailyMovieSchedules_thenStatusOk() {
+
     }
 
     private void signUser() {

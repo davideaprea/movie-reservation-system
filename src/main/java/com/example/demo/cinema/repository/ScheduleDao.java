@@ -24,17 +24,17 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     @Query("SELECT new com.example.demo.cinema.projection.UpcomingSchedule(s.id, s.startTime) FROM Schedule s " +
             "WHERE s.movie.id = :movieId AND " +
             "s.startTime BETWEEN :minDate AND :maxDate AND " +
-            "s.startTime >= CURRENT_TIMESTAMP" +
+            "s.startTime >= CURRENT_TIMESTAMP " +
             "ORDER BY s.startTime ASC")
     List<UpcomingSchedule> findMovieSchedulesByDateRange(long movieId, LocalDateTime minDate, LocalDateTime maxDate);
 
     @Query("""
-            SELECT DISTINCT new com.example.demo.cinema.projection.ScheduleDate(DATE(s.startTime))
+            SELECT DISTINCT s.startTime
             FROM Schedule s
             WHERE s.movie.id = :movieId AND s.startTime > CURRENT_TIMESTAMP
             ORDER BY s.startTime
             """)
-    List<ScheduleDate> findUpcomingMovieScheduleDates(long movieId);
+    List<LocalDateTime> findUpcomingMovieScheduleDates(long movieId);
 
     @Query("SELECT new com.example.demo.cinema.projection.BookingSchedule(s.startTime, s.hall.id) FROM Schedule s WHERE s.id = :id")
     Optional<BookingSchedule> findBookingScheduleById(long id);
