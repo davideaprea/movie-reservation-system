@@ -21,11 +21,15 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             """)
     boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
 
-    @Query("SELECT new com.example.demo.cinema.projection.UpcomingSchedule(s.id, s.startTime) FROM Schedule s " +
-            "WHERE s.movie.id = :movieId AND " +
-            "s.startTime BETWEEN :minDate AND :maxDate AND " +
-            "s.startTime >= CURRENT_TIMESTAMP " +
-            "ORDER BY s.startTime ASC")
+    @Query("""
+            SELECT new com.example.demo.cinema.projection.UpcomingSchedule(s.id, s.startTime)
+                FROM Schedule s
+                WHERE s.movie.id = :movieId AND
+                      s.startTime >= :minDate AND
+                      s.startTime < :maxDate AND
+                      s.startTime > CURRENT_TIMESTAMP
+                ORDER BY s.startTime ASC
+            """)
     List<UpcomingSchedule> findMovieSchedulesByDateRange(long movieId, LocalDateTime minDate, LocalDateTime maxDate);
 
     @Query("""

@@ -5,6 +5,7 @@ import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.entity.Seat;
 import com.example.demo.cinema.projection.ScheduleDate;
 import com.example.demo.cinema.projection.ScheduleSeatDetails;
+import com.example.demo.cinema.projection.UpcomingSchedule;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.config.DBManager;
@@ -30,6 +31,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -145,8 +147,6 @@ public class ScheduleControllerTest {
 
     @Test
     void givenScheduleId_whenGettingScheduleSeats_thenStatusOk() throws Exception {
-        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-
         long scheduleId = scheduleUtil.createFakeSchedule(movieId, hallId).getId();
 
         List<Seat> seats = hallUtil.createSeats(10, 20, hallId);
@@ -175,8 +175,27 @@ public class ScheduleControllerTest {
     }
 
     @Test
-    void givenScheduleDate_whenFindingDailyMovieSchedules_thenStatusOk() {
+    void givenScheduleDate_whenFindingDailyMovieSchedules_thenStatusOk() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
 
+        scheduleUtil.createSchedulesOnDay(movieId, hallId, today, 3);
+        scheduleUtil.createSchedulesOnDay(movieId, hallId, tomorrow, 3);
+
+        String res = mockMvc
+                .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES_DATES + "/" + tomorrow))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<UpcomingSchedule> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
+
+        Assertions.assertEquals(3, upcomingSchedules.size());
+
+        for (UpcomingSchedule schedule : upcomingSchedules) {
+            Assertions.assertTrue(schedule.startTime().toLocalDate().equals(tomorrow));
+        }
     }
 
     private void signUser() {

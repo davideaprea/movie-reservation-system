@@ -5,6 +5,7 @@ import com.example.demo.cinema.repository.ScheduleDao;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ScheduleUtil {
 
         List<Schedule> schedules = new ArrayList<>();
 
-        for (int i = (schedulesNumber * - 1); i < schedulesNumber; i++) {
+        for (int i = (schedulesNumber * -1); i < schedulesNumber; i++) {
             final LocalDateTime date = startTime.plusDays(i);
 
             schedules.add(Schedule.create(
@@ -45,6 +46,26 @@ public class ScheduleUtil {
                     date,
                     date.plusHours(2)
             ));
+        }
+
+        return StreamSupport
+                .stream(scheduleDao.saveAll(schedules).spliterator(), false)
+                .toList();
+    }
+
+    public List<Schedule> createSchedulesOnDay(long movieId, long hallId, LocalDate day, int schedulesNumber) {
+        List<Schedule> schedules = new ArrayList<>();
+        LocalDateTime startTime = day.atStartOfDay();
+
+        for (int i = 0; i < schedulesNumber; i++) {
+            schedules.add(Schedule.create(
+                    movieId,
+                    hallId,
+                    startTime,
+                    startTime.plusHours(2)
+            ));
+
+            startTime = startTime.plusHours(3);
         }
 
         return StreamSupport
