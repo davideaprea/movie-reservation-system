@@ -8,7 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Component
-public class SeatsValidator {
+public class BookingSeatsValidator {
     public void checkHall(List<SeatProjection> selectedSeats, long hallId) {
         boolean areSeatsFromScheduleHall = selectedSeats
                 .stream()

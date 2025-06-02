@@ -3,7 +3,7 @@ package com.example.demo.booking.service;
 import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
-import com.example.demo.booking.validator.SeatsValidator;
+import com.example.demo.booking.validator.BookingSeatsValidator;
 import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 public class BookingService {
     private final BookingDao bookingDao;
     private final ScheduleService scheduleService;
-    private final SeatsValidator seatsValidator;
+    private final BookingSeatsValidator bookingSeatsValidator;
 
     @Transactional
     public List<Booking> create(BookingDto dto) {
@@ -29,8 +29,8 @@ public class BookingService {
 
         validateBookingTime(schedule.startTime());
 
-        seatsValidator.checkHall(dto.selectedSeats(), schedule.hallId());
-        seatsValidator.checkAdjacency(dto.selectedSeats());
+        bookingSeatsValidator.checkHall(dto.selectedSeats(), schedule.hallId());
+        bookingSeatsValidator.checkAdjacency(dto.selectedSeats());
 
         List<Booking> bookings = buildBookings(dto);
 

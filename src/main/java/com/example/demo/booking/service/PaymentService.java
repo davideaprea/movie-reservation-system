@@ -49,6 +49,16 @@ public class PaymentService {
         return newPayment;
     }
 
+    private BigDecimal calculatePrice(List<SeatProjection> seats) {
+        return seats
+                .stream()
+                .reduce(
+                        BigDecimal.ZERO,
+                        (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
+                        BigDecimal::add
+                );
+    }
+
     @Transactional
     public void capture(String payPalOrderId, long userId) {
         if (!paymentDao.isPaymentUncaptured(payPalOrderId, userId)) {
@@ -68,15 +78,5 @@ public class PaymentService {
         if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
         }
-    }
-
-    private BigDecimal calculatePrice(List<SeatProjection> seats) {
-        return seats
-                .stream()
-                .reduce(
-                        BigDecimal.ZERO,
-                        (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
-                        BigDecimal::add
-                );
     }
 }
