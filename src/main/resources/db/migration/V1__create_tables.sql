@@ -50,6 +50,8 @@ CREATE TABLE payments (
     CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE INDEX idx_capture_id_created_at ON payments(capture_id, created_at);
+
 CREATE TABLE bookings (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     seat_id BIGINT NOT NULL,

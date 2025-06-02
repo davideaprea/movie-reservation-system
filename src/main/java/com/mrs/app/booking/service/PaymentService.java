@@ -1,6 +1,7 @@
 package com.mrs.app.booking.service;
 
 import com.mrs.app.booking.dto.internal.BookingDto;
+import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
 import com.mrs.app.booking.dto.request.PaymentDto;
 import com.mrs.app.booking.dto.internal.PayPalOrderDto;
 import com.mrs.app.booking.entity.Payment;
@@ -10,11 +11,13 @@ import com.mrs.app.cinema.dto.projection.SeatProjection;
 import com.mrs.app.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,6 +27,7 @@ public class PaymentService {
     private final BookingService bookingService;
     private final PaymentDao paymentDao;
     private final SeatService seatService;
+    private final PayPalUtilityService payPalUtilityService;
 
     @Transactional
     public Payment create(PaymentDto dto, long userId) {
@@ -34,25 +38,19 @@ public class PaymentService {
 
         PayPalOrder payPalOrder = payPalService.createOrder(orderDto);
 
-        Payment newPayment = paymentDao.save(Payment.create(
-                payPalOrder.id(),
-                totalPrice,
-                userId
-        ));
+        Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, userId);
 
-        bookingService.create(new BookingDto(
-                selectedSeats,
-                dto.scheduleId(),
-                newPayment.getId()
-        ));
+        Payment savedPayment = paymentDao.save(paymentToSave);
 
-        return newPayment;
+        BookingDto bookingDto = new BookingDto(selectedSeats, dto.scheduleId(), savedPayment.getId());
+
+        bookingService.create(bookingDto);
+
+        return savedPayment;
     }
 
     private BigDecimal calculatePrice(List<SeatProjection> seats) {
-        return seats
-                .stream()
-                .reduce(
+        return seats.stream().reduce(
                         BigDecimal.ZERO,
                         (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
                         BigDecimal::add
@@ -65,18 +63,23 @@ public class PaymentService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already captured.");
         }
 
-        String payPalCaptureId = payPalService.captureOrder(payPalOrderId)
-                .purchaseUnits()
-                .getFirst()
-                .payments()
-                .captures()
-                .getFirst()
-                .id();
+        PayPalCapturedOrder capturedOrder = payPalService.captureOrder(payPalOrderId);
+
+        String payPalCaptureId = payPalUtilityService.extractCaptureId(capturedOrder);
 
         int updatedRows = paymentDao.capture(payPalOrderId, payPalCaptureId, userId);
 
         if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
         }
+    }
+
+    @Scheduled(fixedRate = 2 * 60 * 1000)
+    @Transactional
+    public void deleteExpiredUncompletedPayments() {
+        final int paymentExpiryMinutes = 15;
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(paymentExpiryMinutes);
+
+        paymentDao.deleteExpiredUncompletedPayments(cutoff);
     }
 }

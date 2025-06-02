@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ToString
@@ -13,7 +14,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "payments")
+@Table(name = "payments", indexes = {
+        @Index(columnList = "capture_id, created_at")
+})
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +33,9 @@ public class Payment {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(
             mappedBy = Booking.Fields.payment,
