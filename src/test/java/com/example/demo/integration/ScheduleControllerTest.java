@@ -7,7 +7,6 @@ import com.example.demo.cinema.projection.ScheduleDate;
 import com.example.demo.cinema.projection.ScheduleSeatDetails;
 import com.example.demo.cinema.projection.UpcomingSchedule;
 import com.example.demo.cinema.repository.ScheduleDao;
-import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;
 import com.example.demo.core.enumeration.Routes;
@@ -31,7 +30,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

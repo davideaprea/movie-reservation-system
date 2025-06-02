@@ -6,7 +6,6 @@ import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.projection.BookingSchedule;
 import com.example.demo.cinema.projection.ScheduleDate;
 import com.example.demo.cinema.repository.ScheduleDao;
-import com.example.demo.cinema.response.DaySchedule;
 import com.example.demo.cinema.projection.UpcomingSchedule;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
