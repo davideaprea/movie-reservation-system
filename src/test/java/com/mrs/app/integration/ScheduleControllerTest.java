@@ -50,6 +50,8 @@ public class ScheduleControllerTest {
 
     private String jwt;
 
+    private long userId;
+
     private long movieId;
 
     private long hallId;
@@ -74,7 +76,10 @@ public class ScheduleControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        signUser();
+        User newUser = authUtil.createFakeUser(Roles.ADMIN);
+
+        jwt = authUtil.generateAuthHeader(newUser.getEmail());
+        userId = newUser.getId();
         hallId = hallUtil.createFakeHall().getId();
         movieId = movieUtil.createFakeMovie().getId();
     }
@@ -151,7 +156,7 @@ public class ScheduleControllerTest {
 
         final long seatId = seats.getFirst().getId();
 
-        bookingUtil.createFakeBooking(seatId, scheduleId);
+        bookingUtil.createFakeBooking(seatId, scheduleId, userId);
 
         String res = mockMvc
                 .perform(get(Routes.SCHEDULES + "/" + scheduleId + Routes.SEATS))
@@ -194,12 +199,6 @@ public class ScheduleControllerTest {
         for (UpcomingSchedule schedule : upcomingSchedules) {
             Assertions.assertTrue(schedule.startTime().toLocalDate().equals(tomorrow));
         }
-    }
-
-    private void signUser() {
-        User newUser = authUtil.createFakeUser(Roles.ADMIN);
-
-        jwt = authUtil.generateAuthHeader(newUser.getEmail());
     }
 
     private ResultActions postScheduleApi(ScheduleDto dto) throws Exception {

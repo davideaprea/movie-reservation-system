@@ -64,4 +64,10 @@ public class Payment {
                 .id(id)
                 .build();
     }
+
+    public void setCaptureId(String captureId) {
+        if(this.captureId == null) {
+            this.captureId = captureId;
+        }
+    }
 }

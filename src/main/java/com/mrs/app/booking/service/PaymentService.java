@@ -51,27 +51,31 @@ public class PaymentService {
 
     private BigDecimal calculatePrice(List<SeatProjection> seats) {
         return seats.stream().reduce(
-                        BigDecimal.ZERO,
-                        (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
-                        BigDecimal::add
-                );
+                BigDecimal.ZERO,
+                (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
+                BigDecimal::add
+        );
     }
 
     @Transactional
     public void capture(String payPalOrderId, long userId) {
-        if (!paymentDao.isPaymentUncaptured(payPalOrderId, userId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already captured.");
+        System.out.println(userId);
+        paymentDao.findAll().forEach(System.out::println);
+        Payment uncapturedPayment = paymentDao
+                .findByOrderIdAndUserId(payPalOrderId, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
+
+        if (uncapturedPayment.getCaptureId() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This payment has already been captured.");
         }
 
         PayPalCapturedOrder capturedOrder = payPalService.captureOrder(payPalOrderId);
 
         String payPalCaptureId = payPalUtilityService.extractCaptureId(capturedOrder);
 
-        int updatedRows = paymentDao.capture(payPalOrderId, payPalCaptureId, userId);
+        uncapturedPayment.setCaptureId(payPalCaptureId);
 
-        if (updatedRows != 1) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found.");
-        }
+        paymentDao.save(uncapturedPayment);
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)

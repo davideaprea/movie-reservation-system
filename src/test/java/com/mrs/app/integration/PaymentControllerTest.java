@@ -136,7 +136,9 @@ public class PaymentControllerTest {
     void givenAlreadyBookedSeats_whenBookingSeats_thenStatusConflict() throws Exception {
         Seat seat = hallSeats.getFirst();
 
-        bookingUtil.createFakeBooking(seat.getId(), schedule.getId());
+        User user = authUtil.createFakeUser(Roles.USER);
+
+        bookingUtil.createFakeBooking(seat.getId(), schedule.getId(), user.getId());
 
         PaymentDto dto = new PaymentDto(List.of(seat.getId()), schedule.getId());
 
@@ -166,7 +168,8 @@ public class PaymentControllerTest {
     void givenAlreadyCapturedOrderId_whenCapturingOrder_thenStatusConflict() throws Exception {
         Payment payment = bookingUtil.createFakeBooking(
                 hallSeats.getFirst().getId(),
-                schedule.getId()
+                schedule.getId(),
+                userId
         );
 
         patchPaymentApi(payment.getOrderId())
