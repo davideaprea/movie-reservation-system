@@ -59,8 +59,6 @@ public class PaymentService {
 
     @Transactional
     public void capture(String payPalOrderId, long userId) {
-        System.out.println(userId);
-        paymentDao.findAll().forEach(System.out::println);
         Payment uncapturedPayment = paymentDao
                 .findByOrderIdAndUserId(payPalOrderId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
