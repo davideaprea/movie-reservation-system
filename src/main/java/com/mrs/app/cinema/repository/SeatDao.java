@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SeatDao extends CrudRepository<Seat, Long> {
     @Query("""
-        SELECT new com.example.demo.cinema.projection.SeatProjection(
+        SELECT new com.mrs.app.cinema.dto.projection.SeatProjection(
             s.id, s.type, s.rowNumber, s.seatNumber, s.hall.id
         )
         FROM Seat s
@@ -19,7 +19,7 @@ public interface SeatDao extends CrudRepository<Seat, Long> {
     List<SeatProjection> findAll(List<Long> seatIds);
 
     @Query("""
-            SELECT new com.example.demo.cinema.projection.ScheduleSeatDetails(
+            SELECT new com.mrs.app.cinema.dto.projection.ScheduleSeatDetails(
                 s.id,
                 s.type,
                 s.rowNumber,

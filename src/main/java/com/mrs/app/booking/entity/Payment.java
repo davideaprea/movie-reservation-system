@@ -54,6 +54,7 @@ public class Payment {
                 .orderId(orderId)
                 .price(price)
                 .user(User.createWithId(userId))
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 

@@ -47,6 +47,7 @@ CREATE TABLE payments (
     capture_id VARCHAR(255) UNIQUE,
     price DECIMAL(10, 2) NOT NULL,
     user_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

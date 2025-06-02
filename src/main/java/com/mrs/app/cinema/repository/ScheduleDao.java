@@ -21,7 +21,7 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     boolean isHallTaken(long hallId, LocalDateTime startTime, LocalDateTime endTime);
 
     @Query("""
-            SELECT new com.example.demo.cinema.projection.UpcomingSchedule(s.id, s.startTime)
+            SELECT new com.mrs.app.cinema.dto.projection.UpcomingSchedule(s.id, s.startTime)
                 FROM Schedule s
                 WHERE s.movie.id = :movieId AND
                       s.startTime >= :minDate AND
@@ -39,6 +39,6 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             """)
     List<LocalDateTime> findUpcomingMovieScheduleDates(long movieId);
 
-    @Query("SELECT new projection.dto.cinema.com.mrs.app.BookingSchedule(s.startTime, s.hall.id) FROM Schedule s WHERE s.id = :id")
+    @Query("SELECT new com.mrs.app.cinema.dto.projection.BookingSchedule(s.startTime, s.hall.id) FROM Schedule s WHERE s.id = :id")
     Optional<BookingSchedule> findBookingScheduleById(long id);
 }
