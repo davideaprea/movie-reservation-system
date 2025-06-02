@@ -1,4 +1,4 @@
-package com.example.demo.cinema.projection;
+package com.example.demo.cinema.dto.projection;
 
 import java.time.LocalDate;
 

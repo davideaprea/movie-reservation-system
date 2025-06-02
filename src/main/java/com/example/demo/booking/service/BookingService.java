@@ -1,10 +1,10 @@
 package com.example.demo.booking.service;
 
-import com.example.demo.booking.dto.BookingDto;
+import com.example.demo.booking.dto.internal.BookingDto;
 import com.example.demo.booking.entity.Booking;
 import com.example.demo.booking.repository.BookingDao;
 import com.example.demo.booking.validator.BookingSeatsValidator;
-import com.example.demo.cinema.projection.BookingSchedule;
+import com.example.demo.cinema.dto.projection.BookingSchedule;
 import com.example.demo.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

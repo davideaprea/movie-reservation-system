@@ -1,6 +1,6 @@
 package com.example.demo.booking.validator;
 
-import com.example.demo.cinema.projection.SeatProjection;
+import com.example.demo.cinema.dto.projection.SeatProjection;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;

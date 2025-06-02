@@ -1,12 +1,12 @@
 package com.example.demo.booking.service;
 
-import com.example.demo.booking.dto.BookingDto;
-import com.example.demo.booking.dto.PaymentDto;
-import com.example.demo.booking.dto.PayPalOrderDto;
+import com.example.demo.booking.dto.internal.BookingDto;
+import com.example.demo.booking.dto.request.PaymentDto;
+import com.example.demo.booking.dto.internal.PayPalOrderDto;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.PaymentDao;
-import com.example.demo.booking.response.PayPalOrder;
-import com.example.demo.cinema.projection.SeatProjection;
+import com.example.demo.booking.dto.internal.PayPalOrder;
+import com.example.demo.cinema.dto.projection.SeatProjection;
 import com.example.demo.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.example.demo.booking.response;
+package com.example.demo.booking.dto.internal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

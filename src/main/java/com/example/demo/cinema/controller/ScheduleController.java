@@ -1,8 +1,8 @@
 package com.example.demo.cinema.controller;
 
-import com.example.demo.cinema.dto.ScheduleDto;
+import com.example.demo.cinema.dto.request.ScheduleDto;
 import com.example.demo.cinema.entity.Schedule;
-import com.example.demo.cinema.projection.ScheduleSeatDetails;
+import com.example.demo.cinema.dto.projection.ScheduleSeatDetails;
 import com.example.demo.cinema.service.ScheduleService;
 import com.example.demo.cinema.service.SeatService;
 import com.example.demo.core.enumeration.Routes;

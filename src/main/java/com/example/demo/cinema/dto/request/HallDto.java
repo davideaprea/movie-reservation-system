@@ -1,5 +1,6 @@
-package com.example.demo.cinema.dto;
+package com.example.demo.cinema.dto.request;
 
+import com.example.demo.cinema.dto.internal.SeatDto;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;

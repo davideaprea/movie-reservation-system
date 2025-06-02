@@ -1,6 +1,6 @@
 package com.example.demo.booking.controller;
 
-import com.example.demo.booking.dto.PaymentDto;
+import com.example.demo.booking.dto.request.PaymentDto;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.service.PaymentService;
 import com.example.demo.core.enumeration.Routes;

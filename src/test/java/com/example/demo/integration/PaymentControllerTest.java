@@ -1,11 +1,11 @@
 package com.example.demo.integration;
 
-import com.example.demo.booking.dto.PaymentDto;
+import com.example.demo.booking.dto.request.PaymentDto;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.BookingDao;
 import com.example.demo.booking.repository.PaymentDao;
-import com.example.demo.booking.response.PayPalCapturedOrder;
-import com.example.demo.booking.response.PayPalOrder;
+import com.example.demo.booking.dto.internal.PayPalCapturedOrder;
+import com.example.demo.booking.dto.internal.PayPalOrder;
 import com.example.demo.booking.service.PayPalService;
 import com.example.demo.cinema.entity.Hall;
 import com.example.demo.cinema.entity.Movie;

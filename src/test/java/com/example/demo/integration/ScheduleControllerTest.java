@@ -1,11 +1,11 @@
 package com.example.demo.integration;
 
-import com.example.demo.cinema.dto.ScheduleDto;
+import com.example.demo.cinema.dto.request.ScheduleDto;
 import com.example.demo.cinema.entity.Schedule;
 import com.example.demo.cinema.entity.Seat;
-import com.example.demo.cinema.projection.ScheduleDate;
-import com.example.demo.cinema.projection.ScheduleSeatDetails;
-import com.example.demo.cinema.projection.UpcomingSchedule;
+import com.example.demo.cinema.dto.projection.ScheduleDate;
+import com.example.demo.cinema.dto.projection.ScheduleSeatDetails;
+import com.example.demo.cinema.dto.projection.UpcomingSchedule;
 import com.example.demo.cinema.repository.ScheduleDao;
 import com.example.demo.config.DBManager;
 import com.example.demo.config.TestcontainersConfig;

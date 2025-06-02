@@ -1,9 +1,9 @@
 package com.example.demo.cinema.service;
 
-import com.example.demo.cinema.dto.SeatDto;
+import com.example.demo.cinema.dto.internal.SeatDto;
 import com.example.demo.cinema.entity.Seat;
-import com.example.demo.cinema.projection.ScheduleSeatDetails;
-import com.example.demo.cinema.projection.SeatProjection;
+import com.example.demo.cinema.dto.projection.ScheduleSeatDetails;
+import com.example.demo.cinema.dto.projection.SeatProjection;
 import com.example.demo.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

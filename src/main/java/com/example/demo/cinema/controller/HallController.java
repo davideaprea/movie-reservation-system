@@ -1,6 +1,6 @@
 package com.example.demo.cinema.controller;
 
-import com.example.demo.cinema.dto.HallDto;
+import com.example.demo.cinema.dto.request.HallDto;
 import com.example.demo.cinema.entity.Hall;
 import com.example.demo.cinema.service.HallService;
 import com.example.demo.core.enumeration.Routes;

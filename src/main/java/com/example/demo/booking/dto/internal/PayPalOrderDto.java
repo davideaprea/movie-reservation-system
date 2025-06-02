@@ -1,4 +1,4 @@
-package com.example.demo.booking.dto;
+package com.example.demo.booking.dto.internal;
 
 import com.example.demo.booking.enumeration.PayPalOrderIntent;
 import com.fasterxml.jackson.annotation.JsonProperty;

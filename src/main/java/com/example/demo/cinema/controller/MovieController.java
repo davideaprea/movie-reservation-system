@@ -1,9 +1,9 @@
 package com.example.demo.cinema.controller;
 
-import com.example.demo.cinema.dto.MovieDto;
+import com.example.demo.cinema.dto.request.MovieDto;
 import com.example.demo.cinema.entity.Movie;
-import com.example.demo.cinema.projection.ScheduleDate;
-import com.example.demo.cinema.projection.UpcomingSchedule;
+import com.example.demo.cinema.dto.projection.ScheduleDate;
+import com.example.demo.cinema.dto.projection.UpcomingSchedule;
 import com.example.demo.cinema.service.MovieService;
 import com.example.demo.cinema.service.ScheduleService;
 import com.example.demo.core.enumeration.Routes;

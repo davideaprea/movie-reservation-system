@@ -1,4 +1,4 @@
-package com.example.demo.cinema.dto;
+package com.example.demo.cinema.dto.internal;
 
 import com.example.demo.cinema.enumeration.SeatType;
 import jakarta.validation.constraints.NotNull;

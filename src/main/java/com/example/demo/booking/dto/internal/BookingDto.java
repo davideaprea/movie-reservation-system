@@ -1,6 +1,6 @@
-package com.example.demo.booking.dto;
+package com.example.demo.booking.dto.internal;
 
-import com.example.demo.cinema.projection.SeatProjection;
+import com.example.demo.cinema.dto.projection.SeatProjection;
 
 import java.util.List;
 

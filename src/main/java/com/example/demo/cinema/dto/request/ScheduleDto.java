@@ -1,4 +1,4 @@
-package com.example.demo.cinema.dto;
+package com.example.demo.cinema.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;

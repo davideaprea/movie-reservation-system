@@ -1,6 +1,6 @@
 package com.example.demo.cinema.service;
 
-import com.example.demo.cinema.dto.HallDto;
+import com.example.demo.cinema.dto.request.HallDto;
 import com.example.demo.cinema.entity.Hall;
 import com.example.demo.cinema.repository.HallDao;
 import lombok.AllArgsConstructor;

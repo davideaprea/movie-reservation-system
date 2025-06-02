@@ -1,9 +1,9 @@
 package com.example.demo.booking.service;
 
-import com.example.demo.booking.dto.PayPalOrderDto;
-import com.example.demo.booking.response.PayPalCapturedOrder;
-import com.example.demo.booking.response.PayPalOrder;
-import com.example.demo.booking.response.PayPalTokenDetails;
+import com.example.demo.booking.dto.internal.PayPalOrderDto;
+import com.example.demo.booking.dto.internal.PayPalCapturedOrder;
+import com.example.demo.booking.dto.internal.PayPalOrder;
+import com.example.demo.booking.dto.internal.PayPalTokenDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
