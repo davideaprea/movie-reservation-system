@@ -4,6 +4,7 @@ import com.example.demo.booking.dto.PaymentDto;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.BookingDao;
 import com.example.demo.booking.repository.PaymentDao;
+import com.example.demo.booking.response.PayPalCapturedOrder;
 import com.example.demo.booking.response.PayPalOrder;
 import com.example.demo.booking.service.PayPalService;
 import com.example.demo.cinema.entity.Hall;
@@ -193,9 +194,14 @@ public class PaymentControllerTest {
     }
 
     private void mockPayPalOrderCapture() {
+        PayPalCapturedOrder.Capture capture = new PayPalCapturedOrder.Capture(UUID.randomUUID().toString());
+        PayPalCapturedOrder.Payments payments = new PayPalCapturedOrder.Payments(List.of(capture));
+        PayPalCapturedOrder.PurchaseUnit purchaseUnit = new PayPalCapturedOrder.PurchaseUnit(payments);
+        PayPalCapturedOrder capturedOrder = new PayPalCapturedOrder(List.of(purchaseUnit));
+
         Mockito
                 .when(payPalService.captureOrder(Mockito.any()))
-                .thenReturn(UUID.randomUUID().toString());
+                .thenReturn(capturedOrder);
     }
 
     private List<Long> getRandomAdjacentSeatIds() {

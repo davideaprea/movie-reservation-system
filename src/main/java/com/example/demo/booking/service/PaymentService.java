@@ -2,7 +2,7 @@ package com.example.demo.booking.service;
 
 import com.example.demo.booking.dto.BookingDto;
 import com.example.demo.booking.dto.PaymentDto;
-import com.example.demo.booking.dto.OrderDto;
+import com.example.demo.booking.dto.PayPalOrderDto;
 import com.example.demo.booking.entity.Payment;
 import com.example.demo.booking.repository.PaymentDao;
 import com.example.demo.booking.response.PayPalOrder;
@@ -30,7 +30,7 @@ public class PaymentService {
         List<SeatProjection> selectedSeats = seatService.findAll(dto.seatIds());
 
         BigDecimal totalPrice = calculatePrice(selectedSeats);
-        OrderDto orderDto = new OrderDto(totalPrice);
+        PayPalOrderDto orderDto = new PayPalOrderDto(totalPrice);
 
         PayPalOrder payPalOrder = payPalService.createOrder(orderDto);
 
@@ -55,7 +55,14 @@ public class PaymentService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already captured.");
         }
 
-        String payPalCaptureId = payPalService.captureOrder(payPalOrderId);
+        String payPalCaptureId = payPalService.captureOrder(payPalOrderId)
+                .purchaseUnits()
+                .getFirst()
+                .payments()
+                .captures()
+                .getFirst()
+                .id();
+
         int updatedRows = paymentDao.capture(payPalOrderId, payPalCaptureId, userId);
 
         if (updatedRows != 1) {

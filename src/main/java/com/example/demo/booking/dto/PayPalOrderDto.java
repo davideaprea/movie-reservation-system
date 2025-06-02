@@ -6,12 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
 
-public record OrderDto(
+public record PayPalOrderDto(
         PayPalOrderIntent intent,
         @JsonProperty("purchase_units")
         List<PurchaseUnit> purchaseUnits
 ) {
-    public OrderDto(BigDecimal totalPrice) {
+    public PayPalOrderDto(BigDecimal totalPrice) {
         this(
                 PayPalOrderIntent.CAPTURE,
                 List.of(new PurchaseUnit(
@@ -19,4 +19,17 @@ public record OrderDto(
                 ))
         );
     }
+
+    public record PurchaseUnit(
+            Amount amount
+    ) {
+    }
+
+    public record Amount(
+            @JsonProperty("currency_code")
+            String currencyCode,
+            String value
+    ) {
+    }
 }
+

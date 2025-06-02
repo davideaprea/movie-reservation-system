@@ -37,11 +37,6 @@ public class BookingService {
         return saveBookings(bookings);
     }
 
-    private void validateBookingTime(LocalDateTime scheduleStartTime) {
-        if (LocalDateTime.now().isAfter(scheduleStartTime)) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
-        }
-    }
 
     public List<Booking> buildBookings(BookingDto dto) {
         return dto.selectedSeats()
@@ -52,6 +47,12 @@ public class BookingService {
                         dto.scheduleId()
                 ))
                 .toList();
+    }
+
+    private void validateBookingTime(LocalDateTime scheduleStartTime) {
+        if (LocalDateTime.now().isAfter(scheduleStartTime)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Schedule's already started.");
+        }
     }
 
     private List<Booking> saveBookings(List<Booking> bookings) {
