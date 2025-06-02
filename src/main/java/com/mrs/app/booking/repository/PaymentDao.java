@@ -9,6 +9,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PaymentDao extends CrudRepository<Payment, Long> {
+    @Query("""
+            SELECT p
+            FROM Payment p
+            WHERE p.orderId = :orderId AND
+                p.user.id = :userId
+            """)
     Optional<Payment> findByOrderIdAndUserId(String orderId, long userId);
 
     @Modifying

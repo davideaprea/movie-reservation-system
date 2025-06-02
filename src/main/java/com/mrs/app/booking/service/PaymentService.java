@@ -59,13 +59,7 @@ public class PaymentService {
 
     @Transactional
     public void capture(String payPalOrderId, long userId) {
-        Payment uncapturedPayment = paymentDao
-                .findByOrderIdAndUserId(payPalOrderId, userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
-
-        if (uncapturedPayment.getCaptureId() != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This payment has already been captured.");
-        }
+        Payment uncapturedPayment = findUncapturedPayment(payPalOrderId, userId);
 
         PayPalCapturedOrder capturedOrder = payPalService.captureOrder(payPalOrderId);
 
@@ -74,6 +68,18 @@ public class PaymentService {
         uncapturedPayment.setCaptureId(payPalCaptureId);
 
         paymentDao.save(uncapturedPayment);
+    }
+
+    private Payment findUncapturedPayment(String payPalOrderId, long userId) {
+        Payment uncapturedPayment = paymentDao
+                .findByOrderIdAndUserId(payPalOrderId, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
+
+        if (uncapturedPayment.getCaptureId() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This payment has already been captured.");
+        }
+
+        return uncapturedPayment;
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)
