@@ -69,7 +69,10 @@ public class PaymentService {
     }
 
     private void markPaymentAsCompleted(String payPalOrderId, long userId) {
-        int updatedRows = paymentDao.markAsCompleted(payPalOrderId, userId);
+        final int paymentExpiryMinutes = 5;
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(paymentExpiryMinutes);
+
+        int updatedRows = paymentDao.markAsCompleted(payPalOrderId, userId, cutoff);
 
         if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment.");
@@ -87,8 +90,8 @@ public class PaymentService {
     @Scheduled(fixedRate = 2 * 60 * 1000)
     @Transactional
     public void deleteExpiredUncompletedPayments() {
-        final int paymentExpiryMinutes = 15;
-        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(paymentExpiryMinutes);
+        final int safePaymentExpiryMinutes = 7;
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(safePaymentExpiryMinutes);
 
         paymentDao.deleteExpiredUncompletedPayments(cutoff);
     }

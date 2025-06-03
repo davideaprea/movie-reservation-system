@@ -15,9 +15,10 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
             SET p.status = com.mrs.app.booking.enumeration.PaymentStatus.COMPLETED
             WHERE p.orderId = :orderId AND
                 p.user.id = :userId AND
-                p.status = com.mrs.app.booking.enumeration.PaymentStatus.PENDING
+                p.status = com.mrs.app.booking.enumeration.PaymentStatus.PENDING AND
+                p.createdAt > :cutoff
             """)
-    int markAsCompleted(String orderId, long userId);
+    int markAsCompleted(String orderId, long userId, LocalDateTime cutoff);
 
     @Modifying
     @Query("""
@@ -33,7 +34,7 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
     @Query("""
             DELETE FROM Payment p
             WHERE p.status = com.mrs.app.booking.enumeration.PaymentStatus.PENDING AND
-                p.createdAt < :cutoff
+                p.createdAt > :cutoff
             """)
     void deleteExpiredUncompletedPayments(LocalDateTime cutoff);
 }
