@@ -173,7 +173,7 @@ public class PaymentControllerTest {
         );
 
         patchPaymentApi(payment.getOrderId())
-                .andExpect(status().isConflict());
+                .andExpect(status().isNotFound());
     }
 
     private ResultActions postPaymentApi(PaymentDto dto) throws Exception {

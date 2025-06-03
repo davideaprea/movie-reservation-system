@@ -48,10 +48,11 @@ CREATE TABLE payments (
     price DECIMAL(10, 2) NOT NULL,
     user_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL,
+    status VARCHAR(255) NOT NULL,
     CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE INDEX idx_capture_id_created_at ON payments(capture_id, created_at);
+CREATE INDEX idx_status_created_at ON payments(status, created_at);
 
 CREATE TABLE bookings (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

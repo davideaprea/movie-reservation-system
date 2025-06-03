@@ -2,6 +2,7 @@ package com.mrs.app.util;
 
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.Payment;
+import com.mrs.app.booking.enumeration.PaymentStatus;
 import com.mrs.app.booking.repository.BookingDao;
 import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.security.entity.User;
@@ -26,7 +27,8 @@ public class BookingUtil {
                 BigDecimal.valueOf(20),
                 User.createWithId(userId),
                 LocalDateTime.now(),
-                null
+                null,
+                PaymentStatus.COMPLETED
         ));
 
         bookingDao.save(Booking.create(

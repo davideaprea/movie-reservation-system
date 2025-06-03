@@ -59,27 +59,29 @@ public class PaymentService {
 
     @Transactional
     public void capture(String payPalOrderId, long userId) {
-        Payment uncapturedPayment = findUncapturedPayment(payPalOrderId, userId);
+        markPaymentAsCompleted(payPalOrderId, userId);
 
         PayPalCapturedOrder capturedOrder = payPalService.captureOrder(payPalOrderId);
 
         String payPalCaptureId = payPalUtilityService.extractCaptureId(capturedOrder);
 
-        uncapturedPayment.setCaptureId(payPalCaptureId);
-
-        paymentDao.save(uncapturedPayment);
+        setPaymentCaptureId(payPalOrderId, payPalCaptureId, userId);
     }
 
-    private Payment findUncapturedPayment(String payPalOrderId, long userId) {
-        Payment uncapturedPayment = paymentDao
-                .findByOrderIdAndUserId(payPalOrderId, userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
+    private void markPaymentAsCompleted(String payPalOrderId, long userId) {
+        int updatedRows = paymentDao.markAsCompleted(payPalOrderId, userId);
 
-        if (uncapturedPayment.getCaptureId() != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This payment has already been captured.");
+        if (updatedRows != 1) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment.");
         }
+    }
 
-        return uncapturedPayment;
+    private void setPaymentCaptureId(String payPalOrderId, String captureId, long userId) {
+        int updatedRows = paymentDao.setCaptureId(payPalOrderId, captureId, userId);
+
+        if (updatedRows != 1) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment.");
+        }
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)

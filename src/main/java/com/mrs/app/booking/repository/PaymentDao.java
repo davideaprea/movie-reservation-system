@@ -9,18 +9,30 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PaymentDao extends CrudRepository<Payment, Long> {
+    @Modifying
     @Query("""
-            SELECT p
-            FROM Payment p
+            UPDATE Payment p
+            SET p.status = com.mrs.app.booking.enumeration.PaymentStatus.COMPLETED
             WHERE p.orderId = :orderId AND
-                p.user.id = :userId
+                p.user.id = :userId AND
+                p.status = com.mrs.app.booking.enumeration.PaymentStatus.PENDING
             """)
-    Optional<Payment> findByOrderIdAndUserId(String orderId, long userId);
+    int markAsCompleted(String orderId, long userId);
+
+    @Modifying
+    @Query("""
+            UPDATE Payment p
+            SET p.captureId = :captureId
+            WHERE p.orderId = :orderId AND
+                p.user.id = :userId AND
+                p.captureId IS NULL
+            """)
+    int setCaptureId(String orderId, String captureId, long userId);
 
     @Modifying
     @Query("""
             DELETE FROM Payment p
-            WHERE p.captureId IS NULL AND
+            WHERE p.status = com.mrs.app.booking.enumeration.PaymentStatus.PENDING AND
                 p.createdAt < :cutoff
             """)
     void deleteExpiredUncompletedPayments(LocalDateTime cutoff);

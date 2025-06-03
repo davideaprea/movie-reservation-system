@@ -1,5 +1,6 @@
 package com.mrs.app.booking.entity;
 
+import com.mrs.app.booking.enumeration.PaymentStatus;
 import com.mrs.app.security.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "payments", indexes = {
-        @Index(columnList = "capture_id, created_at")
+        @Index(columnList = "status, created_at")
 })
 public class Payment {
     @Id
@@ -44,6 +45,10 @@ public class Payment {
     )
     private List<Booking> items;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
+
     public static Payment create(
             String orderId,
             BigDecimal price,
@@ -55,6 +60,7 @@ public class Payment {
                 .price(price)
                 .user(User.createWithId(userId))
                 .createdAt(LocalDateTime.now())
+                .status(PaymentStatus.PENDING)
                 .build();
     }
 
@@ -63,11 +69,5 @@ public class Payment {
                 .builder()
                 .id(id)
                 .build();
-    }
-
-    public void setCaptureId(String captureId) {
-        if(this.captureId == null) {
-            this.captureId = captureId;
-        }
     }
 }
