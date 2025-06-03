@@ -57,18 +57,16 @@ public class PaymentService {
         );
     }
 
-    @Transactional
     public void capture(String payPalOrderId, long userId) {
-        markPaymentAsCompleted(payPalOrderId, userId);
-
-        PayPalCapturedOrder capturedOrder = payPalService.captureOrder(payPalOrderId);
+        PayPalCapturedOrder capturedOrder = completePayment(payPalOrderId, userId);
 
         String payPalCaptureId = payPalUtilityService.extractCaptureId(capturedOrder);
 
-        setPaymentCaptureId(payPalOrderId, payPalCaptureId, userId);
+        paymentDao.setCaptureId(payPalOrderId, payPalCaptureId, userId);
     }
 
-    private void markPaymentAsCompleted(String payPalOrderId, long userId) {
+    @Transactional
+    private PayPalCapturedOrder completePayment(String payPalOrderId, long userId) {
         final int paymentExpiryMinutes = 5;
         LocalDateTime cutoff = LocalDateTime.now().minusMinutes(paymentExpiryMinutes);
 
@@ -77,18 +75,11 @@ public class PaymentService {
         if (updatedRows != 1) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment.");
         }
-    }
 
-    private void setPaymentCaptureId(String payPalOrderId, String captureId, long userId) {
-        int updatedRows = paymentDao.setCaptureId(payPalOrderId, captureId, userId);
-
-        if (updatedRows != 1) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment.");
-        }
+        return payPalService.captureOrder(payPalOrderId);
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)
-    @Transactional
     public void deleteExpiredUncompletedPayments() {
         final int safePaymentExpiryMinutes = 7;
         LocalDateTime cutoff = LocalDateTime.now().minusMinutes(safePaymentExpiryMinutes);

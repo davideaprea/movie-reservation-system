@@ -4,11 +4,13 @@ import com.mrs.app.booking.entity.Payment;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PaymentDao extends CrudRepository<Payment, Long> {
+    @Transactional
     @Modifying
     @Query("""
             UPDATE Payment p
@@ -20,6 +22,7 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
             """)
     int markAsCompleted(String orderId, long userId, LocalDateTime cutoff);
 
+    @Transactional
     @Modifying
     @Query("""
             UPDATE Payment p
@@ -30,6 +33,7 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
             """)
     int setCaptureId(String orderId, String captureId, long userId);
 
+    @Transactional
     @Modifying
     @Query("""
             DELETE FROM Payment p
