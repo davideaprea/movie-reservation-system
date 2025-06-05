@@ -60,4 +60,8 @@ public class BookingService {
                 .stream(bookingDao.saveAll(bookings).spliterator(), false)
                 .toList();
     }
+
+    public void deletePaymentBookings(long paymentId) {
+        bookingDao.deleteAllByPaymentId(paymentId);
+    }
 }

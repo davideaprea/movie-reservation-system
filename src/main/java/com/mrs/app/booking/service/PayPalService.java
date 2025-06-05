@@ -116,4 +116,22 @@ public class PayPalService {
                 .body(new ParameterizedTypeReference<>() {
                 });
     }
+
+    public void refundPayment(String captureId) {
+        restClient.post()
+                .uri("/v2/payments/captures/" + captureId + "/refund")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
+    public PayPalCapturedOrder findCapturedOrderById(String orderId) {
+        return restClient.get()
+                .uri("/v2/checkout/orders/" + orderId)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
 }

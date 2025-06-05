@@ -38,4 +38,14 @@ public class PaymentController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping("/{paymentId}")
+    public ResponseEntity<Void> refund(
+            @PathVariable long paymentId,
+            @AuthenticationPrincipal AuthUserDetails userDetails
+    ) {
+        paymentService.refundPayment(paymentId, userDetails.getId());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

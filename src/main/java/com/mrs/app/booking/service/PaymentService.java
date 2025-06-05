@@ -2,6 +2,7 @@ package com.mrs.app.booking.service;
 
 import com.mrs.app.booking.dto.internal.BookingDto;
 import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
+import com.mrs.app.booking.dto.projection.PaymentProjection;
 import com.mrs.app.booking.dto.request.PaymentDto;
 import com.mrs.app.booking.dto.internal.PayPalOrderDto;
 import com.mrs.app.booking.entity.Payment;
@@ -77,6 +78,26 @@ public class PaymentService {
         }
 
         return payPalService.captureOrder(payPalOrderId);
+    }
+
+    @Transactional
+    public void refundPayment(long paymentId, long userId) {
+        PaymentProjection refundablePayment = findRefundablePayment(paymentId, userId);
+
+        bookingService.deletePaymentBookings(paymentId);
+
+        payPalService.refundPayment(refundablePayment.captureId());
+
+        paymentDao.markAsRefunded(paymentId, userId);
+    }
+
+    private PaymentProjection findRefundablePayment(long paymentId, long userId) {
+        final int refundExpiryHours = 3;
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(refundExpiryHours);
+
+        return paymentDao
+                .findRefundableById(paymentId, userId, cutoff)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment."));
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)

@@ -1,5 +1,6 @@
 package com.mrs.app.booking.repository;
 
+import com.mrs.app.booking.dto.projection.PaymentProjection;
 import com.mrs.app.booking.entity.Payment;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,4 +42,32 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
                 p.createdAt > :cutoff
             """)
     void deleteExpiredUncompletedPayments(LocalDateTime cutoff);
+
+    @Query("""
+            SELECT com.mrs.app.booking.dto.projection.PaymentProjection(
+                p.id,
+                p.orderId,
+                p.captureId,
+                p.price,
+                p.user.id,
+                p.createdAt
+            )
+            JOIN FETCH p.items b
+            JOIN b.schedule s
+            WHERE p.id = :id AND
+                p.user.id = :userId AND
+                p.status = com.mrs.app.booking.enumeration.PaymentStatus.COMPLETED AND
+                p.captureId IS NOT NULL
+                s.startTime > :cutoff
+            """)
+    Optional<PaymentProjection> findRefundableById(long id, long userId, LocalDateTime cutoff);
+
+    @Modifying
+    @Query("""
+            UPDATE Payment p
+            SET p.status = com.mrs.app.booking.enumeration.PaymentStatus.REFUNDED
+            WHERE p.id = :paymentId AND
+                p.user.id = :userId
+            """)
+    int markAsRefunded(long paymentId, long userId);
 }
