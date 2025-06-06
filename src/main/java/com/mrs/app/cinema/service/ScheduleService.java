@@ -29,11 +29,15 @@ public class ScheduleService {
                 .startTime()
                 .plusMinutes(movieToSchedule.getDuration());
 
-        if (scheduleDao.isHallTaken(
+        List<Schedule> conflictingSchedules = scheduleDao.findHallSchedulesInDateRange(
                 dto.hallId(),
                 dto.startTime(),
                 scheduleEndTime
-        )) throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
+        );
+
+        if(!conflictingSchedules.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
+        }
 
         return scheduleDao.save(Schedule.create(
                 dto.movieId(),
@@ -55,7 +59,7 @@ public class ScheduleService {
         LocalDateTime startOfTheDay = date.atStartOfDay();
         LocalDateTime endOfTheDay = startOfTheDay.plusDays(1);
 
-        return scheduleDao.findMovieSchedulesByDateRange(movieId, startOfTheDay, endOfTheDay);
+        return scheduleDao.findMovieSchedulesInDateRange(movieId, startOfTheDay, endOfTheDay);
     }
 
     public BookingSchedule findBookingScheduleById(long id) {
