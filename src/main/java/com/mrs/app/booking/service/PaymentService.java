@@ -88,21 +88,7 @@ public class PaymentService {
     public void refundPayment(long paymentId, long userId) {
         ScheduleProjection paymentSchedule = scheduleService.findPaymentSchedule(paymentId);
 
-        final LocalDateTime now = LocalDateTime.now();
-
-        final long refundExpiryTime = 3;
-
-        Duration hoursDiff = Duration.between(now, paymentSchedule.startTime());
-
-        if(
-                paymentSchedule.startTime().isAfter(now) ||
-                hoursDiff.toHours() >= refundExpiryTime
-        ) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Refunds can be requested within 3 hours of the start of the schedule."
-            );
-        }
+        checkRefundTimeWindow(paymentSchedule.startTime());
 
         bookingService.deletePaymentBookings(paymentId);
         paymentDao.markAsRefunded(paymentId, userId);
@@ -110,6 +96,21 @@ public class PaymentService {
         PaymentProjection refundablePayment = findProjectionById(paymentId, userId);
 
         payPalService.refundPayment(refundablePayment.captureId());
+    }
+
+    private void checkRefundTimeWindow(LocalDateTime scheduleStartTime) {
+        final LocalDateTime now = LocalDateTime.now();
+
+        final long refundExpiryTime = 3;
+
+        Duration hoursDiff = Duration.between(now, scheduleStartTime);
+
+        if(scheduleStartTime.isAfter(now) || hoursDiff.toHours() >= refundExpiryTime) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Refunds can be requested within 3 hours of the start of the schedule."
+            );
+        }
     }
 
     public PaymentProjection findProjectionById(long paymentId, long userId) {
