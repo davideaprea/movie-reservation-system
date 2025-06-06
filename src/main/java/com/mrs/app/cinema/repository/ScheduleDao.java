@@ -16,7 +16,7 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
                 FROM Schedule s
                 WHERE s.hall.id = :hallId AND
                     s.startTime <= :maxDate AND
-                    minDate >= s.endTime
+                    s.endTime >= :minDate
             """)
     List<Schedule> findHallSchedulesInDateRange(long hallId, LocalDateTime minDate, LocalDateTime maxDate);
 
@@ -25,7 +25,7 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             FROM Schedule s
             WHERE s.movie.id = :movieId AND
                   s.startTime >= :minDate AND
-                  s.startTime < :maxDate AND
+                  s.startTime < :maxDate
             ORDER BY s.startTime ASC
             """)
     List<UpcomingSchedule> findMovieSchedulesInDateRange(long movieId, LocalDateTime minDate, LocalDateTime maxDate);
