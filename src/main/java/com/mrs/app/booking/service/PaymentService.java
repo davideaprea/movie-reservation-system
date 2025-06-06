@@ -31,7 +31,6 @@ public class PaymentService {
     private final BookingService bookingService;
     private final PaymentDao paymentDao;
     private final SeatService seatService;
-    private final PayPalUtilityService payPalUtilityService;
     private final ScheduleService scheduleService;
 
     @Transactional
@@ -65,7 +64,7 @@ public class PaymentService {
     public void capture(String payPalOrderId, long userId) {
         PayPalCapturedOrder capturedOrder = completePayment(payPalOrderId, userId);
 
-        String payPalCaptureId = payPalUtilityService.extractCaptureId(capturedOrder);
+        String payPalCaptureId = extractCaptureId(capturedOrder);
 
         paymentDao.setCaptureId(payPalOrderId, payPalCaptureId, userId);
     }
@@ -82,6 +81,16 @@ public class PaymentService {
         }
 
         return payPalService.captureOrder(payPalOrderId);
+    }
+
+    private String extractCaptureId(PayPalCapturedOrder payPalCapturedOrder) {
+        return payPalCapturedOrder
+                .purchaseUnits()
+                .getFirst()
+                .payments()
+                .captures()
+                .getFirst()
+                .id();
     }
 
     @Transactional
