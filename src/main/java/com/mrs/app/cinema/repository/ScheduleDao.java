@@ -1,5 +1,6 @@
 package com.mrs.app.cinema.repository;
 
+import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.dto.projection.BookingSchedule;
 import com.mrs.app.cinema.dto.projection.UpcomingSchedule;
@@ -44,4 +45,17 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
             WHERE s.id = :id
             """)
     Optional<BookingSchedule> findBookingScheduleById(long id);
+
+    @Query("""
+            SELECT DISTINCT com.mrs.app.cinema.dto.projection.ScheduleProjection(
+                b.schedule.id,
+                b.schedule.movie.id,
+                b.schedule.hall.id,
+                b.schedule.startTime,
+                b.schedule.endTime
+            )
+            FROM Booking b
+            WHERE b.payment.id = :paymentId
+            """)
+    Optional<ScheduleProjection> findPaymentSchedule(long paymentId);
 }

@@ -8,7 +8,9 @@ import com.mrs.app.booking.dto.internal.PayPalOrderDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.booking.dto.internal.PayPalOrder;
+import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.projection.SeatProjection;
+import com.mrs.app.cinema.service.ScheduleService;
 import com.mrs.app.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class PaymentService {
     private final PaymentDao paymentDao;
     private final SeatService seatService;
     private final PayPalUtilityService payPalUtilityService;
+    private final ScheduleService scheduleService;
 
     @Transactional
     public Payment create(PaymentDto dto, long userId) {
@@ -82,22 +86,36 @@ public class PaymentService {
 
     @Transactional
     public void refundPayment(long paymentId, long userId) {
-        PaymentProjection refundablePayment = findRefundablePayment(paymentId, userId);
+        ScheduleProjection paymentSchedule = scheduleService.findPaymentSchedule(paymentId);
+
+        final LocalDateTime now = LocalDateTime.now();
+
+        final long refundExpiryTime = 3;
+
+        Duration hoursDiff = Duration.between(now, paymentSchedule.startTime());
+
+        if(
+                paymentSchedule.startTime().isAfter(now) ||
+                hoursDiff.toHours() >= refundExpiryTime
+        ) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Refunds can be requested within 3 hours of the start of the schedule."
+            );
+        }
 
         bookingService.deletePaymentBookings(paymentId);
+        paymentDao.markAsRefunded(paymentId, userId);
+
+        PaymentProjection refundablePayment = findProjectionById(paymentId, userId);
 
         payPalService.refundPayment(refundablePayment.captureId());
-
-        paymentDao.markAsRefunded(paymentId, userId);
     }
 
-    private PaymentProjection findRefundablePayment(long paymentId, long userId) {
-        final int refundExpiryHours = 3;
-        LocalDateTime cutoff = LocalDateTime.now().minusHours(refundExpiryHours);
-
+    public PaymentProjection findProjectionById(long paymentId, long userId) {
         return paymentDao
-                .findRefundableById(paymentId, userId, cutoff)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment."));
+                .findProjectionById(paymentId, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)

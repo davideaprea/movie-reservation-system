@@ -1,5 +1,6 @@
 package com.mrs.app.cinema.service;
 
+import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.request.ScheduleDto;
 import com.mrs.app.cinema.entity.Movie;
 import com.mrs.app.cinema.entity.Schedule;
@@ -65,6 +66,12 @@ public class ScheduleService {
     public BookingSchedule findBookingScheduleById(long id) {
         return scheduleDao
                 .findBookingScheduleById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
+    }
+
+    public ScheduleProjection findPaymentSchedule(long paymentId) {
+        return scheduleDao
+                .findPaymentSchedule(paymentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 }
