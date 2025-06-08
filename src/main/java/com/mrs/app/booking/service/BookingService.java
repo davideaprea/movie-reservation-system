@@ -51,6 +51,6 @@ public class BookingService {
     }
 
     public void deletePaymentBookings(long paymentId, long userId) {
-        bookingDao.deleteAllByPaymentId(paymentId, userId);
+        bookingDao.deleteAllByPaymentIdAndUserId(paymentId, userId);
     }
 }
