@@ -8,7 +8,6 @@ import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.booking.dto.internal.PayPalOrder;
 import com.mrs.app.cinema.dto.projection.ScheduleProjection;
-import com.mrs.app.cinema.dto.projection.SeatProjection;
 import com.mrs.app.cinema.enumeration.SeatType;
 import com.mrs.app.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
