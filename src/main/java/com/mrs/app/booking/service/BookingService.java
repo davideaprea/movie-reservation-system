@@ -25,7 +25,6 @@ public class BookingService {
         BookingSchedule schedule = scheduleService.findBookingScheduleById(dto.scheduleId());
 
         bookingValidator.checkBookingTime(schedule.startTime());
-
         bookingValidator.checkSeatsHall(dto.selectedSeats(), schedule.hallId());
         bookingValidator.checkSeatsAdjacency(dto.selectedSeats());
 
@@ -34,8 +33,7 @@ public class BookingService {
         return saveBookings(bookings);
     }
 
-
-    public List<Booking> buildBookings(BookingDto dto) {
+    private List<Booking> buildBookings(BookingDto dto) {
         return dto.selectedSeats()
                 .stream()
                 .map(seat -> Booking.create(
