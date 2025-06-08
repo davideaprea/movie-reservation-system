@@ -9,6 +9,7 @@ import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.booking.dto.internal.PayPalOrder;
 import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.projection.SeatProjection;
+import com.mrs.app.cinema.enumeration.SeatType;
 import com.mrs.app.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class PaymentService {
 
     @Transactional
     public Payment create(PaymentDto dto) {
-        BigDecimal totalPrice = calculatePrice(dto.selectedSeats());
+        BigDecimal totalPrice = calculatePrice(dto.selectedSeatsType());
 
         PayPalOrderDto orderDto = new PayPalOrderDto(totalPrice);
 
@@ -42,10 +43,10 @@ public class PaymentService {
         return paymentDao.save(paymentToSave);
     }
 
-    private BigDecimal calculatePrice(List<SeatProjection> seats) {
-        return seats.stream().reduce(
+    private BigDecimal calculatePrice(List<SeatType> seatsType) {
+        return seatsType.stream().reduce(
                 BigDecimal.ZERO,
-                (sub, tot) -> sub.add(BigDecimal.valueOf(tot.type().getPrice())),
+                (sub, tot) -> sub.add(BigDecimal.valueOf(tot.getPrice())),
                 BigDecimal::add
         );
     }

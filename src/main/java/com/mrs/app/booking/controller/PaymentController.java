@@ -7,6 +7,7 @@ import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.booking.service.PaymentService;
 import com.mrs.app.cinema.dto.projection.SeatProjection;
+import com.mrs.app.cinema.enumeration.SeatType;
 import com.mrs.app.cinema.service.SeatService;
 import com.mrs.app.core.enumeration.Routes;
 import com.mrs.app.security.pojo.AuthUserDetails;
@@ -36,7 +37,10 @@ public class PaymentController {
     ) {
         List<SeatProjection> selectedSeats = seatService.findAll(dto.seatIds());
 
-        PaymentDto paymentDto = new PaymentDto(userDetails.getId(), selectedSeats);
+        PaymentDto paymentDto = new PaymentDto(
+                userDetails.getId(),
+                extractSeatTypes(selectedSeats)
+        );
 
         Payment bookingsPayment = paymentService.create(paymentDto);
 
@@ -49,6 +53,13 @@ public class PaymentController {
         bookingService.create(bookingDto);
 
         return new ResponseEntity<>(bookingsPayment, HttpStatus.CREATED);
+    }
+
+    private List<SeatType> extractSeatTypes(List<SeatProjection> seatProjections) {
+        return seatProjections
+                .stream()
+                .map(SeatProjection::type)
+                .toList();
     }
 
     @PatchMapping("/{orderId}")
