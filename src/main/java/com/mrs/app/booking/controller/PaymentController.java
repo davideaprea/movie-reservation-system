@@ -79,7 +79,7 @@ public class PaymentController {
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
         paymentService.refundPayment(paymentId, userDetails.getId());
-        bookingService.deletePaymentBookings(paymentId, userDetails.getId());
+        bookingService.deletePaymentBookings(paymentId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
