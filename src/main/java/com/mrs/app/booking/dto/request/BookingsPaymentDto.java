@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public record PaymentDto(
+public record BookingsPaymentDto(
         @NotNull @Size(min = 1, max = 10)
         List<Long> seatIds,
 

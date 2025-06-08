@@ -50,7 +50,7 @@ public class BookingService {
                 .toList();
     }
 
-    public void deletePaymentBookings(long paymentId) {
-        bookingDao.deleteAllByPaymentId(paymentId);
+    public void deletePaymentBookings(long paymentId, long userId) {
+        bookingDao.deleteAllByPaymentId(paymentId, userId);
     }
 }

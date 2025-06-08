@@ -1,9 +1,8 @@
 package com.mrs.app.booking.service;
 
-import com.mrs.app.booking.dto.internal.BookingDto;
 import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
+import com.mrs.app.booking.dto.internal.PaymentDto;
 import com.mrs.app.booking.dto.projection.PaymentProjection;
-import com.mrs.app.booking.dto.request.PaymentDto;
 import com.mrs.app.booking.dto.internal.PayPalOrderDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.PaymentDao;
@@ -11,7 +10,6 @@ import com.mrs.app.booking.dto.internal.PayPalOrder;
 import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.projection.SeatProjection;
 import com.mrs.app.cinema.service.ScheduleService;
-import com.mrs.app.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,29 +26,20 @@ import java.util.List;
 @Service
 public class PaymentService {
     private final PayPalService payPalService;
-    private final BookingService bookingService;
     private final PaymentDao paymentDao;
-    private final SeatService seatService;
     private final ScheduleService scheduleService;
 
     @Transactional
-    public Payment create(PaymentDto dto, long userId) {
-        List<SeatProjection> selectedSeats = seatService.findAll(dto.seatIds());
+    public Payment create(PaymentDto dto) {
+        BigDecimal totalPrice = calculatePrice(dto.selectedSeats());
 
-        BigDecimal totalPrice = calculatePrice(selectedSeats);
         PayPalOrderDto orderDto = new PayPalOrderDto(totalPrice);
 
         PayPalOrder payPalOrder = payPalService.createOrder(orderDto);
 
-        Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, userId);
+        Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, dto.userId());
 
-        Payment savedPayment = paymentDao.save(paymentToSave);
-
-        BookingDto bookingDto = new BookingDto(selectedSeats, dto.scheduleId(), savedPayment.getId());
-
-        bookingService.create(bookingDto);
-
-        return savedPayment;
+        return paymentDao.save(paymentToSave);
     }
 
     private BigDecimal calculatePrice(List<SeatProjection> seats) {
@@ -99,7 +88,6 @@ public class PaymentService {
 
         checkRefundTimeWindow(paymentSchedule.startTime());
 
-        bookingService.deletePaymentBookings(paymentId);
         paymentDao.markAsRefunded(paymentId, userId);
 
         PaymentProjection refundablePayment = findProjectionById(paymentId, userId);

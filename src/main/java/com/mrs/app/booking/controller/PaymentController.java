@@ -1,7 +1,8 @@
 package com.mrs.app.booking.controller;
 
-import com.mrs.app.booking.dto.request.PaymentDto;
+import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
+import com.mrs.app.booking.service.PaymentMediatorService;
 import com.mrs.app.booking.service.PaymentService;
 import com.mrs.app.core.enumeration.Routes;
 import com.mrs.app.security.pojo.AuthUserDetails;
@@ -16,15 +17,16 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping(Routes.PAYMENTS)
 public class PaymentController {
+    private final PaymentMediatorService paymentMediatorService;
     private final PaymentService paymentService;
 
     @PostMapping
     public ResponseEntity<Payment> create(
-            @Valid @RequestBody PaymentDto dto,
+            @Valid @RequestBody BookingsPaymentDto dto,
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
         return new ResponseEntity<>(
-                paymentService.create(dto, userDetails.getId()),
+                paymentMediatorService.createBookingsPayment(dto, userDetails.getId()),
                 HttpStatus.CREATED
         );
     }
@@ -44,7 +46,7 @@ public class PaymentController {
             @PathVariable long paymentId,
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
-        paymentService.refundPayment(paymentId, userDetails.getId());
+        paymentMediatorService.refundBookingsPayment(paymentId, userDetails.getId());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

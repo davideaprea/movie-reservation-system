@@ -1,6 +1,6 @@
 package com.mrs.app.integration;
 
-import com.mrs.app.booking.dto.request.PaymentDto;
+import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.BookingDao;
 import com.mrs.app.booking.repository.PaymentDao;
@@ -107,7 +107,7 @@ public class PaymentControllerTest {
 
     @Test
     void givenBookingDto_whenBookingSeats_thenStatusOk() throws Exception {
-        PaymentDto dto = new PaymentDto(
+        BookingsPaymentDto dto = new BookingsPaymentDto(
                 getRandomAdjacentSeatIds(),
                 schedule.getId()
         );
@@ -140,7 +140,7 @@ public class PaymentControllerTest {
 
         bookingUtil.createFakeBooking(seat.getId(), schedule.getId(), user.getId());
 
-        PaymentDto dto = new PaymentDto(List.of(seat.getId()), schedule.getId());
+        BookingsPaymentDto dto = new BookingsPaymentDto(List.of(seat.getId()), schedule.getId());
 
         postPaymentApi(dto).andExpect(status().isConflict());
 
@@ -150,7 +150,7 @@ public class PaymentControllerTest {
 
     @Test
     void givenNonAdjacentSeats_whenBookingSeats_thenStatusUnprocessableEntity() throws Exception {
-        PaymentDto dto = new PaymentDto(
+        BookingsPaymentDto dto = new BookingsPaymentDto(
                 List.of(
                         hallSeats.getFirst().getId(),
                         hallSeats.getLast().getId()
@@ -176,7 +176,7 @@ public class PaymentControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    private ResultActions postPaymentApi(PaymentDto dto) throws Exception {
+    private ResultActions postPaymentApi(BookingsPaymentDto dto) throws Exception {
         String json = objectMapper.writeValueAsString(dto);
 
         return mockMvc.perform(post(Routes.PAYMENTS)
