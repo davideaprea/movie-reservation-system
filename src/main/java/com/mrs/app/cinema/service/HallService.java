@@ -5,6 +5,7 @@ import com.mrs.app.cinema.entity.Hall;
 import com.mrs.app.cinema.repository.HallDao;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
@@ -13,7 +14,7 @@ public class HallService {
     private final HallDao hallDao;
     private final SeatService seatService;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Hall create(HallDto dto) {
         Hall hall = hallDao.save(Hall.create());
 

@@ -8,6 +8,7 @@ import com.mrs.app.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -42,7 +43,7 @@ public class SeatService {
         return scheduleSeats;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<Seat> createHallSeats(long hallId, List<SeatDto> seatDtos) {
         List<Seat> seats = seatDtos
                 .stream()
