@@ -1,5 +1,6 @@
 package com.mrs.app.booking.service;
 
+import com.mrs.app.booking.constant.PaymentTimeouts;
 import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
 import com.mrs.app.booking.dto.internal.PaymentDto;
 import com.mrs.app.booking.dto.projection.PaymentProjection;
@@ -60,8 +61,9 @@ public class PaymentService {
 
     @Transactional
     private PayPalCapturedOrder completePayment(String payPalOrderId, long userId) {
-        final int paymentExpiryMinutes = 5;
-        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(paymentExpiryMinutes);
+        LocalDateTime cutoff = LocalDateTime
+                .now()
+                .minusMinutes(PaymentTimeouts.PAYMENT_COMPLETION_TIMEOUT_MINUTES);
 
         int updatedRows = paymentDao.markAsCompleted(payPalOrderId, userId, cutoff);
 
@@ -98,11 +100,12 @@ public class PaymentService {
     private void checkRefundTimeWindow(LocalDateTime scheduleStartTime) {
         final LocalDateTime now = LocalDateTime.now();
 
-        final long refundExpiryTime = 3;
-
         Duration hoursDiff = Duration.between(now, scheduleStartTime);
 
-        if(scheduleStartTime.isAfter(now) || hoursDiff.toHours() >= refundExpiryTime) {
+        if(
+                scheduleStartTime.isAfter(now) ||
+                hoursDiff.toHours() >= PaymentTimeouts.REFUND_ELIGIBILITY_WINDOW_HOURS
+        ) {
             throw new ResponseStatusException(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Refunds can be requested within 3 hours of the start of the schedule."
@@ -118,8 +121,9 @@ public class PaymentService {
 
     @Scheduled(fixedRate = 2 * 60 * 1000)
     public void deleteExpiredUncompletedPayments() {
-        final int safePaymentExpiryMinutes = 7;
-        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(safePaymentExpiryMinutes);
+        LocalDateTime cutoff = LocalDateTime
+                .now()
+                .minusMinutes(PaymentTimeouts.UNCOMPLETED_PAYMENT_GRACE_PERIOD_MINUTES);
 
         paymentDao.deleteExpiredUncompletedPayments(cutoff);
     }
