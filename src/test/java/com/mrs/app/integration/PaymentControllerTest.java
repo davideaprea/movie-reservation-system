@@ -1,5 +1,6 @@
 package com.mrs.app.integration;
 
+import com.mrs.app.booking.dto.projection.PaymentProjection;
 import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.BookingDao;
@@ -118,15 +119,15 @@ public class PaymentControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Payment payment = objectMapper.readValue(res, Payment.class);
+        PaymentProjection payment = objectMapper.readValue(res, PaymentProjection.class);
 
-        Assertions.assertEquals(BigDecimal.valueOf(25.0), payment.getPrice());
+        Assertions.assertEquals(BigDecimal.valueOf(25.0), payment.price());
 
-        patchPaymentApi(payment.getOrderId())
+        patchPaymentApi(payment.orderId())
                 .andExpect(status().isNoContent());
 
         Payment updatePayment = paymentDao
-                .findById(payment.getId())
+                .findById(payment.id())
                 .get();
 
         Assertions.assertNotNull(updatePayment.getCaptureId());

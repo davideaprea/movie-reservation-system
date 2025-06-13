@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface SeatDao extends CrudRepository<Seat, Long> {
-    List<Seat> findAllIn(List<Long> seatIds);
+    List<Seat> findAllByIdIn(List<Long> seatIds);
 
     @Query("""
             SELECT new com.mrs.app.cinema.dto.projection.ScheduleSeatDetails(

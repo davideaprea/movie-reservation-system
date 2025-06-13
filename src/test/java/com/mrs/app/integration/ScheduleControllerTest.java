@@ -1,5 +1,6 @@
 package com.mrs.app.integration;
 
+import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.request.ScheduleDto;
 import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.entity.Seat;
@@ -191,12 +192,12 @@ public class ScheduleControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        List<Schedule> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
+        List<ScheduleProjection> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
 
         Assertions.assertEquals(3, upcomingSchedules.size());
 
-        for (Schedule schedule : upcomingSchedules) {
-            Assertions.assertTrue(schedule.getStartTime().toLocalDate().equals(tomorrow));
+        for (ScheduleProjection schedule : upcomingSchedules) {
+            Assertions.assertTrue(schedule.startTime().toLocalDate().equals(tomorrow));
         }
     }
 

@@ -20,7 +20,7 @@ public class SeatService {
     private final SeatDao seatDao;
 
     public List<Seat> findAll(List<Long> seatIds) {
-        List<Seat> seats = seatDao.findAllIn(seatIds);
+        List<Seat> seats = seatDao.findAllByIdIn(seatIds);
 
         if (seats.size() != seatIds.size()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found.");
