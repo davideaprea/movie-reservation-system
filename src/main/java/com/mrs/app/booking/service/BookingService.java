@@ -38,7 +38,7 @@ public class BookingService {
                 .stream()
                 .map(seat -> Booking.create(
                         dto.paymentId(),
-                        seat.id(),
+                        seat.getId(),
                         dto.scheduleId()
                 ))
                 .toList();

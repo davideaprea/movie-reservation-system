@@ -2,8 +2,10 @@ package com.mrs.app.booking.controller;
 
 import com.mrs.app.booking.dto.internal.BookingDto;
 import com.mrs.app.booking.dto.internal.PaymentDto;
+import com.mrs.app.booking.dto.projection.PaymentProjection;
 import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
+import com.mrs.app.booking.mapper.PaymentMapper;
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.booking.service.PaymentService;
 import com.mrs.app.cinema.entity.Seat;
@@ -31,7 +33,7 @@ public class PaymentController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity<Payment> create(
+    public ResponseEntity<PaymentProjection> create(
             @Valid @RequestBody BookingsPaymentDto dto,
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
@@ -52,11 +54,14 @@ public class PaymentController {
 
         bookingService.create(bookingDto);
 
-        return new ResponseEntity<>(bookingsPayment, HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                PaymentMapper.INSTANCE.entityToProjection(bookingsPayment),
+                HttpStatus.CREATED
+        );
     }
 
-    private List<SeatType> extractSeatTypes(List<Seat> seatProjections) {
-        return seatProjections
+    private List<SeatType> extractSeatTypes(List<Seat> seats) {
+        return seats
                 .stream()
                 .map(Seat::getType)
                 .toList();

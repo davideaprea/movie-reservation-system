@@ -1,8 +1,10 @@
 package com.mrs.app.cinema.controller;
 
+import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.request.ScheduleDto;
 import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
+import com.mrs.app.cinema.mapper.ScheduleMapper;
 import com.mrs.app.cinema.service.ScheduleService;
 import com.mrs.app.cinema.service.SeatService;
 import com.mrs.app.core.enumeration.Routes;
@@ -22,9 +24,11 @@ public class ScheduleController {
     private final SeatService seatService;
 
     @PostMapping
-    public ResponseEntity<Schedule> create(@Valid @RequestBody ScheduleDto dto) {
+    public ResponseEntity<ScheduleProjection> create(@Valid @RequestBody ScheduleDto dto) {
+        Schedule savedSchedule = scheduleService.create(dto);
+
         return new ResponseEntity<>(
-                scheduleService.create(dto),
+                ScheduleMapper.INSTANCE.toProjection(savedSchedule),
                 HttpStatus.CREATED
         );
     }

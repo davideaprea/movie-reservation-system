@@ -91,7 +91,7 @@ public class PaymentService {
 
         paymentDao.markAsRefunded(paymentId, userId);
 
-        Payment refundablePayment = findProjectionById(paymentId, userId);
+        Payment refundablePayment = findByIdAndUserId(paymentId, userId);
 
         payPalService.refundPayment(refundablePayment.getCaptureId());
     }
@@ -112,9 +112,9 @@ public class PaymentService {
         }
     }
 
-    public Payment findProjectionById(long paymentId, long userId) {
+    public Payment findByIdAndUserId(long paymentId, long userId) {
         return paymentDao
-                .findProjectionById(paymentId, userId)
+                .findByIdAndUserId(paymentId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
     }
 

@@ -50,11 +50,5 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
             """)
     int markAsRefunded(long paymentId, long userId);
 
-    @Query("""
-            SELECT p
-            FROM Payment p
-            WHERE p.id = :id AND
-                p.user.id = :userId
-            """)
-    Optional<Payment> findProjectionById(long id, long userId);
+    Optional<Payment> findByIdAndUserId(long id, long userId);
 }
