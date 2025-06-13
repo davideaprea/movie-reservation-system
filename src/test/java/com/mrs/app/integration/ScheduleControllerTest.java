@@ -3,7 +3,7 @@ package com.mrs.app.integration;
 import com.mrs.app.cinema.dto.request.ScheduleDto;
 import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.entity.Seat;
-import com.mrs.app.cinema.dto.projection.ScheduleDate;
+import com.mrs.app.cinema.dto.response.ScheduleDate;
 import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
 import com.mrs.app.cinema.repository.ScheduleDao;
 import com.mrs.app.config.DBManager;

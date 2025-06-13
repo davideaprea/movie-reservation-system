@@ -2,7 +2,7 @@ package com.mrs.app.cinema.controller;
 
 import com.mrs.app.cinema.dto.request.MovieDto;
 import com.mrs.app.cinema.entity.Movie;
-import com.mrs.app.cinema.dto.projection.ScheduleDate;
+import com.mrs.app.cinema.dto.response.ScheduleDate;
 import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.service.MovieService;
 import com.mrs.app.cinema.service.ScheduleService;

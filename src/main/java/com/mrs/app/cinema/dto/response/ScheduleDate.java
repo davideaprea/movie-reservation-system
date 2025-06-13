@@ -1,4 +1,4 @@
-package com.mrs.app.cinema.dto.projection;
+package com.mrs.app.cinema.dto.response;
 
 import java.time.LocalDate;
 

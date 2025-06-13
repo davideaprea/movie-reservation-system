@@ -3,7 +3,7 @@ package com.mrs.app.cinema.service;
 import com.mrs.app.cinema.dto.request.ScheduleDto;
 import com.mrs.app.cinema.entity.Movie;
 import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.dto.projection.ScheduleDate;
+import com.mrs.app.cinema.dto.response.ScheduleDate;
 import com.mrs.app.cinema.repository.ScheduleDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
