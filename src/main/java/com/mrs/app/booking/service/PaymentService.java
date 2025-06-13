@@ -3,12 +3,11 @@ package com.mrs.app.booking.service;
 import com.mrs.app.booking.constant.PaymentTimeouts;
 import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
 import com.mrs.app.booking.dto.internal.PaymentDto;
-import com.mrs.app.booking.dto.projection.PaymentProjection;
 import com.mrs.app.booking.dto.internal.PayPalOrderDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.booking.dto.internal.PayPalOrder;
-import com.mrs.app.cinema.dto.projection.ScheduleProjection;
+import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.enumeration.SeatType;
 import com.mrs.app.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
@@ -86,15 +85,15 @@ public class PaymentService {
 
     @Transactional
     public void refundPayment(long paymentId, long userId) {
-        ScheduleProjection paymentSchedule = scheduleService.findPaymentSchedule(paymentId);
+        Schedule paymentSchedule = scheduleService.findPaymentSchedule(paymentId);
 
-        checkRefundTimeWindow(paymentSchedule.startTime());
+        checkRefundTimeWindow(paymentSchedule.getStartTime());
 
         paymentDao.markAsRefunded(paymentId, userId);
 
-        PaymentProjection refundablePayment = findProjectionById(paymentId, userId);
+        Payment refundablePayment = findProjectionById(paymentId, userId);
 
-        payPalService.refundPayment(refundablePayment.captureId());
+        payPalService.refundPayment(refundablePayment.getCaptureId());
     }
 
     private void checkRefundTimeWindow(LocalDateTime scheduleStartTime) {
@@ -113,7 +112,7 @@ public class PaymentService {
         }
     }
 
-    public PaymentProjection findProjectionById(long paymentId, long userId) {
+    public Payment findProjectionById(long paymentId, long userId) {
         return paymentDao
                 .findProjectionById(paymentId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));

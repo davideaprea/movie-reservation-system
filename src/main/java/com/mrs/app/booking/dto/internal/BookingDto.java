@@ -1,11 +1,11 @@
 package com.mrs.app.booking.dto.internal;
 
-import com.mrs.app.cinema.dto.projection.SeatProjection;
+import com.mrs.app.cinema.entity.Seat;
 
 import java.util.List;
 
 public record BookingDto(
-        List<SeatProjection> selectedSeats,
+        List<Seat> selectedSeats,
         long scheduleId,
         long paymentId
 ) {

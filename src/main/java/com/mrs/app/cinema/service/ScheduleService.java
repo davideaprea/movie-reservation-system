@@ -1,13 +1,10 @@
 package com.mrs.app.cinema.service;
 
-import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.dto.request.ScheduleDto;
 import com.mrs.app.cinema.entity.Movie;
 import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.dto.projection.BookingSchedule;
 import com.mrs.app.cinema.dto.projection.ScheduleDate;
 import com.mrs.app.cinema.repository.ScheduleDao;
-import com.mrs.app.cinema.dto.projection.UpcomingSchedule;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -56,20 +53,20 @@ public class ScheduleService {
                 .toList();
     }
 
-    public List<UpcomingSchedule> findMovieSchedulesByDate(long movieId, LocalDate date) {
+    public List<Schedule> findMovieSchedulesByDate(long movieId, LocalDate date) {
         LocalDateTime startOfTheDay = date.atStartOfDay();
         LocalDateTime endOfTheDay = startOfTheDay.plusDays(1);
 
         return scheduleDao.findMovieSchedulesInDateRange(movieId, startOfTheDay, endOfTheDay);
     }
 
-    public BookingSchedule findBookingScheduleById(long id) {
+    public Schedule findBookingScheduleById(long id) {
         return scheduleDao
                 .findBookingScheduleById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 
-    public ScheduleProjection findPaymentSchedule(long paymentId) {
+    public Schedule findPaymentSchedule(long paymentId) {
         return scheduleDao
                 .findPaymentSchedule(paymentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));

@@ -6,7 +6,7 @@ import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.booking.service.PaymentService;
-import com.mrs.app.cinema.dto.projection.SeatProjection;
+import com.mrs.app.cinema.entity.Seat;
 import com.mrs.app.cinema.enumeration.SeatType;
 import com.mrs.app.cinema.service.SeatService;
 import com.mrs.app.core.enumeration.Routes;
@@ -35,7 +35,7 @@ public class PaymentController {
             @Valid @RequestBody BookingsPaymentDto dto,
             @AuthenticationPrincipal AuthUserDetails userDetails
     ) {
-        List<SeatProjection> selectedSeats = seatService.findAll(dto.seatIds());
+        List<Seat> selectedSeats = seatService.findAll(dto.seatIds());
 
         PaymentDto paymentDto = new PaymentDto(
                 userDetails.getId(),
@@ -55,10 +55,10 @@ public class PaymentController {
         return new ResponseEntity<>(bookingsPayment, HttpStatus.CREATED);
     }
 
-    private List<SeatType> extractSeatTypes(List<SeatProjection> seatProjections) {
+    private List<SeatType> extractSeatTypes(List<Seat> seatProjections) {
         return seatProjections
                 .stream()
-                .map(SeatProjection::type)
+                .map(Seat::getType)
                 .toList();
     }
 

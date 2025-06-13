@@ -3,7 +3,7 @@ package com.mrs.app.cinema.controller;
 import com.mrs.app.cinema.dto.request.MovieDto;
 import com.mrs.app.cinema.entity.Movie;
 import com.mrs.app.cinema.dto.projection.ScheduleDate;
-import com.mrs.app.cinema.dto.projection.UpcomingSchedule;
+import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.service.MovieService;
 import com.mrs.app.cinema.service.ScheduleService;
 import com.mrs.app.core.enumeration.Routes;
@@ -49,7 +49,7 @@ public class MovieController {
     }
 
     @GetMapping("/{id}" + Routes.SCHEDULES_DATES + "/{date}")
-    public ResponseEntity<List<UpcomingSchedule>> findMovieSchedulesByDate(
+    public ResponseEntity<List<Schedule>> findMovieSchedulesByDate(
             @PathVariable long id,
             @PathVariable @Valid @FutureOrPresent LocalDate date
     ) {

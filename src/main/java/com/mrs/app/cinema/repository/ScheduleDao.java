@@ -1,9 +1,6 @@
 package com.mrs.app.cinema.repository;
 
-import com.mrs.app.cinema.dto.projection.ScheduleProjection;
 import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.dto.projection.BookingSchedule;
-import com.mrs.app.cinema.dto.projection.UpcomingSchedule;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -22,14 +19,14 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     List<Schedule> findHallSchedulesInDateRange(long hallId, LocalDateTime minDate, LocalDateTime maxDate);
 
     @Query("""
-            SELECT new com.mrs.app.cinema.dto.projection.UpcomingSchedule(s.id, s.startTime)
+            SELECT s
             FROM Schedule s
             WHERE s.movie.id = :movieId AND
                   s.startTime >= :minDate AND
                   s.startTime < :maxDate
             ORDER BY s.startTime ASC
             """)
-    List<UpcomingSchedule> findMovieSchedulesInDateRange(long movieId, LocalDateTime minDate, LocalDateTime maxDate);
+    List<Schedule> findMovieSchedulesInDateRange(long movieId, LocalDateTime minDate, LocalDateTime maxDate);
 
     @Query("""
             SELECT s.startTime
@@ -40,22 +37,16 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     List<LocalDateTime> findUpcomingMovieScheduleDates(long movieId);
 
     @Query("""
-            SELECT new com.mrs.app.cinema.dto.projection.BookingSchedule(s.startTime, s.hall.id)
+            SELECT s
             FROM Schedule s
             WHERE s.id = :id
             """)
-    Optional<BookingSchedule> findBookingScheduleById(long id);
+    Optional<Schedule> findBookingScheduleById(long id);
 
     @Query("""
-            SELECT DISTINCT com.mrs.app.cinema.dto.projection.ScheduleProjection(
-                b.schedule.id,
-                b.schedule.movie.id,
-                b.schedule.hall.id,
-                b.schedule.startTime,
-                b.schedule.endTime
-            )
+            SELECT DISTINCT b.schedule
             FROM Booking b
             WHERE b.payment.id = :paymentId
             """)
-    Optional<ScheduleProjection> findPaymentSchedule(long paymentId);
+    Optional<Schedule> findPaymentSchedule(long paymentId);
 }

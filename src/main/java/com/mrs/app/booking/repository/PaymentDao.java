@@ -1,6 +1,5 @@
 package com.mrs.app.booking.repository;
 
-import com.mrs.app.booking.dto.projection.PaymentProjection;
 import com.mrs.app.booking.entity.Payment;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,17 +51,10 @@ public interface PaymentDao extends CrudRepository<Payment, Long> {
     int markAsRefunded(long paymentId, long userId);
 
     @Query("""
-            SELECT com.mrs.app.booking.dto.projection.PaymentProjection(
-                p.id,
-                p.orderId,
-                p.captureId,
-                p.price,
-                p.user.id,
-                p.createdAt
-            )
+            SELECT p
             FROM Payment p
             WHERE p.id = :id AND
                 p.user.id = :userId
             """)
-    Optional<PaymentProjection> findProjectionById(long id, long userId);
+    Optional<Payment> findProjectionById(long id, long userId);
 }

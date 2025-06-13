@@ -3,7 +3,6 @@ package com.mrs.app.cinema.service;
 import com.mrs.app.cinema.dto.internal.SeatDto;
 import com.mrs.app.cinema.entity.Seat;
 import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
-import com.mrs.app.cinema.dto.projection.SeatProjection;
 import com.mrs.app.cinema.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,14 +19,14 @@ import java.util.stream.StreamSupport;
 public class SeatService {
     private final SeatDao seatDao;
 
-    public List<SeatProjection> findAll(List<Long> seatIds) {
-        List<SeatProjection> seats = seatDao.findAll(seatIds);
+    public List<Seat> findAll(List<Long> seatIds) {
+        List<Seat> seats = seatDao.findAllIn(seatIds);
 
         if (seats.size() != seatIds.size()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found.");
         }
 
-        seats.sort(Comparator.comparingInt(SeatProjection::seatNumber));
+        seats.sort(Comparator.comparingInt(Seat::getSeatNumber));
 
         return seats;
     }

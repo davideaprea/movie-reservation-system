@@ -4,7 +4,7 @@ import com.mrs.app.booking.dto.internal.BookingDto;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.repository.BookingDao;
 import com.mrs.app.booking.validator.BookingValidator;
-import com.mrs.app.cinema.dto.projection.BookingSchedule;
+import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +22,10 @@ public class BookingService {
 
     @Transactional
     public List<Booking> create(BookingDto dto) {
-        BookingSchedule schedule = scheduleService.findBookingScheduleById(dto.scheduleId());
+        Schedule schedule = scheduleService.findBookingScheduleById(dto.scheduleId());
 
-        bookingValidator.checkBookingTime(schedule.startTime());
-        bookingValidator.checkSeatsHall(dto.selectedSeats(), schedule.hallId());
+        bookingValidator.checkBookingTime(schedule.getStartTime());
+        bookingValidator.checkSeatsHall(dto.selectedSeats(), schedule.getHall().getId());
         bookingValidator.checkSeatsAdjacency(dto.selectedSeats());
 
         List<Booking> bookings = buildBookings(dto);
