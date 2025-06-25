@@ -9,7 +9,7 @@ import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
 import com.mrs.app.cinema.repository.ScheduleDao;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.security.enumeration.Roles;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -126,7 +126,7 @@ public class ScheduleControllerTest {
         );
 
         String json = mockMvc
-                .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES_DATES))
+                .perform(get(ControllerRoutes.MOVIES + "/" + movieId + ControllerRoutes.SCHEDULES_DATES))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -159,7 +159,7 @@ public class ScheduleControllerTest {
         bookingUtil.createFakeBooking(seatId, scheduleId, userId);
 
         String res = mockMvc
-                .perform(get(Routes.SCHEDULES + "/" + scheduleId + Routes.SEATS))
+                .perform(get(ControllerRoutes.SCHEDULES + "/" + scheduleId + ControllerRoutes.SEATS))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -186,7 +186,7 @@ public class ScheduleControllerTest {
         scheduleUtil.createSchedulesOnDay(movieId, hallId, tomorrow, 3);
 
         String res = mockMvc
-                .perform(get(Routes.MOVIES + "/" + movieId + Routes.SCHEDULES_DATES + "/" + tomorrow))
+                .perform(get(ControllerRoutes.MOVIES + "/" + movieId + ControllerRoutes.SCHEDULES_DATES + "/" + tomorrow))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -205,7 +205,7 @@ public class ScheduleControllerTest {
         String body = objMapper.writeValueAsString(dto);
 
         return mockMvc
-                .perform(post(Routes.SCHEDULES)
+                .perform(post(ControllerRoutes.SCHEDULES)
                         .header("Authorization", jwt)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body));

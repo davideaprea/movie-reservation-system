@@ -14,7 +14,7 @@ import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.entity.Seat;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.security.enumeration.Roles;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -180,14 +180,14 @@ public class PaymentControllerTest {
     private ResultActions postPaymentApi(BookingsPaymentDto dto) throws Exception {
         String json = objectMapper.writeValueAsString(dto);
 
-        return mockMvc.perform(post(Routes.PAYMENTS)
+        return mockMvc.perform(post(ControllerRoutes.PAYMENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .header("Authorization", jwt));
     }
 
     private ResultActions patchPaymentApi(String orderId) throws Exception {
-        return mockMvc.perform(patch(Routes.PAYMENTS + "/" + orderId)
+        return mockMvc.perform(patch(ControllerRoutes.PAYMENTS + "/" + orderId)
                 .header("Authorization", jwt));
     }
 

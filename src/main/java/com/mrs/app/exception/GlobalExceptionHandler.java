@@ -1,4 +1,4 @@
-package com.mrs.app.core.exception;
+package com.mrs.app.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;

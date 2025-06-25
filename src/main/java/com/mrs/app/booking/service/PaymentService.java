@@ -103,7 +103,7 @@ public class PaymentService {
 
         if(
                 scheduleStartTime.isAfter(now) ||
-                hoursDiff.toHours() >= PaymentTimeouts.REFUND_ELIGIBILITY_WINDOW_HOURS
+                hoursDiff.toMinutes() >= PaymentTimeouts.REFUND_ELIGIBILITY_WINDOW_MINUTES
         ) {
             throw new ResponseStatusException(
                     HttpStatus.UNPROCESSABLE_ENTITY,

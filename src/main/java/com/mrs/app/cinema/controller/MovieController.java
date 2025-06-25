@@ -8,7 +8,7 @@ import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.mapper.ScheduleMapper;
 import com.mrs.app.cinema.service.MovieService;
 import com.mrs.app.cinema.service.ScheduleService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(Routes.MOVIES)
+@RequestMapping(ControllerRoutes.MOVIES)
 public class MovieController {
     private final MovieService movieService;
     private final ScheduleService scheduleService;
@@ -42,7 +42,7 @@ public class MovieController {
         );
     }
 
-    @GetMapping("/{id}" + Routes.SCHEDULES_DATES)
+    @GetMapping("/{id}" + ControllerRoutes.SCHEDULES_DATES)
     public ResponseEntity<List<ScheduleDate>> findUpcomingMovieScheduleDates(@PathVariable long id) {
         return new ResponseEntity<>(
                 scheduleService.findUpcomingMovieScheduleDates(id),
@@ -50,7 +50,7 @@ public class MovieController {
         );
     }
 
-    @GetMapping("/{id}" + Routes.SCHEDULES_DATES + "/{date}")
+    @GetMapping("/{id}" + ControllerRoutes.SCHEDULES_DATES + "/{date}")
     public ResponseEntity<List<ScheduleProjection>> findMovieSchedulesByDate(
             @PathVariable long id,
             @PathVariable @Valid @FutureOrPresent LocalDate date

@@ -7,7 +7,7 @@ import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
 import com.mrs.app.cinema.mapper.ScheduleMapper;
 import com.mrs.app.cinema.service.ScheduleService;
 import com.mrs.app.cinema.service.SeatService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(Routes.SCHEDULES)
+@RequestMapping(ControllerRoutes.SCHEDULES)
 public class ScheduleController {
     private final ScheduleService scheduleService;
     private final SeatService seatService;
@@ -33,7 +33,7 @@ public class ScheduleController {
         );
     }
 
-    @GetMapping("/{scheduleId}" + Routes.SEATS)
+    @GetMapping("/{scheduleId}" + ControllerRoutes.SEATS)
     public ResponseEntity<List<ScheduleSeatDetails>> findScheduleSeats(@PathVariable long scheduleId) {
         return new ResponseEntity<>(
                 seatService.findScheduleSeats(scheduleId),

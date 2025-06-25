@@ -1,6 +1,6 @@
 package com.mrs.app.security.config;
 
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import com.mrs.app.security.enumeration.Roles;
 import com.mrs.app.security.filter.JWTFilter;
 import com.mrs.app.security.service.AuthUserDetailsService;
@@ -34,14 +34,14 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
-                        .requestMatchers(Routes.AUTH + Routes.REGISTER).permitAll()
-                        .requestMatchers(Routes.AUTH + Routes.LOGIN).permitAll()
-                        .requestMatchers(Routes.SWAGGER + "/**").permitAll()
-                        .requestMatchers(GET, Routes.MOVIES + "/**").permitAll()
-                        .requestMatchers(GET, Routes.SCHEDULES + "/**").permitAll()
-                        .requestMatchers(Routes.MOVIES + "/**").hasRole(Roles.ADMIN.toString())
-                        .requestMatchers(Routes.SCHEDULES + "/**").hasRole(Roles.ADMIN.toString())
-                        .requestMatchers(Routes.HALLS + "/**").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers(ControllerRoutes.AUTH + ControllerRoutes.REGISTER).permitAll()
+                        .requestMatchers(ControllerRoutes.AUTH + ControllerRoutes.LOGIN).permitAll()
+                        .requestMatchers(ControllerRoutes.SWAGGER + "/**").permitAll()
+                        .requestMatchers(GET, ControllerRoutes.MOVIES + "/**").permitAll()
+                        .requestMatchers(GET, ControllerRoutes.SCHEDULES + "/**").permitAll()
+                        .requestMatchers(ControllerRoutes.MOVIES + "/**").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers(ControllerRoutes.SCHEDULES + "/**").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers(ControllerRoutes.HALLS + "/**").hasRole(Roles.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

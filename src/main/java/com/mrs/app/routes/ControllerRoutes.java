@@ -1,6 +1,6 @@
-package com.mrs.app.core.enumeration;
+package com.mrs.app.routes;
 
-public class Routes {
+public class ControllerRoutes {
     public static final String AUTH = "/auth";
     public static final String LOGIN = "/login";
     public static final String REGISTER = "/register";

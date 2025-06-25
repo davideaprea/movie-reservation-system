@@ -1,4 +1,4 @@
-package com.mrs.app.core.configuration;
+package com.mrs.app.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

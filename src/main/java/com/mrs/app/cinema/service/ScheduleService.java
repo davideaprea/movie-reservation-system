@@ -60,9 +60,9 @@ public class ScheduleService {
         return scheduleDao.findMovieSchedulesInDateRange(movieId, startOfTheDay, endOfTheDay);
     }
 
-    public Schedule findBookingScheduleById(long id) {
+    public Schedule findById(long id) {
         return scheduleDao
-                .findBookingScheduleById(id)
+                .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 

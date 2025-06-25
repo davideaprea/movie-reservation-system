@@ -11,7 +11,7 @@ import com.mrs.app.booking.service.PaymentService;
 import com.mrs.app.cinema.entity.Seat;
 import com.mrs.app.cinema.enumeration.SeatType;
 import com.mrs.app.cinema.service.SeatService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import com.mrs.app.security.pojo.AuthUserDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(Routes.PAYMENTS)
+@RequestMapping(ControllerRoutes.PAYMENTS)
 public class PaymentController {
     private final PaymentService paymentService;
     private final BookingService bookingService;

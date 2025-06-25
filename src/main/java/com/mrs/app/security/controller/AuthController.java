@@ -3,7 +3,7 @@ package com.mrs.app.security.controller;
 import com.mrs.app.security.doc.AuthControllerDocs;
 import com.mrs.app.security.dto.RegisterResponse;
 import com.mrs.app.security.entity.User;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import com.mrs.app.security.dto.LoginDto;
 import com.mrs.app.security.dto.RegisterDto;
 import com.mrs.app.security.service.AuthService;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(Routes.AUTH)
+@RequestMapping(ControllerRoutes.AUTH)
 public class AuthController implements AuthControllerDocs {
     private final AuthService authService;
 
-    @PostMapping(Routes.REGISTER)
+    @PostMapping(ControllerRoutes.REGISTER)
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterDto dto) {
         User newUser = authService.register(dto);
 
@@ -35,7 +35,7 @@ public class AuthController implements AuthControllerDocs {
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PostMapping(Routes.LOGIN)
+    @PostMapping(ControllerRoutes.LOGIN)
     public ResponseEntity<Void> login(@RequestBody @Valid LoginDto dto) {
         String token = authService.login(dto);
 
