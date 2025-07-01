@@ -1,15 +1,15 @@
 package com.mrs.app.booking.service;
 
 import com.mrs.app.booking.constant.PaymentTimeouts;
+import com.mrs.app.booking.dto.internal.BookingDto;
 import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
-import com.mrs.app.booking.dto.internal.PaymentDto;
 import com.mrs.app.booking.dto.internal.PayPalOrderDto;
+import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.booking.dto.internal.PayPalOrder;
-import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.enumeration.SeatType;
-import com.mrs.app.cinema.service.ScheduleService;
+import com.mrs.app.cinema.entity.Seat;
+import com.mrs.app.cinema.service.SeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,25 +26,34 @@ import java.util.List;
 public class PaymentService {
     private final PayPalService payPalService;
     private final PaymentDao paymentDao;
-    private final ScheduleService scheduleService;
+    private final BookingService bookingService;
+    private final SeatService seatService;
 
     @Transactional
-    public Payment create(PaymentDto dto) {
-        BigDecimal totalPrice = calculatePrice(dto.selectedSeatsType());
+    public Payment create(BookingsPaymentDto dto, long loggedUserId) {
+        List<Seat> selectedSeats = seatService.findAll(dto.seatIds());
+        final BigDecimal totalPrice = calculatePrice(selectedSeats);
 
         PayPalOrderDto orderDto = new PayPalOrderDto(totalPrice);
 
         PayPalOrder payPalOrder = payPalService.createOrder(orderDto);
 
-        Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, dto.userId());
+        Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, loggedUserId);
+        Payment savedPayment = paymentDao.save(paymentToSave);
 
-        return paymentDao.save(paymentToSave);
+        bookingService.create(new BookingDto(
+                selectedSeats,
+                dto.scheduleId(),
+                savedPayment.getId()
+        ));
+
+        return savedPayment;
     }
 
-    private BigDecimal calculatePrice(List<SeatType> seatsType) {
+    private BigDecimal calculatePrice(List<Seat> seatsType) {
         return seatsType.stream().reduce(
                 BigDecimal.ZERO,
-                (sub, tot) -> sub.add(BigDecimal.valueOf(tot.getPrice())),
+                (sub, tot) -> sub.add(BigDecimal.valueOf(tot.getType().getPrice())),
                 BigDecimal::add
         );
     }
@@ -85,31 +93,13 @@ public class PaymentService {
 
     @Transactional
     public void refundPayment(long paymentId, long userId) {
-        Schedule paymentSchedule = scheduleService.findPaymentSchedule(paymentId);
-
-        checkRefundTimeWindow(paymentSchedule.getStartTime());
+        bookingService.deletePaymentBookings(paymentId);
 
         paymentDao.markAsRefunded(paymentId, userId);
 
         Payment refundablePayment = findByIdAndUserId(paymentId, userId);
 
         payPalService.refundPayment(refundablePayment.getCaptureId());
-    }
-
-    private void checkRefundTimeWindow(LocalDateTime scheduleStartTime) {
-        final LocalDateTime now = LocalDateTime.now();
-
-        Duration hoursDiff = Duration.between(now, scheduleStartTime);
-
-        if(
-                scheduleStartTime.isAfter(now) ||
-                hoursDiff.toMinutes() >= PaymentTimeouts.REFUND_ELIGIBILITY_WINDOW_MINUTES
-        ) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Refunds can be requested within 3 hours of the start of the schedule."
-            );
-        }
     }
 
     public Payment findByIdAndUserId(long paymentId, long userId) {
