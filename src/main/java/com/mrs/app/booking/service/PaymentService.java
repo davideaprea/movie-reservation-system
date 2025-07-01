@@ -9,7 +9,6 @@ import com.mrs.app.booking.repository.PaymentDao;
 import com.mrs.app.booking.dto.internal.PayPalOrder;
 import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.enumeration.SeatType;
-import com.mrs.app.cinema.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,7 +26,6 @@ import java.util.List;
 public class PaymentService {
     private final PayPalService payPalService;
     private final PaymentDao paymentDao;
-    private final ScheduleService scheduleService;
 
     @Transactional
     public Payment create(PaymentDto dto) {
@@ -85,31 +83,11 @@ public class PaymentService {
 
     @Transactional
     public void refundPayment(long paymentId, long userId) {
-        Schedule paymentSchedule = scheduleService.findPaymentSchedule(paymentId);
-
-        checkRefundTimeWindow(paymentSchedule.getStartTime());
-
         paymentDao.markAsRefunded(paymentId, userId);
 
         Payment refundablePayment = findByIdAndUserId(paymentId, userId);
 
         payPalService.refundPayment(refundablePayment.getCaptureId());
-    }
-
-    private void checkRefundTimeWindow(LocalDateTime scheduleStartTime) {
-        final LocalDateTime now = LocalDateTime.now();
-
-        Duration hoursDiff = Duration.between(now, scheduleStartTime);
-
-        if(
-                scheduleStartTime.isAfter(now) ||
-                hoursDiff.toHours() >= PaymentTimeouts.REFUND_ELIGIBILITY_WINDOW_HOURS
-        ) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Refunds can be requested within 3 hours of the start of the schedule."
-            );
-        }
     }
 
     public Payment findByIdAndUserId(long paymentId, long userId) {
