@@ -27,7 +27,7 @@ public class BookingService {
 
     @Transactional
     public List<Booking> create(BookingDto dto) {
-        Schedule schedule = scheduleService.findBookingScheduleById(dto.scheduleId());
+        Schedule schedule = scheduleService.findById(dto.scheduleId());
 
         bookingValidator.checkBookingTime(schedule.getStartTime());
         bookingValidator.checkSeatsHall(dto.selectedSeats(), schedule.getHall().getId());

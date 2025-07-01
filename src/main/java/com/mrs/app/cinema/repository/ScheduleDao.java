@@ -37,13 +37,6 @@ public interface ScheduleDao extends CrudRepository<Schedule, Long> {
     List<LocalDateTime> findUpcomingMovieScheduleDates(long movieId);
 
     @Query("""
-            SELECT s
-            FROM Schedule s
-            WHERE s.id = :id
-            """)
-    Optional<Schedule> findBookingScheduleById(long id);
-
-    @Query("""
             SELECT DISTINCT b.schedule
             FROM Booking b
             WHERE b.payment.id = :paymentId
