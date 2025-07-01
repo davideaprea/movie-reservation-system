@@ -5,7 +5,7 @@ import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.mapper.PaymentMapper;
 import com.mrs.app.booking.service.PaymentService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.routes.ControllerRoutes;
 import com.mrs.app.security.pojo.AuthUserDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(Routes.PAYMENTS)
+@RequestMapping(ControllerRoutes.PAYMENTS)
 public class PaymentController {
     private final PaymentService paymentService;
 
