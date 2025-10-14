@@ -1,10 +1,6 @@
 package com.mrs.app.shared.component;
 
-import com.mrs.app.shared.dto.PayPalOrderDto;
-import com.mrs.app.shared.dto.PayPalCapturedOrder;
-import com.mrs.app.shared.dto.PayPalOrder;
-import com.mrs.app.shared.dto.PayPalTokenDetails;
-import org.springframework.beans.factory.annotation.Value;
+import com.mrs.app.shared.dto.*;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,21 +26,14 @@ public class PaymentGateway {
     private volatile Instant tokenExpiryTime;
 
     public PaymentGateway(
-            @Value("${paypal.base-url}")
-            String baseUrl,
-
-            @Value("${paypal.client-id}")
-            String clientId,
-
-            @Value("${paypal.secret}")
-            String clientSecret,
+            PaymentGatewayProps paymentGatewayProps,
 
             RestClient.Builder restClientBuilder
     ) {
-        this.encodedCredentials = encodeCredentials(clientId, clientSecret);
+        this.encodedCredentials = encodeCredentials(paymentGatewayProps.clientId(), paymentGatewayProps.secret());
 
         this.restClient = restClientBuilder
-                .baseUrl(baseUrl)
+                .baseUrl(paymentGatewayProps.baseUrl())
                 .requestInterceptor(configInterceptor())
                 .build();
     }
