@@ -1,15 +1,15 @@
-package com.mrs.app.booking.service;
+package com.mrs.app.shared.component;
 
-import com.mrs.app.booking.dto.internal.PayPalOrderDto;
-import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
-import com.mrs.app.booking.dto.internal.PayPalOrder;
-import com.mrs.app.booking.dto.internal.PayPalTokenDetails;
+import com.mrs.app.shared.dto.PayPalOrderDto;
+import com.mrs.app.shared.dto.PayPalCapturedOrder;
+import com.mrs.app.shared.dto.PayPalOrder;
+import com.mrs.app.shared.dto.PayPalTokenDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -17,8 +17,8 @@ import org.springframework.web.client.RestClient;
 import java.time.Instant;
 import java.util.Base64;
 
-@Service
-public class PayPalService {
+@Component
+public class PaymentGateway {
     private final String encodedCredentials;
 
     private final RestClient restClient;
@@ -29,7 +29,7 @@ public class PayPalService {
 
     private volatile Instant tokenExpiryTime;
 
-    public PayPalService(
+    public PaymentGateway(
             @Value("${paypal.base-url}")
             String baseUrl,
 

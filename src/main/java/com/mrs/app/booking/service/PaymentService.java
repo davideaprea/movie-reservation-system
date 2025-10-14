@@ -2,14 +2,15 @@ package com.mrs.app.booking.service;
 
 import com.mrs.app.booking.constant.PaymentTimeouts;
 import com.mrs.app.booking.dto.internal.BookingDto;
-import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
-import com.mrs.app.booking.dto.internal.PayPalOrderDto;
+import com.mrs.app.shared.dto.PayPalCapturedOrder;
+import com.mrs.app.shared.dto.PayPalOrderDto;
 import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.PaymentDao;
-import com.mrs.app.booking.dto.internal.PayPalOrder;
+import com.mrs.app.shared.dto.PayPalOrder;
 import com.mrs.app.cinema.entity.Seat;
 import com.mrs.app.cinema.service.SeatService;
+import com.mrs.app.shared.component.PaymentGateway;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class PaymentService {
-    private final PayPalService payPalService;
+    private final PaymentGateway paymentGateway;
     private final PaymentDao paymentDao;
     private final BookingService bookingService;
     private final SeatService seatService;
@@ -36,7 +37,7 @@ public class PaymentService {
 
         PayPalOrderDto orderDto = new PayPalOrderDto(totalPrice);
 
-        PayPalOrder payPalOrder = payPalService.createOrder(orderDto);
+        PayPalOrder payPalOrder = paymentGateway.createOrder(orderDto);
 
         Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, loggedUserId);
         Payment savedPayment = paymentDao.save(paymentToSave);
@@ -78,7 +79,7 @@ public class PaymentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find the pending payment.");
         }
 
-        return payPalService.captureOrder(payPalOrderId);
+        return paymentGateway.captureOrder(payPalOrderId);
     }
 
     private String extractCaptureId(PayPalCapturedOrder payPalCapturedOrder) {
@@ -99,7 +100,7 @@ public class PaymentService {
 
         Payment refundablePayment = findByIdAndUserId(paymentId, userId);
 
-        payPalService.refundPayment(refundablePayment.getCaptureId());
+        paymentGateway.refundPayment(refundablePayment.getCaptureId());
     }
 
     public Payment findByIdAndUserId(long paymentId, long userId) {

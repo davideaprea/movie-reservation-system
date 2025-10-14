@@ -1,4 +1,4 @@
-package com.mrs.app.booking.enumeration;
+package com.mrs.app.shared.enumeration;
 
 public enum PayPalOrderIntent {
     CAPTURE,

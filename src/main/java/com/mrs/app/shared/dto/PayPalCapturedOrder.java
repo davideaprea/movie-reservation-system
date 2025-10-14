@@ -1,4 +1,4 @@
-package com.mrs.app.booking.dto.internal;
+package com.mrs.app.shared.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

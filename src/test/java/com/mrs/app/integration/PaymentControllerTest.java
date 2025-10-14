@@ -5,9 +5,9 @@ import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.repository.BookingDao;
 import com.mrs.app.booking.repository.PaymentDao;
-import com.mrs.app.booking.dto.internal.PayPalCapturedOrder;
-import com.mrs.app.booking.dto.internal.PayPalOrder;
-import com.mrs.app.booking.service.PayPalService;
+import com.mrs.app.shared.dto.PayPalCapturedOrder;
+import com.mrs.app.shared.dto.PayPalOrder;
+import com.mrs.app.shared.component.PaymentGateway;
 import com.mrs.app.cinema.entity.Hall;
 import com.mrs.app.cinema.entity.Movie;
 import com.mrs.app.cinema.entity.Schedule;
@@ -74,7 +74,7 @@ public class PaymentControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private PayPalService payPalService;
+    private PaymentGateway paymentGateway;
 
     @Autowired
     private HallUtil hallUtil;
@@ -193,7 +193,7 @@ public class PaymentControllerTest {
 
     private void mockPayPalOrderCreation() {
         Mockito
-                .when(payPalService.createOrder(Mockito.any()))
+                .when(paymentGateway.createOrder(Mockito.any()))
                 .thenReturn(new PayPalOrder(UUID.randomUUID().toString()));
     }
 
@@ -204,7 +204,7 @@ public class PaymentControllerTest {
         PayPalCapturedOrder capturedOrder = new PayPalCapturedOrder(List.of(purchaseUnit));
 
         Mockito
-                .when(payPalService.captureOrder(Mockito.any()))
+                .when(paymentGateway.captureOrder(Mockito.any()))
                 .thenReturn(capturedOrder);
     }
 
