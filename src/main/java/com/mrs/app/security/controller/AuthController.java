@@ -3,7 +3,7 @@ package com.mrs.app.security.controller;
 import com.mrs.app.security.doc.AuthControllerDocs;
 import com.mrs.app.security.dto.RegisterResponse;
 import com.mrs.app.security.entity.User;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import com.mrs.app.security.dto.LoginDto;
 import com.mrs.app.security.dto.RegisterDto;
 import com.mrs.app.security.service.AuthService;

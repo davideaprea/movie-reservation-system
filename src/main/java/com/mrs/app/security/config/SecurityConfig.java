@@ -1,6 +1,6 @@
 package com.mrs.app.security.config;
 
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import com.mrs.app.security.enumeration.Roles;
 import com.mrs.app.security.filter.JWTFilter;
 import com.mrs.app.security.service.AuthUserDetailsService;

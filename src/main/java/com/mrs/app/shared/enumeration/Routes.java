@@ -1,4 +1,4 @@
-package com.mrs.app.core.enumeration;
+package com.mrs.app.shared.enumeration;
 
 public class Routes {
     public static final String AUTH = "/auth";

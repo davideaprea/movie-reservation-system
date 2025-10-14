@@ -8,7 +8,7 @@ import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.mapper.ScheduleMapper;
 import com.mrs.app.cinema.service.MovieService;
 import com.mrs.app.cinema.service.ScheduleService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;

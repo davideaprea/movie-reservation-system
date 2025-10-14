@@ -3,7 +3,7 @@ package com.mrs.app.cinema.controller;
 import com.mrs.app.cinema.dto.request.HallDto;
 import com.mrs.app.cinema.entity.Hall;
 import com.mrs.app.cinema.service.HallService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -5,7 +5,7 @@ import com.mrs.app.booking.dto.request.BookingsPaymentDto;
 import com.mrs.app.booking.entity.Payment;
 import com.mrs.app.booking.mapper.PaymentMapper;
 import com.mrs.app.booking.service.PaymentService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import com.mrs.app.security.pojo.AuthUserDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

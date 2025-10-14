@@ -7,7 +7,7 @@ import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
 import com.mrs.app.cinema.mapper.ScheduleMapper;
 import com.mrs.app.cinema.service.ScheduleService;
 import com.mrs.app.cinema.service.SeatService;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

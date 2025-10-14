@@ -14,7 +14,7 @@ import com.mrs.app.cinema.entity.Schedule;
 import com.mrs.app.cinema.entity.Seat;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
-import com.mrs.app.core.enumeration.Routes;
+import com.mrs.app.shared.enumeration.Routes;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.security.enumeration.Roles;
 import com.fasterxml.jackson.databind.ObjectMapper;
