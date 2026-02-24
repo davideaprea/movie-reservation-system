@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
-@ToString
 @Getter
 @Entity
 @Table(name = "schedules", indexes = {

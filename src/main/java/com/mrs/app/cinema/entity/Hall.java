@@ -9,7 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
-@ToString
 @Getter
 @Entity
 @Table(name = "halls")

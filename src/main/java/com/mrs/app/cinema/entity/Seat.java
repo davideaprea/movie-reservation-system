@@ -9,7 +9,6 @@ import lombok.experimental.FieldNameConstants;
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @FieldNameConstants
-@ToString
 @Getter
 @Entity
 @Table(name = "seats", uniqueConstraints = {
