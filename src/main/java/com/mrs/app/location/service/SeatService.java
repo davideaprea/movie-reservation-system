@@ -1,7 +1,6 @@
 package com.mrs.app.location.service;
 
 import com.mrs.app.location.entity.Seat;
-import com.mrs.app.schedule.dto.ScheduleSeatDetails;
 import com.mrs.app.location.repository.SeatDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

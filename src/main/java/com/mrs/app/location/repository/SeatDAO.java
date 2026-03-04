@@ -1,6 +1,5 @@
 package com.mrs.app.location.repository;
 
-import com.mrs.app.schedule.dto.ScheduleSeatDetails;
 import com.mrs.app.location.entity.Seat;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

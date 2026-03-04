@@ -2,7 +2,7 @@ package com.mrs.app.schedule.dto;
 
 import java.time.LocalDateTime;
 
-public record ScheduleProjection(
+public record ScheduleDTO(
         long id,
         long movieId,
         long hallId,

@@ -1,9 +1,8 @@
 package com.mrs.app.catalog.controller;
 
-import com.mrs.app.schedule.dto.ScheduleProjection;
+import com.mrs.app.catalog.dto.MovieDTO;
+import com.mrs.app.schedule.dto.ScheduleDTO;
 import com.mrs.app.catalog.dto.MovieCreateRequest;
-import com.mrs.app.catalog.entity.Movie;
-import com.mrs.app.schedule.dto.ScheduleDate;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.catalog.service.MovieService;
@@ -27,7 +26,7 @@ public class MovieController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<Movie> create(@Valid @RequestBody MovieCreateRequest dto) {
+    public ResponseEntity<MovieDTO> create(@Valid @RequestBody MovieCreateRequest dto) {
         return new ResponseEntity<>(
                 movieService.create(dto),
                 HttpStatus.CREATED
@@ -35,7 +34,7 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> findById(@PathVariable long id) {
+    public ResponseEntity<MovieDTO> findById(@PathVariable long id) {
         return new ResponseEntity<>(
                 movieService.findById(id),
                 HttpStatus.OK
@@ -51,19 +50,19 @@ public class MovieController {
     }
 
     @GetMapping("/{id}" + Routes.SCHEDULES_DATES + "/{date}")
-    public ResponseEntity<List<ScheduleProjection>> findMovieSchedulesByDate(
+    public ResponseEntity<List<ScheduleDTO>> findMovieSchedulesByDate(
             @PathVariable long id,
             @PathVariable @Valid @FutureOrPresent LocalDate date
     ) {
         List<Schedule> schedulesOfTheDay = scheduleService.findMovieSchedulesByDate(id, date);
 
-        List<ScheduleProjection> scheduleProjections = schedulesOfTheDay
+        List<ScheduleDTO> scheduleDTOS = schedulesOfTheDay
                 .stream()
                 .map(ScheduleMapper.INSTANCE::toProjection)
                 .toList();
 
         return new ResponseEntity<>(
-                scheduleProjections,
+                scheduleDTOS,
                 HttpStatus.OK
         );
     }

@@ -1,64 +1,39 @@
 package com.mrs.app.schedule.service;
 
-import com.mrs.app.schedule.dto.ScheduleDto;
-import com.mrs.app.catalog.entity.Movie;
+import com.mrs.app.catalog.dto.MovieDTO;
+import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.catalog.service.MovieService;
+import com.mrs.app.schedule.dto.ScheduleDTO;
 import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.schedule.dto.ScheduleDate;
-import com.mrs.app.schedule.dao.ScheduleDao;
+import com.mrs.app.schedule.dao.ScheduleDAO;
+import com.mrs.app.schedule.mapper.ScheduleMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
 @Service
 public class ScheduleService {
-    private final ScheduleDao scheduleDao;
+    private final ScheduleDAO scheduleDao;
+    private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
 
-    public Schedule create(ScheduleDto dto) {
-        Movie movieToSchedule = movieService.findById(dto.movieId());
+    public ScheduleDTO create(ScheduleCreateRequest dto) {
+        MovieDTO movieToSchedule = movieService.findById(dto.movieId());
+        LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
 
-        LocalDateTime scheduleEndTime = dto
-                .startTime()
-                .plusMinutes(movieToSchedule.getDuration());
-
-        List<Schedule> conflictingSchedules = scheduleDao.findHallSchedulesInDateRange(
-                dto.hallId(),
-                dto.startTime(),
-                scheduleEndTime
-        );
-
-        if(!conflictingSchedules.isEmpty()) {
+        if (!findByFilters().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This location is already taken.");
         }
 
-        return scheduleDao.save(Schedule.create(
-                dto.movieId(),
-                dto.hallId(),
-                dto.startTime(),
-                scheduleEndTime
-        ));
-    }
+        Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
+        Schedule savedSchedule = scheduleDao.save(scheduleToSave);
 
-    public List<ScheduleDate> findUpcomingMovieScheduleDates(long movieId) {
-        return scheduleDao
-                .findUpcomingMovieScheduleDates(movieId)
-                .stream()
-                .map(startTime -> new ScheduleDate(startTime.toLocalDate()))
-                .toList();
-    }
-
-    public List<Schedule> findMovieSchedulesByDate(long movieId, LocalDate date) {
-        LocalDateTime startOfTheDay = date.atStartOfDay();
-        LocalDateTime endOfTheDay = startOfTheDay.plusDays(1);
-
-        return scheduleDao.findMovieSchedulesInDateRange(movieId, startOfTheDay, endOfTheDay);
+        return scheduleMapper.toDTO(savedSchedule);
     }
 
     public Schedule findById(long id) {
@@ -67,9 +42,7 @@ public class ScheduleService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 
-    public Schedule findPaymentSchedule(long paymentId) {
-        return scheduleDao
-                .findPaymentSchedule(paymentId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
+    public List<ScheduleDTO> findByFilters() {
+
     }
 }

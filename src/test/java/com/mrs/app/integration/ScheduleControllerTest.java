@@ -1,12 +1,10 @@
 package com.mrs.app.integration;
 
-import com.mrs.app.schedule.dto.ScheduleProjection;
-import com.mrs.app.schedule.dto.ScheduleDto;
+import com.mrs.app.schedule.dto.ScheduleDTO;
+import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.location.entity.Seat;
-import com.mrs.app.schedule.dto.ScheduleDate;
-import com.mrs.app.schedule.dto.ScheduleSeatDetails;
-import com.mrs.app.schedule.dao.ScheduleDao;
+import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
 import com.mrs.app.shared.enumeration.Routes;
@@ -57,7 +55,7 @@ public class ScheduleControllerTest {
     private long hallId;
 
     @Autowired
-    private ScheduleDao scheduleDao;
+    private ScheduleDAO scheduleDao;
 
     @Autowired
     private AuthUtil authUtil;
@@ -86,7 +84,7 @@ public class ScheduleControllerTest {
 
     @Test
     void givenCorrectSchedule_whenCreatingSchedule_thenStatusCreated() throws Exception {
-        ScheduleDto dto = new ScheduleDto(
+        ScheduleCreateRequest dto = new ScheduleCreateRequest(
                 movieId,
                 hallId,
                 LocalDateTime.now().plusDays(1)
@@ -106,7 +104,7 @@ public class ScheduleControllerTest {
                 starTime.plusHours(2)
         ));
 
-        ScheduleDto dto = new ScheduleDto(
+        ScheduleCreateRequest dto = new ScheduleCreateRequest(
                 movieId,
                 hallId,
                 starTime
@@ -192,16 +190,16 @@ public class ScheduleControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        List<ScheduleProjection> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
+        List<ScheduleDTO> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
 
         Assertions.assertEquals(3, upcomingSchedules.size());
 
-        for (ScheduleProjection schedule : upcomingSchedules) {
+        for (ScheduleDTO schedule : upcomingSchedules) {
             Assertions.assertTrue(schedule.startTime().toLocalDate().equals(tomorrow));
         }
     }
 
-    private ResultActions postScheduleApi(ScheduleDto dto) throws Exception {
+    private ResultActions postScheduleApi(ScheduleCreateRequest dto) throws Exception {
         String body = objMapper.writeValueAsString(dto);
 
         return mockMvc

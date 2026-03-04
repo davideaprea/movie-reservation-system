@@ -1,7 +1,7 @@
 package com.mrs.app.util;
 
 import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.schedule.dao.ScheduleDao;
+import com.mrs.app.schedule.dao.ScheduleDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 @Component
 @AllArgsConstructor
 public class ScheduleUtil {
-    private final ScheduleDao scheduleDao;
+    private final ScheduleDAO scheduleDao;
 
     public Schedule createFakeSchedule(long movieId, long hallId) {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
 
-public record ScheduleDto(
+public record ScheduleCreateRequest(
         @Positive
         long movieId,
 

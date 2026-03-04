@@ -1,6 +1,7 @@
 package com.mrs.app.catalog.service;
 
 import com.mrs.app.catalog.dto.MovieCreateRequest;
+import com.mrs.app.catalog.dto.MovieDTO;
 import com.mrs.app.catalog.entity.Movie;
 import com.mrs.app.catalog.mapper.MovieMapper;
 import com.mrs.app.catalog.repository.MovieDAO;
@@ -12,16 +13,20 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 @Service
 public class MovieService {
-    private final MovieDAO movieDao;
+    private final MovieDAO movieDAO;
     private final MovieMapper movieMapper;
 
-    public Movie create(MovieCreateRequest createRequest) {
-        return movieDao.save(movieMapper.toEntity(createRequest));
+    public MovieDTO create(MovieCreateRequest createRequest) {
+        Movie movieToSave = movieMapper.toEntity(createRequest);
+        Movie savedMovie = movieDAO.save(movieToSave);
+
+        return movieMapper.toDTO(savedMovie);
     }
 
-    public Movie findById(long id) {
-        return movieDao
+    public MovieDTO findById(long id) {
+        return movieDAO
                 .findById(id)
+                .map(movieMapper::toDTO)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found."));
     }
 }
