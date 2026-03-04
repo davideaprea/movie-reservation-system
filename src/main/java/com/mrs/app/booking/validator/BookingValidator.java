@@ -1,6 +1,6 @@
 package com.mrs.app.booking.validator;
 
-import com.mrs.app.cinema.entity.Seat;
+import com.mrs.app.location.entity.Seat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,7 +22,7 @@ public class BookingValidator {
                 .allMatch(seat -> seat.getHall().getId() == hallId);
 
         if (!areSeatsFromScheduleHall) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Seats must be in the schedule hall.");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Seats must be in the schedule location.");
         }
     }
 

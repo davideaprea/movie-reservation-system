@@ -1,17 +1,17 @@
 package com.mrs.app.integration;
 
-import com.mrs.app.booking.dto.projection.PaymentProjection;
-import com.mrs.app.booking.dto.request.BookingsPaymentDto;
-import com.mrs.app.booking.entity.Payment;
+import com.mrs.app.payment.dto.PaymentProjection;
+import com.mrs.app.booking.dto.BookingsPaymentDto;
+import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.booking.repository.BookingDao;
-import com.mrs.app.booking.repository.PaymentDao;
+import com.mrs.app.payment.repository.PaymentDao;
 import com.mrs.app.shared.dto.PayPalCapturedOrder;
 import com.mrs.app.shared.dto.PayPalOrder;
 import com.mrs.app.shared.component.PaymentGateway;
-import com.mrs.app.cinema.entity.Hall;
-import com.mrs.app.cinema.entity.Movie;
-import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.entity.Seat;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.catalog.entity.Movie;
+import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.location.entity.Seat;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
 import com.mrs.app.shared.enumeration.Routes;

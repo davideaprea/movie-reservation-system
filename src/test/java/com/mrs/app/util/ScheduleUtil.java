@@ -1,7 +1,7 @@
 package com.mrs.app.util;
 
-import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.repository.ScheduleDao;
+import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.schedule.dao.ScheduleDao;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,12 +1,12 @@
 package com.mrs.app.integration;
 
-import com.mrs.app.cinema.dto.projection.ScheduleProjection;
-import com.mrs.app.cinema.dto.request.ScheduleDto;
-import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.entity.Seat;
-import com.mrs.app.cinema.dto.response.ScheduleDate;
-import com.mrs.app.cinema.dto.projection.ScheduleSeatDetails;
-import com.mrs.app.cinema.repository.ScheduleDao;
+import com.mrs.app.schedule.dto.ScheduleProjection;
+import com.mrs.app.schedule.dto.ScheduleDto;
+import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.location.entity.Seat;
+import com.mrs.app.schedule.dto.ScheduleDate;
+import com.mrs.app.schedule.dto.ScheduleSeatDetails;
+import com.mrs.app.schedule.dao.ScheduleDao;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
 import com.mrs.app.shared.enumeration.Routes;

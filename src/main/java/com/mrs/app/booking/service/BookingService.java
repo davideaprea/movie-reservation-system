@@ -1,12 +1,12 @@
 package com.mrs.app.booking.service;
 
-import com.mrs.app.booking.constant.PaymentTimeouts;
-import com.mrs.app.booking.dto.internal.BookingDto;
+import com.mrs.app.payment.constant.PaymentTimeouts;
+import com.mrs.app.booking.dto.BookingDto;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.repository.BookingDao;
 import com.mrs.app.booking.validator.BookingValidator;
-import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.service.ScheduleService;
+import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.schedule.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

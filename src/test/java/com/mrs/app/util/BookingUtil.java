@@ -1,10 +1,10 @@
 package com.mrs.app.util;
 
 import com.mrs.app.booking.entity.Booking;
-import com.mrs.app.booking.entity.Payment;
-import com.mrs.app.booking.enumeration.PaymentStatus;
+import com.mrs.app.payment.entity.Payment;
+import com.mrs.app.payment.enumeration.PaymentStatus;
 import com.mrs.app.booking.repository.BookingDao;
-import com.mrs.app.booking.repository.PaymentDao;
+import com.mrs.app.payment.repository.PaymentDao;
 import com.mrs.app.security.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

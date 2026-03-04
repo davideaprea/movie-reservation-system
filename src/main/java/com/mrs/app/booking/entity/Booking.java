@@ -1,7 +1,8 @@
 package com.mrs.app.booking.entity;
 
-import com.mrs.app.cinema.entity.Schedule;
-import com.mrs.app.cinema.entity.Seat;
+import com.mrs.app.payment.entity.Payment;
+import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.location.entity.Seat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;

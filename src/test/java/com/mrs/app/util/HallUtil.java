@@ -1,10 +1,10 @@
 package com.mrs.app.util;
 
-import com.mrs.app.cinema.entity.Hall;
-import com.mrs.app.cinema.entity.Seat;
-import com.mrs.app.cinema.enumeration.SeatType;
-import com.mrs.app.cinema.repository.HallDao;
-import com.mrs.app.cinema.repository.SeatDao;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.location.entity.Seat;
+import com.mrs.app.location.enumeration.SeatType;
+import com.mrs.app.location.repository.HallDao;
+import com.mrs.app.location.repository.SeatDao;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
