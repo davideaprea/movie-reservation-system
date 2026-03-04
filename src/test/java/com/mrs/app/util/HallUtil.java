@@ -2,9 +2,8 @@ package com.mrs.app.util;
 
 import com.mrs.app.location.entity.Hall;
 import com.mrs.app.location.entity.Seat;
-import com.mrs.app.location.enumeration.SeatType;
-import com.mrs.app.location.repository.HallDao;
-import com.mrs.app.location.repository.SeatDao;
+import com.mrs.app.location.repository.HallDAO;
+import com.mrs.app.location.repository.SeatDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +14,8 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @Component
 public class HallUtil {
-    private final HallDao hallDao;
-    private final SeatDao seatDao;
+    private final HallDAO hallDao;
+    private final SeatDAO seatDao;
 
     public Hall createFakeHall() {
         return hallDao.save(Hall.create());

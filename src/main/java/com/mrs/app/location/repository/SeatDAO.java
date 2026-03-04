@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface SeatDao extends CrudRepository<Seat, Long> {
+public interface SeatDAO extends CrudRepository<Seat, Long> {
     List<Seat> findAllByIdIn(List<Long> seatIds);
 
     @Query("""

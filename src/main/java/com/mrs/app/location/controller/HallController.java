@@ -1,6 +1,6 @@
 package com.mrs.app.location.controller;
 
-import com.mrs.app.location.dto.HallDto;
+import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.entity.Hall;
 import com.mrs.app.location.service.HallService;
 import com.mrs.app.shared.enumeration.Routes;
@@ -18,9 +18,9 @@ public class HallController {
     private final HallService hallService;
 
     @PostMapping
-    public ResponseEntity<Hall> create(HallDto dto) {
+    public ResponseEntity<Hall> create(HallCreateRequest createRequest) {
         return new ResponseEntity<>(
-                hallService.create(dto),
+                hallService.create(createRequest),
                 HttpStatus.CREATED
         );
     }

@@ -1,23 +1,20 @@
 package com.mrs.app.location.service;
 
-import com.mrs.app.location.dto.SeatDto;
 import com.mrs.app.location.entity.Seat;
 import com.mrs.app.schedule.dto.ScheduleSeatDetails;
-import com.mrs.app.location.repository.SeatDao;
+import com.mrs.app.location.repository.SeatDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
 public class SeatService {
-    private final SeatDao seatDao;
+    private final SeatDAO seatDao;
 
     public List<Seat> findAll(List<Long> seatIds) {
         List<Seat> seats = seatDao.findAllByIdIn(seatIds);
@@ -39,22 +36,5 @@ public class SeatService {
         }
 
         return scheduleSeats;
-    }
-
-    @Transactional
-    public List<Seat> createHallSeats(long hallId, List<SeatDto> seatDtos) {
-        List<Seat> seats = seatDtos
-                .stream()
-                .map(dto -> Seat.create(
-                        dto.type(),
-                        dto.rowNumber(),
-                        dto.seatNumber(),
-                        hallId
-                ))
-                .toList();
-
-        return StreamSupport
-                .stream(seatDao.saveAll(seats).spliterator(), false)
-                .toList();
     }
 }

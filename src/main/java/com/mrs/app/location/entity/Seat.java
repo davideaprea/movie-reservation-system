@@ -1,6 +1,5 @@
 package com.mrs.app.location.entity;
 
-import com.mrs.app.location.enumeration.SeatType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
@@ -19,8 +18,7 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(optional = false)
     private SeatType type;
 
     @Column(nullable = false, updatable = false)
