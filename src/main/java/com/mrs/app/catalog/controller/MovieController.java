@@ -1,7 +1,7 @@
 package com.mrs.app.catalog.controller;
 
 import com.mrs.app.schedule.dto.ScheduleProjection;
-import com.mrs.app.catalog.dto.MovieDto;
+import com.mrs.app.catalog.dto.MovieCreateRequest;
 import com.mrs.app.catalog.entity.Movie;
 import com.mrs.app.schedule.dto.ScheduleDate;
 import com.mrs.app.schedule.entity.Schedule;
@@ -27,7 +27,7 @@ public class MovieController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<Movie> create(@Valid @RequestBody MovieDto dto) {
+    public ResponseEntity<Movie> create(@Valid @RequestBody MovieCreateRequest dto) {
         return new ResponseEntity<>(
                 movieService.create(dto),
                 HttpStatus.CREATED

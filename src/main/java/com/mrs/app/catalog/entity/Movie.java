@@ -1,9 +1,9 @@
 package com.mrs.app.catalog.entity;
 
-import com.mrs.app.schedule.entity.Schedule;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Duration;
 import java.util.List;
 
 @NoArgsConstructor
@@ -21,7 +21,7 @@ public class Movie {
     private String title;
 
     @Column(nullable = false)
-    private Integer duration;
+    private Duration duration;
 
     @Column(nullable = false)
     private String description;
@@ -29,28 +29,6 @@ public class Movie {
     @Column(nullable = false)
     private String cover;
 
-    @OneToMany(mappedBy = Schedule.Fields.movie, fetch = FetchType.LAZY)
-    private List<Schedule> schedules;
-
-    public static Movie createWithId(long id) {
-        return Movie
-                .builder()
-                .id(id)
-                .build();
-    }
-
-    public static Movie create(
-            String title,
-            int duration,
-            String description,
-            String cover
-    ) {
-        return Movie
-                .builder()
-                .title(title)
-                .duration(duration)
-                .description(description)
-                .cover(cover)
-                .build();
-    }
+    @ManyToMany
+    private List<Genre> genres;
 }

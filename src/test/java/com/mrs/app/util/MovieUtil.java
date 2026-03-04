@@ -1,14 +1,14 @@
 package com.mrs.app.util;
 
 import com.mrs.app.catalog.entity.Movie;
-import com.mrs.app.catalog.repository.MovieDao;
+import com.mrs.app.catalog.repository.MovieDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class MovieUtil {
-    private final MovieDao movieDao;
+    private final MovieDAO movieDao;
 
     public Movie createFakeMovie() {
         return movieDao.save(Movie.create(

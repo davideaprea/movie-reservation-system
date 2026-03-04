@@ -1,8 +1,9 @@
 package com.mrs.app.catalog.service;
 
-import com.mrs.app.catalog.dto.MovieDto;
+import com.mrs.app.catalog.dto.MovieCreateRequest;
 import com.mrs.app.catalog.entity.Movie;
-import com.mrs.app.catalog.repository.MovieDao;
+import com.mrs.app.catalog.mapper.MovieMapper;
+import com.mrs.app.catalog.repository.MovieDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,15 +12,11 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 @Service
 public class MovieService {
-    private final MovieDao movieDao;
+    private final MovieDAO movieDao;
+    private final MovieMapper movieMapper;
 
-    public Movie create(MovieDto dto) {
-        return movieDao.save(Movie.create(
-                dto.title(),
-                dto.duration(),
-                dto.description(),
-                dto.cover()
-        ));
+    public Movie create(MovieCreateRequest createRequest) {
+        return movieDao.save(movieMapper.toEntity(createRequest));
     }
 
     public Movie findById(long id) {
