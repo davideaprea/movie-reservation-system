@@ -29,26 +29,4 @@ public class Seat {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Hall hall;
-
-    public static Seat create(
-            SeatType type,
-            int rowNumber,
-            int seatNumber,
-            long hallId
-    ) {
-        return Seat
-                .builder()
-                .type(type)
-                .rowNumber(rowNumber)
-                .seatNumber(seatNumber)
-                .hall(Hall.createWithId(hallId))
-                .build();
-    }
-
-    public static Seat createWithId(long id) {
-        return Seat
-                .builder()
-                .id(id)
-                .build();
-    }
 }

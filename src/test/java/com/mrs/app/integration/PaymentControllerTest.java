@@ -1,9 +1,9 @@
 package com.mrs.app.integration;
 
 import com.mrs.app.payment.dto.PaymentProjection;
-import com.mrs.app.booking.dto.BookingsPaymentDto;
+import com.mrs.app.payment.dto.BookingsPaymentDto;
 import com.mrs.app.payment.entity.Payment;
-import com.mrs.app.booking.repository.BookingDao;
+import com.mrs.app.booking.repository.BookingDAO;
 import com.mrs.app.payment.repository.PaymentDao;
 import com.mrs.app.shared.dto.PayPalCapturedOrder;
 import com.mrs.app.shared.dto.PayPalOrder;
@@ -53,7 +53,7 @@ public class PaymentControllerTest {
     private AuthUtil authUtil;
 
     @Autowired
-    private BookingDao bookingDao;
+    private BookingDAO bookingDao;
 
     @Autowired
     private PaymentDao paymentDao;

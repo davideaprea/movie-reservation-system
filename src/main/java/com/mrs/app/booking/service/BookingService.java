@@ -1,10 +1,11 @@
 package com.mrs.app.booking.service;
 
+import com.mrs.app.location.dto.SeatGetResponse;
+import com.mrs.app.location.service.SeatService;
 import com.mrs.app.payment.constant.PaymentTimeouts;
-import com.mrs.app.booking.dto.BookingDto;
+import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.entity.Booking;
-import com.mrs.app.booking.repository.BookingDao;
-import com.mrs.app.booking.validator.BookingValidator;
+import com.mrs.app.booking.repository.BookingDAO;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.service.ScheduleService;
 import lombok.AllArgsConstructor;
@@ -16,43 +17,27 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
 public class BookingService {
-    private final BookingDao bookingDao;
+    private final BookingDAO bookingDAO;
     private final ScheduleService scheduleService;
-    private final BookingValidator bookingValidator;
+    private final SeatService seatService;
 
     @Transactional
-    public List<Booking> create(BookingDto dto) {
-        Schedule schedule = scheduleService.findById(dto.scheduleId());
+    public List<Booking> create(BookingCreateRequest dto) {
+        List<SeatGetResponse> seats = seatService.findRowSeats(
+                scheduleService.findById(dto.scheduleId()).hallId(),
+                dto.rowNumber(),
+                dto.seatNumbers()
+        );
 
-        bookingValidator.checkBookingTime(schedule.getStartTime());
-        bookingValidator.checkSeatsHall(dto.selectedSeats(), schedule.getHall().getId());
-        bookingValidator.checkSeatsAdjacency(dto.selectedSeats());
+        if (seats.size() != dto.seatNumbers().size()) {
+            //throw
+        }
 
-        List<Booking> bookings = buildBookings(dto);
 
-        return saveBookings(bookings);
-    }
-
-    private List<Booking> buildBookings(BookingDto dto) {
-        return dto.selectedSeats()
-                .stream()
-                .map(seat -> Booking.create(
-                        dto.paymentId(),
-                        seat.getId(),
-                        dto.scheduleId()
-                ))
-                .toList();
-    }
-
-    private List<Booking> saveBookings(List<Booking> bookings) {
-        return StreamSupport
-                .stream(bookingDao.saveAll(bookings).spliterator(), false)
-                .toList();
     }
 
     public void deletePaymentBookings(long paymentId) {
@@ -60,7 +45,7 @@ public class BookingService {
 
         checkRefundTimeWindow(paymentSchedule.getStartTime());
 
-        bookingDao.deleteAllByPaymentId(paymentId);
+        bookingDAO.deleteAllByPaymentId(paymentId);
     }
 
     private void checkRefundTimeWindow(LocalDateTime scheduleStartTime) {
@@ -68,7 +53,7 @@ public class BookingService {
 
         Duration hoursDiff = Duration.between(now, scheduleStartTime);
 
-        if(
+        if (
                 scheduleStartTime.isAfter(now) ||
                         hoursDiff.toHours() >= PaymentTimeouts.REFUND_ELIGIBILITY_WINDOW_HOURS
         ) {

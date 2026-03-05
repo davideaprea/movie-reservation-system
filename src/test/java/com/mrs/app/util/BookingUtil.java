@@ -3,7 +3,7 @@ package com.mrs.app.util;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
-import com.mrs.app.booking.repository.BookingDao;
+import com.mrs.app.booking.repository.BookingDAO;
 import com.mrs.app.payment.repository.PaymentDao;
 import com.mrs.app.security.entity.User;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 public class BookingUtil {
-    private final BookingDao bookingDao;
+    private final BookingDAO bookingDao;
     private final PaymentDao paymentDao;
 
     public Payment createFakeBooking(long seatId, long scheduleId, long userId) {

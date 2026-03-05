@@ -1,45 +1,30 @@
 package com.mrs.app.booking.entity;
 
-import com.mrs.app.payment.entity.Payment;
-import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.location.entity.Seat;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldNameConstants;
 
-@FieldNameConstants
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity
 @Table(name = "bookings", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"schedule_id", "seat_id"})
+        @UniqueConstraint(columnNames = {"schedule_id", "row_number", "seat_number"})
 })
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Seat seat;
+    @Column(nullable = false)
+    private Long rowNumber;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Schedule schedule;
+    @Column(nullable = false)
+    private Long seatNumber;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Payment payment;
+    @Column(nullable = false)
+    private Long scheduleId;
 
-    public static Booking create(
-            long paymentId,
-            long seatId,
-            long scheduleId
-    ) {
-        return Booking
-                .builder()
-                .schedule(Schedule.createWithId(scheduleId))
-                .seat(Seat.createWithId(seatId))
-                .payment(Payment.createWithId(paymentId))
-                .build();
-    }
+    @Column(nullable = false)
+    private Long userId;
 }

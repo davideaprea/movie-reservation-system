@@ -3,7 +3,6 @@ package com.mrs.app.schedule.controller;
 import com.mrs.app.schedule.dto.ScheduleDTO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.service.ScheduleService;
-import com.mrs.app.location.service.SeatService;
 import com.mrs.app.shared.enumeration.Routes;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class ScheduleService {
-    private final ScheduleDAO scheduleDao;
+    private final ScheduleDAO scheduleDAO;
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
 
@@ -31,18 +31,18 @@ public class ScheduleService {
         }
 
         Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
-        Schedule savedSchedule = scheduleDao.save(scheduleToSave);
+        Schedule savedSchedule = scheduleDAO.save(scheduleToSave);
 
         return scheduleMapper.toDTO(savedSchedule);
     }
 
-    public Schedule findById(long id) {
-        return scheduleDao
+    public ScheduleDTO findById(long id) {
+        return scheduleDAO
                 .findById(id)
+                .map(scheduleMapper::toDTO)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 
     public List<ScheduleDTO> findByFilters() {
-
     }
 }

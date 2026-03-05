@@ -23,5 +23,6 @@ public record HallCreateRequest(
 
             @Positive
             long seatTypeId
-    ) {}
+    ) {
+    }
 }

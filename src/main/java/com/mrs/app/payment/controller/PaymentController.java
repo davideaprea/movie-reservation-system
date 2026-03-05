@@ -1,7 +1,7 @@
 package com.mrs.app.payment.controller;
 
 import com.mrs.app.payment.dto.PaymentProjection;
-import com.mrs.app.booking.dto.BookingsPaymentDto;
+import com.mrs.app.payment.dto.BookingsPaymentDto;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.service.PaymentService;

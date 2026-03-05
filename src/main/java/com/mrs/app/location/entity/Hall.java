@@ -28,18 +28,4 @@ public class Hall {
             orphanRemoval = true
     )
     private List<Seat> seats;
-
-    public static Hall create() {
-        return Hall
-                .builder()
-                .status(HallStatus.AVAILABLE)
-                .build();
-    }
-
-    public static Hall createWithId(long id) {
-        return Hall
-                .builder()
-                .id(id)
-                .build();
-    }
 }

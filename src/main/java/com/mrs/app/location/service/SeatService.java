@@ -1,39 +1,24 @@
 package com.mrs.app.location.service;
 
-import com.mrs.app.location.entity.Seat;
+import com.mrs.app.location.dto.SeatGetResponse;
+import com.mrs.app.location.mapper.SeatMapper;
 import com.mrs.app.location.repository.SeatDAO;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Comparator;
 import java.util.List;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class SeatService {
-    private final SeatDAO seatDao;
+    private final SeatDAO seatDAO;
+    private final SeatMapper seatMapper;
 
-    public List<Seat> findAll(List<Long> seatIds) {
-        List<Seat> seats = seatDao.findAllByIdIn(seatIds);
-
-        if (seats.size() != seatIds.size()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found.");
-        }
-
-        seats.sort(Comparator.comparingInt(Seat::getSeatNumber));
-
-        return seats;
-    }
-
-    public List<ScheduleSeatDetails> findScheduleSeats(long scheduleId) {
-        List<ScheduleSeatDetails> scheduleSeats = seatDao.findScheduleSeats(scheduleId);
-
-        if (scheduleSeats.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found.");
-        }
-
-        return scheduleSeats;
+    public List<SeatGetResponse> findRowSeats(long hallId, long rowNumber, List<Long> seatNumbers) {
+        return seatDAO
+                .findByHallIdAndRowNumberAndSeatNumberIn(hallId, rowNumber, seatNumbers)
+                .stream()
+                .map(seatMapper::toResponse)
+                .toList();
     }
 }

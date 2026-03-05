@@ -2,15 +2,14 @@ package com.mrs.app.payment.service;
 
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.payment.constant.PaymentTimeouts;
-import com.mrs.app.booking.dto.BookingDto;
+import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.shared.dto.PayPalCapturedOrder;
 import com.mrs.app.shared.dto.PayPalOrderDto;
-import com.mrs.app.booking.dto.BookingsPaymentDto;
+import com.mrs.app.payment.dto.BookingsPaymentDto;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.repository.PaymentDao;
 import com.mrs.app.shared.dto.PayPalOrder;
 import com.mrs.app.location.entity.Seat;
-import com.mrs.app.location.service.SeatService;
 import com.mrs.app.shared.component.PaymentGateway;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,7 @@ public class PaymentService {
         Payment paymentToSave = Payment.create(payPalOrder.id(), totalPrice, loggedUserId);
         Payment savedPayment = paymentDao.save(paymentToSave);
 
-        bookingService.create(new BookingDto(
+        bookingService.create(new BookingCreateRequest(
                 selectedSeats,
                 dto.scheduleId(),
                 savedPayment.getId()

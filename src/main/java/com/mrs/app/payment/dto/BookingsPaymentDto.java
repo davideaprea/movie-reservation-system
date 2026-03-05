@@ -1,4 +1,4 @@
-package com.mrs.app.booking.dto;
+package com.mrs.app.payment.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
