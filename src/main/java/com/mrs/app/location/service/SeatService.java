@@ -14,9 +14,9 @@ public class SeatService {
     private final SeatDAO seatDAO;
     private final SeatMapper seatMapper;
 
-    public List<SeatGetResponse> findRowSeats(long hallId, long rowNumber, List<Long> seatNumbers) {
+    public List<SeatGetResponse> findAllByHallId(long hallId) {
         return seatDAO
-                .findByHallIdAndRowNumberAndSeatNumberIn(hallId, rowNumber, seatNumbers)
+                .findAllByHallId(hallId)
                 .stream()
                 .map(seatMapper::toResponse)
                 .toList();

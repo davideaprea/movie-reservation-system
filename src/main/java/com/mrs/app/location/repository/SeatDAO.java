@@ -6,9 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface SeatDAO extends CrudRepository<Seat, Long> {
-    List<Seat> findByHallIdAndRowNumberAndSeatNumberIn(
-            long hallId,
-            long rowNumber,
-            List<Long> seatNumbers
-    );
+    List<Seat> findAllByHallId(long hallId);
 }

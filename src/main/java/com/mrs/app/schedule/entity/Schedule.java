@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,8 +20,12 @@ public class Schedule {
     @Column(nullable = false)
     private Long movieId;
 
-    @Column(nullable = false)
-    private Long hallId;
+    @OneToMany(
+            mappedBy = "schedule",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ScheduleSeat> seats;
 
     @Column(nullable = false)
     private LocalDateTime startTime;

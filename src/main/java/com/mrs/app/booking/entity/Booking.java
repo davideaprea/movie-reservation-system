@@ -17,10 +17,7 @@ public class Booking {
     private Long id;
 
     @Column(nullable = false)
-    private Long rowNumber;
-
-    @Column(nullable = false)
-    private Long seatNumber;
+    private Long seatId;
 
     @Column(nullable = false)
     private Long scheduleId;

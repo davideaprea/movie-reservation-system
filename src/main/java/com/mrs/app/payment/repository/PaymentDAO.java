@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface PaymentDao extends CrudRepository<Payment, Long> {
+public interface PaymentDAO extends CrudRepository<Payment, Long> {
     @Transactional
     @Modifying
     @Query("""

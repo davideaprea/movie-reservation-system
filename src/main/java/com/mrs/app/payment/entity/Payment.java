@@ -2,7 +2,6 @@ package com.mrs.app.payment.entity;
 
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.payment.enumeration.PaymentStatus;
-import com.mrs.app.security.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,8 +31,8 @@ public class Payment {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private User user;
+    @Column(nullable = false, updatable = false)
+    private Long userId;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -48,26 +47,4 @@ public class Payment {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
-
-    public static Payment create(
-            String orderId,
-            BigDecimal price,
-            long userId
-    ) {
-        return Payment
-                .builder()
-                .orderId(orderId)
-                .price(price)
-                .user(User.createWithId(userId))
-                .createdAt(LocalDateTime.now())
-                .status(PaymentStatus.PENDING)
-                .build();
-    }
-
-    public static Payment createWithId(long id) {
-        return Payment
-                .builder()
-                .id(id)
-                .build();
-    }
 }

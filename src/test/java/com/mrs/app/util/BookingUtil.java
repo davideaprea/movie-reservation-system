@@ -4,7 +4,7 @@ import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
 import com.mrs.app.booking.repository.BookingDAO;
-import com.mrs.app.payment.repository.PaymentDao;
+import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.security.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BookingUtil {
     private final BookingDAO bookingDao;
-    private final PaymentDao paymentDao;
+    private final PaymentDAO paymentDao;
 
     public Payment createFakeBooking(long seatId, long scheduleId, long userId) {
         Payment payment = paymentDao.save(new Payment(

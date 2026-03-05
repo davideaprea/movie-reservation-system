@@ -4,7 +4,7 @@ import com.mrs.app.payment.dto.PaymentProjection;
 import com.mrs.app.payment.dto.BookingsPaymentDto;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.booking.repository.BookingDAO;
-import com.mrs.app.payment.repository.PaymentDao;
+import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.shared.dto.PayPalCapturedOrder;
 import com.mrs.app.shared.dto.PayPalOrder;
 import com.mrs.app.shared.component.PaymentGateway;
@@ -56,7 +56,7 @@ public class PaymentControllerTest {
     private BookingDAO bookingDao;
 
     @Autowired
-    private PaymentDao paymentDao;
+    private PaymentDAO paymentDao;
 
     private long userId;
 
