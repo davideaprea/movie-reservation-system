@@ -8,19 +8,14 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "bookings", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"schedule_id", "row_number", "seat_number"})
-})
+@Table(name = "bookings")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long seatId;
-
-    @Column(nullable = false)
-    private Long scheduleId;
+    @Column(nullable = false, unique = true)
+    private Long scheduleSeatId;
 
     @Column(nullable = false)
     private Long userId;

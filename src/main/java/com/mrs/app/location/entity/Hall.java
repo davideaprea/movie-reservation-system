@@ -24,7 +24,7 @@ public class Hall {
     @OneToMany(
             mappedBy = Seat.Fields.hall,
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     private List<Seat> seats;

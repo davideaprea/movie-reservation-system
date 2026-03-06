@@ -1,11 +1,11 @@
 package com.mrs.app.schedule.service;
 
-import com.mrs.app.catalog.dto.MovieDTO;
-import com.mrs.app.location.service.SeatService;
+import com.mrs.app.catalog.dto.MovieGetResponse;
+import com.mrs.app.location.service.HallService;
 import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.catalog.service.MovieService;
-import com.mrs.app.schedule.dto.ScheduleDTO;
+import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.ScheduleSeat;
@@ -26,37 +26,37 @@ public class ScheduleService {
     private final ScheduleSeatDAO scheduleSeatDAO;
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
-    private final SeatService seatService;
+    private final HallService hallService;
 
     @Transactional
-    public ScheduleDTO create(ScheduleCreateRequest dto) {
-        MovieDTO movieToSchedule = movieService.findById(dto.movieId());
+    public ScheduleGetResponse create(ScheduleCreateRequest dto) {
+        MovieGetResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
 
         if (!findByFilters().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This location is already taken.");
         }
 
-        Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
-        Schedule savedSchedule = scheduleDAO.save(scheduleToSave);
-        List<ScheduleSeat> seats = seatService
-                .findAllByHallId(dto.hallId())
+        Schedule schedule = scheduleDAO.save(scheduleMapper.toEntity(dto, scheduleEndTime));
+        List<ScheduleSeat> seats = hallService
+                .findById(dto.hallId())
+                .seats()
                 .stream()
-                .map(seat -> new ScheduleSeat(null, seat.id(), scheduleToSave))
+                .map(seat -> new ScheduleSeat(null, seat.id(), schedule))
                 .toList();
 
         scheduleSeatDAO.saveAll(seats);
 
-        return scheduleMapper.toDTO(savedSchedule);
+        return scheduleMapper.toDTO(schedule);
     }
 
-    public ScheduleDTO findById(long id) {
+    public ScheduleGetResponse findById(long id) {
         return scheduleDAO
                 .findById(id)
                 .map(scheduleMapper::toDTO)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 
-    public List<ScheduleDTO> findByFilters() {
+    public List<ScheduleGetResponse> findByFilters() {
     }
 }

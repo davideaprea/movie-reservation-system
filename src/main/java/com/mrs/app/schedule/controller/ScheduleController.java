@@ -1,6 +1,6 @@
 package com.mrs.app.schedule.controller;
 
-import com.mrs.app.schedule.dto.ScheduleDTO;
+import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.service.ScheduleService;
 import com.mrs.app.shared.enumeration.Routes;
@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Routes.SCHEDULES)
 public class ScheduleController {
     private final ScheduleService scheduleService;
-    private final SeatService seatService;
 
     @PostMapping
-    public ResponseEntity<ScheduleDTO> create(@Valid @RequestBody ScheduleCreateRequest dto) {
+    public ResponseEntity<ScheduleGetResponse> create(@Valid @RequestBody ScheduleCreateRequest dto) {
         return new ResponseEntity<>(
                 scheduleService.create(dto),
                 HttpStatus.CREATED

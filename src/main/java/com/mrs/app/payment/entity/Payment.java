@@ -1,13 +1,11 @@
 package com.mrs.app.payment.entity;
 
-import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.payment.enumeration.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -36,13 +34,6 @@ public class Payment {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @OneToMany(
-            mappedBy = Booking.Fields.payment,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<Booking> items;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

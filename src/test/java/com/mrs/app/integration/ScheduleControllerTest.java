@@ -1,6 +1,6 @@
 package com.mrs.app.integration;
 
-import com.mrs.app.schedule.dto.ScheduleDTO;
+import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.location.entity.Seat;
@@ -190,11 +190,11 @@ public class ScheduleControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        List<ScheduleDTO> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
+        List<ScheduleGetResponse> upcomingSchedules = objMapper.readValue(res, new TypeReference<>() { });
 
         Assertions.assertEquals(3, upcomingSchedules.size());
 
-        for (ScheduleDTO schedule : upcomingSchedules) {
+        for (ScheduleGetResponse schedule : upcomingSchedules) {
             Assertions.assertTrue(schedule.startTime().toLocalDate().equals(tomorrow));
         }
     }

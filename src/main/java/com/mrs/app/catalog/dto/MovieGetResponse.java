@@ -3,7 +3,7 @@ package com.mrs.app.catalog.dto;
 import java.time.Duration;
 import java.util.List;
 
-public record MovieDTO(
+public record MovieGetResponse(
         long id,
         String title,
         Duration duration,

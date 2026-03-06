@@ -1,7 +1,7 @@
 package com.mrs.app.catalog.mapper;
 
 import com.mrs.app.catalog.dto.MovieCreateRequest;
-import com.mrs.app.catalog.dto.MovieDTO;
+import com.mrs.app.catalog.dto.MovieGetResponse;
 import com.mrs.app.catalog.entity.Movie;
 import org.mapstruct.Mapper;
 
@@ -9,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface MovieMapper {
     Movie toEntity(MovieCreateRequest createRequest);
 
-    MovieDTO toDTO(Movie movie);
+    MovieGetResponse toDTO(Movie movie);
 }
