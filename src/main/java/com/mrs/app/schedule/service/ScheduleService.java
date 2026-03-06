@@ -1,10 +1,10 @@
 package com.mrs.app.schedule.service;
 
-import com.mrs.app.catalog.dto.MovieGetResponse;
-import com.mrs.app.location.service.HallService;
+import com.mrs.app.movie.dto.MovieGetResponse;
+import com.mrs.app.hall.service.HallService;
 import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
-import com.mrs.app.catalog.service.MovieService;
+import com.mrs.app.movie.service.MovieService;
 import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
@@ -34,7 +34,7 @@ public class ScheduleService {
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
 
         if (!findByFilters().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This location is already taken.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
         }
 
         Schedule schedule = scheduleDAO.save(scheduleMapper.toEntity(dto, scheduleEndTime));

@@ -1,7 +1,7 @@
 package com.mrs.app.util;
 
-import com.mrs.app.catalog.entity.Movie;
-import com.mrs.app.catalog.repository.MovieDAO;
+import com.mrs.app.movie.entity.Movie;
+import com.mrs.app.movie.repository.MovieDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,8 @@
 package com.mrs.app.util;
 
-import com.mrs.app.location.entity.Hall;
-import com.mrs.app.location.entity.Seat;
-import com.mrs.app.location.repository.HallDAO;
+import com.mrs.app.hall.entity.Hall;
+import com.mrs.app.hall.entity.Seat;
+import com.mrs.app.hall.repository.HallDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -3,7 +3,7 @@ package com.mrs.app.integration;
 import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.location.entity.Seat;
+import com.mrs.app.hall.entity.Seat;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;

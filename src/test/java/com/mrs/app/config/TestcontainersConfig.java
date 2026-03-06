@@ -13,6 +13,6 @@ public class TestcontainersConfig {
     PostgreSQLContainer<?> pgContainer() {
         final DockerImageName imageName = DockerImageName.parse("postgres:17-alpine");
 
-        return new PostgreSQLContainer<>(imageName).withDatabaseName("catalog");
+        return new PostgreSQLContainer<>(imageName).withDatabaseName("movie");
     }
 }

@@ -9,7 +9,7 @@ import com.mrs.app.payment.dto.BookingsPaymentDto;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.shared.dto.PayPalOrder;
-import com.mrs.app.location.entity.Seat;
+import com.mrs.app.hall.entity.Seat;
 import com.mrs.app.shared.component.PaymentGateway;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
