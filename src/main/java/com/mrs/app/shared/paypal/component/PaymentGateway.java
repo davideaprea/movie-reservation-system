@@ -1,6 +1,6 @@
-package com.mrs.app.shared.component;
+package com.mrs.app.shared.paypal.component;
 
-import com.mrs.app.shared.dto.*;
+import com.mrs.app.shared.paypal.dto.*;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

@@ -4,30 +4,19 @@ import com.mrs.app.payment.enumeration.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
-@NoArgsConstructor
 @Entity
-@Table(name = "payments", indexes = {
-        @Index(columnList = "status, created_at")
-})
+@Table(name = "payments")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, updatable = false)
-    private String orderId;
-
-    @Column(unique = true)
-    private String captureId;
-
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private GatewayOrder gatewayOrder;
 
     @Column(nullable = false, updatable = false)
     private Long userId;

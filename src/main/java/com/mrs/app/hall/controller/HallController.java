@@ -3,7 +3,6 @@ package com.mrs.app.hall.controller;
 import com.mrs.app.hall.dto.HallCreateRequest;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.service.HallService;
-import com.mrs.app.shared.enumeration.Routes;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

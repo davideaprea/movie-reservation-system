@@ -3,7 +3,6 @@ package com.mrs.app.movie.controller;
 import com.mrs.app.movie.dto.MovieGetResponse;
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.service.MovieService;
-import com.mrs.app.shared.enumeration.Routes;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

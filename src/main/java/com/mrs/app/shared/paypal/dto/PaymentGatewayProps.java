@@ -1,4 +1,4 @@
-package com.mrs.app.shared.dto;
+package com.mrs.app.shared.paypal.dto;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

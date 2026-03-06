@@ -3,7 +3,6 @@ package com.mrs.app.integration;
 import com.mrs.app.config.DBManager;
 import com.mrs.app.config.TestcontainersConfig;
 import com.mrs.app.security.entity.User;
-import com.mrs.app.shared.enumeration.Routes;
 import com.mrs.app.security.dto.LoginDto;
 import com.mrs.app.security.dto.RegisterDto;
 import com.mrs.app.security.repository.UserDao;

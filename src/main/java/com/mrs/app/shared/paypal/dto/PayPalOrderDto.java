@@ -1,6 +1,6 @@
-package com.mrs.app.shared.dto;
+package com.mrs.app.shared.paypal.dto;
 
-import com.mrs.app.shared.enumeration.PayPalOrderIntent;
+import com.mrs.app.shared.paypal.enumeration.PayPalOrderIntent;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
