@@ -24,6 +24,7 @@ public class Payment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Setter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
