@@ -2,12 +2,10 @@ package com.mrs.app.hall.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldNameConstants;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
-@FieldNameConstants
 @Getter
 @Entity
 @Table(name = "seats", uniqueConstraints = {
