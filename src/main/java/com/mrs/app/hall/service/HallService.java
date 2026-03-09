@@ -5,6 +5,7 @@ import com.mrs.app.hall.dto.HallGetResponse;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.mapper.HallMapper;
 import com.mrs.app.hall.repository.HallDAO;
+import com.mrs.app.shared.exception.EntityNotFondException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,6 @@ public class HallService {
         return hallDAO
                 .findById(id)
                 .map(hallMapper::toResponse)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFondException("hall", id));
     }
 }

@@ -8,12 +8,14 @@ import com.mrs.app.payment.enumeration.PaymentStatus;
 import com.mrs.app.payment.mapper.PayPalOrderMapper;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.PaymentDAO;
+import com.mrs.app.shared.exception.EntityNotFondException;
 import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -38,7 +40,7 @@ public class PaymentService {
     public PaymentResponse complete(PaymentUpdateRequest completionRequest) {
         Payment pendingPayment = paymentDAO
                 .findByIdAndUserId(completionRequest.paymentId(), completionRequest.userId())
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFondException("payment", completionRequest));
 
         if (!PaymentStatus.PENDING.equals(pendingPayment.getStatus())) {
             //throw
@@ -54,7 +56,7 @@ public class PaymentService {
                 .map(PaymentCollection::getCaptures)
                 .map(List::getFirst)
                 .map(OrdersCapture::getId)
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
 
         pendingPayment.setStatus(PaymentStatus.COMPLETED);
         pendingPayment.getGatewayOrder().setCompletionId(captureId);
@@ -65,7 +67,7 @@ public class PaymentService {
     public PaymentResponse refund(PaymentUpdateRequest updateRequest) {
         Payment payment = paymentDAO
                 .findByIdAndUserId(updateRequest.paymentId(), updateRequest.userId())
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFondException("payment", updateRequest));
 
         if (!PaymentStatus.COMPLETED.equals(payment.getStatus())) {
             //throw

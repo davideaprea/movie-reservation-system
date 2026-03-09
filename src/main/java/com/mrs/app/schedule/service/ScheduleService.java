@@ -6,12 +6,14 @@ import com.mrs.app.schedule.configuration.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
+import com.mrs.app.schedule.dto.ScheduleGetRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.SchedulesGetFilters;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
+import com.mrs.app.shared.exception.EntityNotFondException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -59,12 +61,12 @@ public class ScheduleService {
         return scheduleMapper.toDTO(schedule);
     }
 
-    public ScheduleResponse findByIdWithSeats(long id, List<Long> seatIds) {
+    public ScheduleResponse findByIdWithSeats(ScheduleGetRequest getRequest) {
         return scheduleDAO
-                .findByIdWithSeats(id, seatIds)
+                .findByIdWithSeats(getRequest.id(), getRequest.seatIds())
                 .map(scheduleMapper::toDTO)
-                .filter(schedule -> schedule.seats().size() == seatIds.size())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
+                .filter(schedule -> schedule.seats().size() == getRequest.seatIds().size())
+                .orElseThrow(() -> new EntityNotFondException("schedule", getRequest));
     }
 
     public List<ScheduleResponse> findByFilters(SchedulesGetFilters filters) {

@@ -5,10 +5,9 @@ import com.mrs.app.movie.dto.MovieGetResponse;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.mapper.MovieMapper;
 import com.mrs.app.movie.repository.MovieDAO;
+import com.mrs.app.shared.exception.EntityNotFondException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @AllArgsConstructor
 @Service
@@ -27,6 +26,6 @@ public class MovieService {
         return movieDAO
                 .findById(id)
                 .map(movieMapper::toDTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found."));
+                .orElseThrow(() -> new EntityNotFondException("movie", id));
     }
 }
