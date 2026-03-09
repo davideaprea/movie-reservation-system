@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(Routes.HALLS)
+@RequestMapping("/halls")
 public class HallController {
     private final HallService hallService;
 

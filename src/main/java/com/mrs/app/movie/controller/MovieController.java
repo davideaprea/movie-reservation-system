@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(Routes.MOVIES)
+@RequestMapping("/movies")
 public class MovieController {
     private final MovieService movieService;
 
