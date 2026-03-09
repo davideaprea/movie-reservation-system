@@ -2,10 +2,12 @@ package com.mrs.app.schedule.service;
 
 import com.mrs.app.movie.dto.MovieGetResponse;
 import com.mrs.app.hall.service.HallService;
+import com.mrs.app.schedule.configuration.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
 import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.schedule.dto.SchedulesGetFilters;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.ScheduleSeat;
@@ -28,17 +30,19 @@ public class ScheduleService {
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
     private final HallService hallService;
+    private final ScheduleSpecificationBuilder specificationBuilder;
 
     @Transactional
     public ScheduleResponse create(ScheduleCreateRequest dto) {
         MovieGetResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
+        Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
 
-        if (!findByFilters().isEmpty()) {
+        if (!findByFilters(new SchedulesGetFilters(dto.movieId(), dto.startTime(), scheduleEndTime)).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
         }
 
-        Schedule schedule = scheduleDAO.save(scheduleMapper.toEntity(dto, scheduleEndTime));
+        Schedule schedule = scheduleDAO.save(scheduleToSave);
         List<ScheduleSeat> seats = hallService
                 .findById(dto.hallId())
                 .seats()
@@ -63,6 +67,11 @@ public class ScheduleService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 
-    public List<ScheduleResponse> findByFilters() {
+    public List<ScheduleResponse> findByFilters(SchedulesGetFilters filters) {
+        return scheduleDAO
+                .findAll(specificationBuilder.fromFilters(filters))
+                .stream()
+                .map(scheduleMapper::toDTO)
+                .toList();
     }
 }
