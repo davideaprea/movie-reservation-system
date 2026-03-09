@@ -1,8 +1,7 @@
 package com.mrs.app.payment.service;
 
-import com.mrs.app.payment.constant.PaymentTimeouts;
-import com.mrs.app.payment.dto.PaymentCompletionRequest;
-import com.mrs.app.payment.dto.PaymentCreateResponse;
+import com.mrs.app.payment.dto.PaymentUpdateRequest;
+import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
@@ -12,13 +11,10 @@ import com.mrs.app.payment.repository.PaymentDAO;
 import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -28,7 +24,7 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
     private final PayPalOrderMapper payPalOrderMapper;
 
-    public PaymentCreateResponse create(PaymentCreateRequest createRequest) {
+    public PaymentResponse create(PaymentCreateRequest createRequest) {
         Order createdOrder = paymentGateway
                 .getOrdersController()
                 .createOrder(payPalOrderMapper.toCreateOrderInput(createRequest))
@@ -39,7 +35,7 @@ public class PaymentService {
         return paymentMapper.toResponse(savedPayment);
     }
 
-    public void complete(PaymentCompletionRequest completionRequest) {
+    public PaymentResponse complete(PaymentUpdateRequest completionRequest) {
         Payment pendingPayment = paymentDAO
                 .findByIdAndUserId(completionRequest.paymentId(), completionRequest.userId())
                 .orElseThrow();
@@ -51,26 +47,35 @@ public class PaymentService {
         Order capturedOrder = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
                 .Builder()
                 .id(pendingPayment.getGatewayOrder().getId())
-                .build());
+                .build()).getResult();
+        String captureId = Optional.ofNullable(capturedOrder.getPurchaseUnits())
+                .map(List::getFirst)
+                .map(PurchaseUnit::getPayments)
+                .map(PaymentCollection::getCaptures)
+                .map(List::getFirst)
+                .map(OrdersCapture::getId)
+                .orElseThrow();
+
         pendingPayment.setStatus(PaymentStatus.COMPLETED);
-        pendingPayment.getGatewayOrder().setCompletionId(capturedOrder.getPaymentSource().);
-        paymentDAO.save(pendingPayment);
+        pendingPayment.getGatewayOrder().setCompletionId(captureId);
+
+        return paymentMapper.toResponse(paymentDAO.save(pendingPayment));
     }
 
-    @Transactional
-    public void refundPayment(long paymentId, long userId) {
-        bookingService.deletePaymentBookings(paymentId);
+    public PaymentResponse refund(PaymentUpdateRequest updateRequest) {
+        Payment payment = paymentDAO
+                .findByIdAndUserId(updateRequest.paymentId(), updateRequest.userId())
+                .orElseThrow();
 
-        paymentDAO.markAsRefunded(paymentId, userId);
+        if (!PaymentStatus.COMPLETED.equals(payment.getStatus())) {
+            //throw
+        }
 
-        Payment refundablePayment = findByIdAndUserId(paymentId, userId);
+        payment.setStatus(PaymentStatus.REFUNDED);
+        paymentGateway.getPaymentsController().refundCapturedPayment(new RefundCapturedPaymentInput.Builder()
+                .captureId(payment.getGatewayOrder().getCompletionId())
+                .build());
 
-        paymentGateway.refundPayment(refundablePayment.getCaptureId());
-    }
-
-    public Payment findByIdAndUserId(long paymentId, long userId) {
-        return paymentDAO
-                .findByIdAndUserId(paymentId, userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found."));
+        return paymentMapper.toResponse(paymentDAO.save(payment));
     }
 }

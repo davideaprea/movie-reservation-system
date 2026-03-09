@@ -1,7 +1,7 @@
 package com.mrs.app.payment.mapper;
 
 import com.mrs.app.payment.dto.PaymentCreateRequest;
-import com.mrs.app.payment.dto.PaymentCreateResponse;
+import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.entity.GatewayOrder;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
-    PaymentCreateResponse toResponse(Payment payment);
+    PaymentResponse toResponse(Payment payment);
 
     default Payment toEntity(
             PaymentCreateRequest createRequest,
