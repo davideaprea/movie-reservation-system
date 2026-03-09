@@ -3,8 +3,6 @@ package com.mrs.app.hall.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @AllArgsConstructor
 @Getter
 @Entity
@@ -16,7 +14,4 @@ public class SeatType {
 
     @Column(nullable = false, unique = true, updatable = false)
     private String name;
-
-    @Column(nullable = false)
-    private BigDecimal price;
 }

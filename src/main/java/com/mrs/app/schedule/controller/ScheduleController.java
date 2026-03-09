@@ -1,6 +1,6 @@
 package com.mrs.app.schedule.controller;
 
-import com.mrs.app.schedule.dto.ScheduleGetResponse;
+import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
@@ -16,7 +16,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<ScheduleGetResponse> create(@Valid @RequestBody ScheduleCreateRequest dto) {
+    public ResponseEntity<ScheduleResponse> create(@Valid @RequestBody ScheduleCreateRequest dto) {
         return new ResponseEntity<>(
                 scheduleService.create(dto),
                 HttpStatus.CREATED

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @Getter
 @Entity
@@ -18,4 +20,7 @@ public class ScheduleSeat {
 
     @ManyToOne(optional = false)
     private Schedule schedule;
+
+    @Column(nullable = false)
+    private BigDecimal price;
 }

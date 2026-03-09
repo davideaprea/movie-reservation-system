@@ -5,7 +5,7 @@ import com.mrs.app.hall.service.HallService;
 import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
-import com.mrs.app.schedule.dto.ScheduleGetResponse;
+import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.ScheduleSeat;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class ScheduleService {
     private final HallService hallService;
 
     @Transactional
-    public ScheduleGetResponse create(ScheduleCreateRequest dto) {
+    public ScheduleResponse create(ScheduleCreateRequest dto) {
         MovieGetResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
 
@@ -42,7 +43,11 @@ public class ScheduleService {
                 .findById(dto.hallId())
                 .seats()
                 .stream()
-                .map(seat -> new ScheduleSeat(null, seat.id(), schedule))
+                .map(seat -> {
+                    BigDecimal seatPrice = dto.seatPriceOptions().get(seat.seatType().name());
+
+                    return new ScheduleSeat(null, seat.id(), schedule, seatPrice);
+                })
                 .toList();
 
         scheduleSeatDAO.saveAll(seats);
@@ -50,13 +55,14 @@ public class ScheduleService {
         return scheduleMapper.toDTO(schedule);
     }
 
-    public ScheduleGetResponse findById(long id) {
+    public ScheduleResponse findByIdWithSeats(long id, List<Long> seatIds) {
         return scheduleDAO
-                .findById(id)
+                .findByIdWithSeats(id, seatIds)
                 .map(scheduleMapper::toDTO)
+                .filter(schedule -> schedule.seats().size() == seatIds.size())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found."));
     }
 
-    public List<ScheduleGetResponse> findByFilters() {
+    public List<ScheduleResponse> findByFilters() {
     }
 }

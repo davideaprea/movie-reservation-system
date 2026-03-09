@@ -4,7 +4,9 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public record ScheduleCreateRequest(
         @Positive
@@ -14,6 +16,8 @@ public record ScheduleCreateRequest(
         long hallId,
 
         @NotNull @Future
-        LocalDateTime startTime
+        LocalDateTime startTime,
+
+        Map<String, BigDecimal> seatPriceOptions
 ) {
 }
