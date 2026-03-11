@@ -22,7 +22,7 @@ public class Hall {
     private HallStatus status;
 
     @OneToMany(
-            mappedBy = Seat.Fields.hall,
+            mappedBy = "hall",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
             orphanRemoval = true
