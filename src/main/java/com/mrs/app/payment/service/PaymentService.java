@@ -5,6 +5,7 @@ import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
+import com.mrs.app.payment.exception.PaymentGatewayException;
 import com.mrs.app.payment.mapper.PayPalOrderMapper;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.PaymentDAO;
@@ -30,10 +31,17 @@ public class PaymentService {
     private final PayPalOrderMapper payPalOrderMapper;
 
     public PaymentResponse create(PaymentCreateRequest createRequest) {
-        Order createdOrder = paymentGateway
-                .getOrdersController()
-                .createOrder(payPalOrderMapper.toCreateOrderInput(createRequest))
-                .getResult();
+        Order createdOrder;
+
+        try {
+            createdOrder = paymentGateway
+                    .getOrdersController()
+                    .createOrder(payPalOrderMapper.toCreateOrderInput(createRequest))
+                    .getResult();
+        } catch (Exception e) {
+            throw new PaymentGatewayException(e.getMessage());
+        }
+
         Payment paymentToSave = paymentMapper.toEntity(createRequest, createdOrder);
         Payment savedPayment = paymentDAO.save(paymentToSave);
 
@@ -55,10 +63,17 @@ public class PaymentService {
             ));
         }
 
-        Order capturedOrder = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
-                .Builder()
-                .id(pendingPayment.getGatewayOrder().getId())
-                .build()).getResult();
+        Order capturedOrder;
+
+        try {
+            capturedOrder = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
+                    .Builder()
+                    .id(pendingPayment.getGatewayOrder().getId())
+                    .build()).getResult();
+        } catch (Exception e) {
+            throw new PaymentGatewayException(e.getMessage());
+        }
+
         String captureId = Optional.ofNullable(capturedOrder.getPurchaseUnits())
                 .map(List::getFirst)
                 .map(PurchaseUnit::getPayments)
@@ -89,9 +104,14 @@ public class PaymentService {
         }
 
         payment.setStatus(PaymentStatus.REFUNDED);
-        paymentGateway.getPaymentsController().refundCapturedPayment(new RefundCapturedPaymentInput.Builder()
-                .captureId(payment.getGatewayOrder().getCompletionId())
-                .build());
+
+        try {
+            paymentGateway.getPaymentsController().refundCapturedPayment(new RefundCapturedPaymentInput.Builder()
+                    .captureId(payment.getGatewayOrder().getCompletionId())
+                    .build());
+        } catch (Exception e) {
+            throw new PaymentGatewayException(e.getMessage());
+        }
 
         return paymentMapper.toResponse(paymentDAO.save(payment));
     }
