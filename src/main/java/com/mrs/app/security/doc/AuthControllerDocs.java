@@ -1,15 +1,17 @@
 package com.mrs.app.security.doc;
 
-import com.mrs.app.security.dto.LoginDto;
-import com.mrs.app.security.dto.RegisterDto;
-import com.mrs.app.security.dto.RegisterResponse;
+import com.mrs.app.security.dto.LoginCreateRequest;
+import com.mrs.app.security.dto.UserCreateRequest;
+import com.mrs.app.security.dto.UserCreateResponse;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
+@Tag(name = "Auth")
 public interface AuthControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(
@@ -17,7 +19,7 @@ public interface AuthControllerDocs {
                     description = "User registered successfully.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RegisterResponse.class)
+                            schema = @Schema(implementation = UserCreateResponse.class)
                     )
             ),
             @ApiResponse(
@@ -30,7 +32,7 @@ public interface AuthControllerDocs {
                     content = @Content
             )
     })
-    ResponseEntity<RegisterResponse> register(RegisterDto dto);
+    ResponseEntity<UserCreateResponse> register(UserCreateRequest dto);
 
     @ApiResponses(value = {
             @ApiResponse(
@@ -53,5 +55,5 @@ public interface AuthControllerDocs {
                     content = @Content
             )
     })
-    ResponseEntity<Void> login(LoginDto dto);
+    ResponseEntity<Void> login(LoginCreateRequest dto);
 }

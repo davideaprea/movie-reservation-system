@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScheduleSpecificationBuilder {
     public Specification<Schedule> fromFilters(SchedulesGetFilters filters) {
-        Specification<Schedule> finalSpecification = Specification.where(null);
+        Specification<Schedule> finalSpecification = Specification.allOf();
 
         if (filters.movieId() != null) {
             finalSpecification = finalSpecification.and((
