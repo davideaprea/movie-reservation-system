@@ -13,12 +13,13 @@ import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
+import com.mrs.app.shared.exception.ConflictingEntityException;
+import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,9 +40,16 @@ public class ScheduleService {
         MovieGetResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
         Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
+        List<ScheduleResponse> conflictingSchedules = findByFilters(new SchedulesGetFilters(dto.movieId(), dto.startTime(), scheduleEndTime));
 
-        if (!findByFilters(new SchedulesGetFilters(dto.movieId(), dto.startTime(), scheduleEndTime)).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This hall is already taken.");
+        if (!conflictingSchedules.isEmpty()) {
+            ConflictingResourceError error = new ConflictingResourceError(
+                    conflictingSchedules,
+                    List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId),
+                    "This hall is already taken."
+            );
+
+            throw new ConflictingEntityException(error);
         }
 
         Schedule schedule = scheduleDAO.save(scheduleToSave);
@@ -66,7 +74,10 @@ public class ScheduleService {
                 .findByIdWithSeats(getRequest.id(), getRequest.seatIds())
                 .map(scheduleMapper::toDTO)
                 .filter(schedule -> schedule.seats().size() == getRequest.seatIds().size())
-                .orElseThrow(() -> new EntityNotFondException("schedule", getRequest));
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Schedule.class.getSimpleName(),
+                        getRequest
+                )));
     }
 
     public List<ScheduleResponse> findByFilters(SchedulesGetFilters filters) {

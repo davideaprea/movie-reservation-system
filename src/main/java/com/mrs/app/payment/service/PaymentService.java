@@ -8,7 +8,10 @@ import com.mrs.app.payment.enumeration.PaymentStatus;
 import com.mrs.app.payment.mapper.PayPalOrderMapper;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.PaymentDAO;
+import com.mrs.app.shared.exception.DomainRequirementError;
+import com.mrs.app.shared.exception.DomainRequirementException;
 import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
@@ -40,10 +43,16 @@ public class PaymentService {
     public PaymentResponse complete(PaymentUpdateRequest completionRequest) {
         Payment pendingPayment = paymentDAO
                 .findByIdAndUserId(completionRequest.paymentId(), completionRequest.userId())
-                .orElseThrow(() -> new EntityNotFondException("payment", completionRequest));
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Payment.class.getSimpleName(),
+                        completionRequest
+                )));
 
         if (!PaymentStatus.PENDING.equals(pendingPayment.getStatus())) {
-            //throw
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "The selected payment is already closed.",
+                    PaymentUpdateRequest.Fields.paymentId
+            ));
         }
 
         Order capturedOrder = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
@@ -67,10 +76,16 @@ public class PaymentService {
     public PaymentResponse refund(PaymentUpdateRequest updateRequest) {
         Payment payment = paymentDAO
                 .findByIdAndUserId(updateRequest.paymentId(), updateRequest.userId())
-                .orElseThrow(() -> new EntityNotFondException("payment", updateRequest));
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Payment.class.getSimpleName(),
+                        updateRequest
+                )));
 
         if (!PaymentStatus.COMPLETED.equals(payment.getStatus())) {
-            //throw
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "The selected payment is not completed.",
+                    PaymentUpdateRequest.Fields.paymentId
+            ));
         }
 
         payment.setStatus(PaymentStatus.REFUNDED);

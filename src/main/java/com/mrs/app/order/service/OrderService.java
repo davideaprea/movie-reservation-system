@@ -10,8 +10,11 @@ import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.service.PaymentService;
+import com.mrs.app.schedule.dto.ScheduleGetRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
+import com.mrs.app.shared.exception.DomainRequirementError;
+import com.mrs.app.shared.exception.DomainRequirementException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,10 +33,13 @@ public class OrderService {
 
     @Transactional
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
-        ScheduleResponse schedule = scheduleService.findByIdWithSeats(createRequest.scheduleId(), createRequest.seatIds());
+        ScheduleResponse schedule = scheduleService.findByIdWithSeats(new ScheduleGetRequest(createRequest.scheduleId(), createRequest.seatIds()));
 
         if (LocalDateTime.now().isAfter(schedule.startTime())) {
-            //throw
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "The selected schedule is already over.",
+                    OrderCreateRequest.Fields.scheduleId
+            ));
         }
 
         BigDecimal totalPrice = schedule.seats().stream()

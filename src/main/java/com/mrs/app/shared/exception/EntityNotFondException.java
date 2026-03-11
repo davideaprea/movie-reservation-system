@@ -1,11 +1,14 @@
 package com.mrs.app.shared.exception;
 
-public class EntityNotFondException extends RuntimeException {
-    public EntityNotFondException(String entityName, Record usedParams) {
-        super("Couldn't find any %s with the given parameters: %s".formatted(entityName, usedParams));
-    }
+import lombok.Getter;
 
-    public EntityNotFondException(String entityName, Long id) {
-        super("Couldn't find any %s with the given id: %s".formatted(entityName, id));
+@Getter
+public class EntityNotFondException extends RuntimeException {
+    private final EntityNotFoundError error;
+
+    public EntityNotFondException(EntityNotFoundError error) {
+        super("Couldn't find any entity with the given parameters. Details: %s".formatted(error));
+
+        this.error = error;
     }
 }
