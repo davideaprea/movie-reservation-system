@@ -10,8 +10,9 @@ import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.service.PaymentService;
-import com.mrs.app.schedule.dto.ScheduleGetRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.schedule.dto.ScheduleSeatResponse;
+import com.mrs.app.schedule.service.ScheduleSeatService;
 import com.mrs.app.schedule.service.ScheduleService;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
@@ -30,10 +31,22 @@ public class OrderService {
     private final BookingService bookingService;
     private final PaymentService paymentService;
     private final ScheduleService scheduleService;
+    private final ScheduleSeatService scheduleSeatService;
 
     @Transactional
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
-        ScheduleResponse schedule = scheduleService.findByIdWithSeats(new ScheduleGetRequest(createRequest.scheduleId(), createRequest.seatIds()));
+        ScheduleResponse schedule = scheduleService.findById(createRequest.scheduleId());
+        List<ScheduleSeatResponse> selectedSeats = scheduleSeatService.findAllByIds(createRequest.seatIds());
+        boolean areSeatsFromADifferentSchedule = selectedSeats
+                .stream()
+                .anyMatch(seat -> seat.scheduleId() != createRequest.scheduleId());
+
+        if (areSeatsFromADifferentSchedule) {
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "All seats must be from the same selected schedule.",
+                    OrderCreateRequest.Fields.seatIds
+            ));
+        }
 
         if (LocalDateTime.now().isAfter(schedule.startTime())) {
             throw new DomainRequirementException(new DomainRequirementError(
@@ -42,9 +55,7 @@ public class OrderService {
             ));
         }
 
-        BigDecimal totalPrice = schedule.seats().stream()
-                .map(ScheduleResponse.SeatDTO::price)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalPrice = selectedSeats.stream().map(ScheduleSeatResponse::price).reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
         Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), LocalDateTime.now()));
         List<BookingCreateResponse> bookings = createRequest.seatIds().stream()

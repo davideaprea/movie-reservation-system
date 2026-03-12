@@ -16,7 +16,10 @@ public class ScheduleSeat {
     private Long id;
 
     @Column(nullable = false)
-    private Long seatId;
+    private Long seatNumber;
+
+    @Column(nullable = false)
+    private Long rowNumber;
 
     @ManyToOne(optional = false)
     private Schedule schedule;

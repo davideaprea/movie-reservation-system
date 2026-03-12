@@ -1,0 +1,12 @@
+package com.mrs.app.schedule.dto;
+
+import java.math.BigDecimal;
+
+public record ScheduleSeatResponse(
+        long id,
+        long scheduleId,
+        BigDecimal price,
+        long seatNumber,
+        long rowNumber
+) {
+}
