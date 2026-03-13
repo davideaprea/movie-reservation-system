@@ -2,7 +2,7 @@ package com.mrs.app.schedule.service;
 
 import com.mrs.app.movie.dto.MovieGetResponse;
 import com.mrs.app.hall.service.HallService;
-import com.mrs.app.schedule.configuration.ScheduleSpecificationBuilder;
+import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
@@ -33,7 +33,6 @@ public class ScheduleService {
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
     private final HallService hallService;
-    private final ScheduleSpecificationBuilder specificationBuilder;
 
     @Transactional
     public ScheduleResponse create(ScheduleCreateRequest dto) {
@@ -82,7 +81,7 @@ public class ScheduleService {
 
     public List<ScheduleResponse> findByFilters(SchedulesGetFilters filters) {
         return scheduleDAO
-                .findAll(specificationBuilder.fromFilters(filters))
+                .findAll(ScheduleSpecificationBuilder.fromFilters(filters))
                 .stream()
                 .map(scheduleMapper::toDTO)
                 .toList();
