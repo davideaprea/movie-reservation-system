@@ -7,7 +7,6 @@ import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.OrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.entity.Order;
-import com.mrs.app.order.enumeration.OrderStatus;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.service.PaymentService;
@@ -48,7 +47,7 @@ public class OrderService {
                 .map(ScheduleResponse.SeatDTO::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
-        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), LocalDateTime.now(), OrderStatus.CREATED));
+        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), LocalDateTime.now()));
         List<BookingResponse> bookings = createRequest.seatIds().stream()
                 .map(seatId -> bookingService.create(new BookingCreateRequest(seatId, createRequest.userId())))
                 .toList();
