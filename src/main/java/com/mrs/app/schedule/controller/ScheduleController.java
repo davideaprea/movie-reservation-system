@@ -27,7 +27,7 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findByFilters(@ModelAttribute SchedulesGetFilters filters) {
+    public ResponseEntity<List<ScheduleResponse>> findByFilters(@ModelAttribute @Valid SchedulesGetFilters filters) {
         return new ResponseEntity<>(scheduleService.findByFilters(filters), HttpStatus.OK);
     }
 }
