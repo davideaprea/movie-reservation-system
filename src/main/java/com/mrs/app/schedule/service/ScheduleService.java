@@ -3,7 +3,6 @@ package com.mrs.app.schedule.service;
 import com.mrs.app.movie.dto.MovieGetResponse;
 import com.mrs.app.hall.service.HallService;
 import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
-import com.mrs.app.schedule.dao.ScheduleSeatDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
 import com.mrs.app.schedule.dto.ScheduleGetRequest;
@@ -29,7 +28,6 @@ import java.util.List;
 @Service
 public class ScheduleService {
     private final ScheduleDAO scheduleDAO;
-    private final ScheduleSeatDAO scheduleSeatDAO;
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
     private final HallService hallService;
@@ -51,19 +49,16 @@ public class ScheduleService {
             throw new ConflictingEntityException(error);
         }
 
-        Schedule schedule = scheduleDAO.save(scheduleToSave);
-        List<ScheduleSeat> seats = hallService
+        hallService
                 .findById(dto.hallId())
                 .seats()
-                .stream()
-                .map(seat -> {
+                .forEach(seat -> {
                     BigDecimal seatPrice = dto.seatPriceOptions().get(seat.seatType().name());
 
-                    return new ScheduleSeat(null, seat.id(), schedule, seatPrice);
-                })
-                .toList();
+                    scheduleToSave.addSeat(new ScheduleSeat(null, seat.id(), scheduleToSave, seatPrice));
+                });
 
-        scheduleSeatDAO.saveAll(seats);
+        Schedule schedule = scheduleDAO.save(scheduleToSave);
 
         return scheduleMapper.toDTO(schedule);
     }

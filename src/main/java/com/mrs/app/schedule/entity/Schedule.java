@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @FieldNameConstants
@@ -34,4 +35,12 @@ public class Schedule {
 
     @Column(nullable = false)
     private LocalDateTime endTime;
+
+    public void addSeat(ScheduleSeat seat) {
+        if (seats == null) {
+            seats = new ArrayList<>();
+        }
+
+        seats.add(seat);
+    }
 }
