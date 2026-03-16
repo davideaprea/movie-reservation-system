@@ -1,7 +1,7 @@
 package com.mrs.app.order.service;
 
 import com.mrs.app.booking.dto.BookingCreateRequest;
-import com.mrs.app.booking.dto.BookingCreateResponse;
+import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.OrderCreateRequest;
@@ -47,7 +47,7 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
         Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), LocalDateTime.now()));
-        List<BookingCreateResponse> bookings = createRequest.seatIds().stream()
+        List<BookingResponse> bookings = createRequest.seatIds().stream()
                 .map(seatId -> bookingService.create(new BookingCreateRequest(seatId, createRequest.userId())))
                 .toList();
 
