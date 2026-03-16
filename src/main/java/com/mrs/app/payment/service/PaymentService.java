@@ -68,7 +68,7 @@ public class PaymentService {
         try {
             capturedOrder = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
                     .Builder()
-                    .id(pendingPayment.getGatewayOrder().getId())
+                    .id(pendingPayment.getGatewayOrder().getOrderId())
                     .build()).getResult();
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());

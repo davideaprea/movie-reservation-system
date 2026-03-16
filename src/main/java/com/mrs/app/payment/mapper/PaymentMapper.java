@@ -25,7 +25,6 @@ public interface PaymentMapper {
                         null,
                         createRequest.totalPrice()
                 ),
-                createRequest.userId(),
                 LocalDateTime.now(),
                 PaymentStatus.PENDING
         );

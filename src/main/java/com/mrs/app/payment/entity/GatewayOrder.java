@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Embeddable
 public class GatewayOrder {
     @Column(unique = true, nullable = false, updatable = false)
-    private String id;
+    private String orderId;
 
     @Setter
     @Column(unique = true)

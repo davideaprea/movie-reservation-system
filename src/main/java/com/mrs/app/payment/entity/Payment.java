@@ -19,9 +19,6 @@ public class Payment {
     private GatewayOrder gatewayOrder;
 
     @Column(nullable = false, updatable = false)
-    private Long userId;
-
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Setter

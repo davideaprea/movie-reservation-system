@@ -15,9 +15,10 @@ import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,7 +32,7 @@ public class OrderService {
     private final PaymentService paymentService;
     private final ScheduleService scheduleService;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
         ScheduleResponse schedule = scheduleService.findById(new ScheduleGetRequest(createRequest.scheduleId(), createRequest.seatIds()));
 
