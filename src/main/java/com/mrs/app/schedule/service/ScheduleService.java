@@ -64,7 +64,7 @@ public class ScheduleService {
         return scheduleMapper.toDTO(schedule);
     }
 
-    public ScheduleResponse findByIdWithSeats(ScheduleGetRequest getRequest) {
+    public ScheduleResponse findById(ScheduleGetRequest getRequest) {
         return scheduleDAO
                 .findByIdWithSeats(getRequest.id(), getRequest.seatIds())
                 .map(scheduleMapper::toDTO)
@@ -72,6 +72,16 @@ public class ScheduleService {
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Schedule.class.getSimpleName(),
                         getRequest
+                )));
+    }
+
+    public ScheduleResponse findById(long id) {
+        return scheduleDAO
+                .findById(id)
+                .map(scheduleMapper::toDTO)
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Schedule.class.getSimpleName(),
+                        Map.of("id", id)
                 )));
     }
 

@@ -33,7 +33,7 @@ public class OrderService {
 
     @Transactional
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
-        ScheduleResponse schedule = scheduleService.findByIdWithSeats(new ScheduleGetRequest(createRequest.scheduleId(), createRequest.seatIds()));
+        ScheduleResponse schedule = scheduleService.findById(new ScheduleGetRequest(createRequest.scheduleId(), createRequest.seatIds()));
 
         if (LocalDateTime.now().isAfter(schedule.startTime())) {
             throw new DomainRequirementException(new DomainRequirementError(

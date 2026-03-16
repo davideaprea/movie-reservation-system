@@ -20,14 +20,16 @@ public class ScheduleController {
 
     @PostMapping
     public ResponseEntity<ScheduleResponse> create(@Valid @RequestBody ScheduleCreateRequest dto) {
-        return new ResponseEntity<>(
-                scheduleService.create(dto),
-                HttpStatus.CREATED
-        );
+        return new ResponseEntity<>(scheduleService.create(dto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<ScheduleResponse>> findByFilters(@ModelAttribute @Valid SchedulesGetFilters filters) {
         return new ResponseEntity<>(scheduleService.findByFilters(filters), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduleResponse> findById(@PathVariable long id) {
+        return new ResponseEntity<>(scheduleService.findById(id), HttpStatus.OK);
     }
 }
