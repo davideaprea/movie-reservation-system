@@ -47,11 +47,11 @@ public class OrderService {
                 .map(ScheduleResponse.SeatDTO::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
-        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), LocalDateTime.now()));
+        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId()));
         List<BookingResponse> bookings = createRequest.seatIds().stream()
                 .map(seatId -> bookingService.create(new BookingCreateRequest(seatId, createRequest.userId())))
                 .toList();
 
-        return new OrderCreateResponse(order.getId(), order.getCreatedAt(), bookings, payment);
+        return new OrderCreateResponse(order.getId(), bookings, payment);
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 
 public record OrderCreateResponse(
         long id,
-        LocalDateTime createdAt,
         List<BookingResponse> bookings,
         PaymentResponse payment
 ) {
