@@ -1,6 +1,5 @@
 package com.mrs.app.payment.service;
 
-import com.mrs.app.payment.dto.PaymentUpdateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.entity.Payment;
@@ -19,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -48,18 +48,18 @@ public class PaymentService {
         return paymentMapper.toResponse(savedPayment);
     }
 
-    public PaymentResponse complete(PaymentUpdateRequest completionRequest) {
+    public PaymentResponse complete(long id) {
         Payment pendingPayment = paymentDAO
-                .findByIdAndUserId(completionRequest.paymentId(), completionRequest.userId())
+                .findById(id)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Payment.class.getSimpleName(),
-                        completionRequest
+                        Map.of("id", id)
                 )));
 
         if (!PaymentStatus.PENDING.equals(pendingPayment.getStatus())) {
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected payment is already closed.",
-                    PaymentUpdateRequest.Fields.paymentId
+                    "id"
             ));
         }
 
@@ -88,18 +88,18 @@ public class PaymentService {
         return paymentMapper.toResponse(paymentDAO.save(pendingPayment));
     }
 
-    public PaymentResponse refund(PaymentUpdateRequest updateRequest) {
+    public PaymentResponse refund(long id) {
         Payment payment = paymentDAO
-                .findByIdAndUserId(updateRequest.paymentId(), updateRequest.userId())
+                .findById(id)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Payment.class.getSimpleName(),
-                        updateRequest
+                        Map.of("id", id)
                 )));
 
         if (!PaymentStatus.COMPLETED.equals(payment.getStatus())) {
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected payment is not completed.",
-                    PaymentUpdateRequest.Fields.paymentId
+                    "id"
             ));
         }
 
