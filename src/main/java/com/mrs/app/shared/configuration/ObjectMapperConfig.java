@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/main/java/com/mrs/app/config/ObjectMapperConfig.java
-package com.mrs.app.config;
-========
 package com.mrs.app.shared.configuration;
->>>>>>>> refactor:src/main/java/com/mrs/app/shared/configuration/ObjectMapperConfig.java
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
