@@ -1,5 +1,6 @@
 package com.mrs.app.order.entity;
 
+import com.mrs.app.order.enumeration.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +24,7 @@ public class Order {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private OrderStatus status;
 }
