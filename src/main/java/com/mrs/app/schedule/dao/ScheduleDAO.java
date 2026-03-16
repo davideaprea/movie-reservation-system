@@ -17,4 +17,6 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, JpaSpecifica
                 AND se.seatId IN :seatIds
             """)
     Optional<Schedule> findByIdWithSeats(long id, List<Long> seatIds);
+
+    long deleteById(long id);
 }

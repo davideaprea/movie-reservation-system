@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Service
@@ -80,5 +81,17 @@ public class ScheduleService {
                 .stream()
                 .map(scheduleMapper::toDTO)
                 .toList();
+    }
+
+    @Transactional
+    public void deleteById(long id) {
+        long deleteCount = scheduleDAO.deleteById(id);
+
+        if (deleteCount == 0) {
+            throw new EntityNotFondException(new EntityNotFoundError(
+                    Schedule.class.getSimpleName(),
+                    Map.of("id", id)
+            ));
+        }
     }
 }
