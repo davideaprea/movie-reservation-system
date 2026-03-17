@@ -5,7 +5,6 @@ import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
 import com.mrs.app.payment.exception.PaymentGatewayException;
-import com.mrs.app.payment.mapper.PayPalOrderMapper;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.payment.util.PayPalOrderUtils;
@@ -17,7 +16,6 @@ import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -28,7 +26,6 @@ public class PaymentService {
     private final PaypalServerSdkClient paymentGateway;
     private final PaymentDAO paymentDAO;
     private final PaymentMapper paymentMapper;
-    private final PayPalOrderMapper payPalOrderMapper;
 
     public PaymentResponse create(PaymentCreateRequest createRequest) {
         Order createdOrder;
@@ -36,7 +33,7 @@ public class PaymentService {
         try {
             createdOrder = paymentGateway
                     .getOrdersController()
-                    .createOrder(payPalOrderMapper.toCreateOrderInput(createRequest))
+                    .createOrder(paymentMapper.toCreateOrderInput(createRequest))
                     .getResult();
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());
@@ -48,20 +45,9 @@ public class PaymentService {
         return paymentMapper.toResponse(savedPayment);
     }
 
-    @Transactional
     public PaymentResponse complete(long id) {
         Payment pendingPayment = findById(id);
-        Order order = capture(pendingPayment);
-        String captureId = PayPalOrderUtils
-                .extractCaptureIdFromOrder(order)
-                .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
 
-        saveCompletionId(pendingPayment, captureId);
-
-        return paymentMapper.toResponse(pendingPayment);
-    }
-
-    private Order capture(Payment pendingPayment) {
         if (!PaymentStatus.PENDING.equals(pendingPayment.getStatus())) {
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected payment is already closed.",
@@ -69,21 +55,25 @@ public class PaymentService {
             ));
         }
 
+        Order order;
+
         try {
-            return paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
+            order = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
                     .Builder()
                     .id(pendingPayment.getGatewayOrder().getOrderId())
                     .build()).getResult();
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());
         }
-    }
 
-    private void saveCompletionId(Payment payment, String completionId) {
-        payment.setStatus(PaymentStatus.COMPLETED);
-        payment.getGatewayOrder().setCompletionId(completionId);
+        String captureId = PayPalOrderUtils
+                .extractCaptureIdFromOrder(order)
+                .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
 
-        paymentMapper.toResponse(paymentDAO.save(payment));
+        pendingPayment.setStatus(PaymentStatus.COMPLETED);
+        pendingPayment.getGatewayOrder().setCompletionId(captureId);
+
+        return paymentMapper.toResponse(paymentDAO.save(pendingPayment));
     }
 
     public PaymentResponse refund(long id) {
