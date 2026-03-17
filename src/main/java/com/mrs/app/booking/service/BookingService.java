@@ -8,8 +8,6 @@ import com.mrs.app.booking.repository.BookingDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @AllArgsConstructor
 @Service
 public class BookingService {
@@ -23,10 +21,7 @@ public class BookingService {
         return bookingMapper.toResponse(savedBooking);
     }
 
-    public List<BookingResponse> findByScheduleId(long scheduleId) {
-        return bookingDAO.findAllByScheduleId(scheduleId)
-                .stream()
-                .map(bookingMapper::toResponse)
-                .toList();
+    public void deleteByOrderId(long orderId) {
+        bookingDAO.deleteByOrderId(orderId);
     }
 }

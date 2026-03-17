@@ -49,9 +49,9 @@ public class OrderService {
                 .map(ScheduleResponse.SeatDTO::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
-        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId()));
+        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), createRequest.scheduleId()));
         List<BookingResponse> bookings = createRequest.seatIds().stream()
-                .map(seatId -> bookingService.create(new BookingCreateRequest(seatId, createRequest.userId())))
+                .map(seatId -> bookingService.create(new BookingCreateRequest(seatId, order.getId())))
                 .toList();
 
         return new OrderCreateResponse(order.getId(), bookings, payment);
@@ -63,6 +63,27 @@ public class OrderService {
                 .filter(o -> o.getUserId() == request.userId())
                 .orElseThrow();
         PaymentResponse payment = paymentService.complete(order.getPaymentId());
+
+        return new OrderUpdateResponse(order.getId(), order.getUserId(), payment);
+    }
+
+    public OrderUpdateResponse cancel(OrderUpdateRequest request) {
+        Order order = orderDAO
+                .findById(request.orderId())
+                .filter(o -> o.getUserId() == request.userId())
+                .orElseThrow();
+        ScheduleResponse schedule = scheduleService.findById(order.getPaymentId());
+
+        if (LocalDateTime.now().isAfter(schedule.startTime())) {
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "The selected schedule is already over.",
+                    "orderId"
+            ));
+        }
+
+        bookingService.deleteByOrderId(order.getId());
+
+        PaymentResponse payment = paymentService.refund(order.getPaymentId());
 
         return new OrderUpdateResponse(order.getId(), order.getUserId(), payment);
     }

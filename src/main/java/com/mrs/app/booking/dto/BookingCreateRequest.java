@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Positive;
 
 public record BookingCreateRequest(
         @Positive
-        long scheduleId,
+        long orderId,
 
         @Positive
         long scheduleSeatId

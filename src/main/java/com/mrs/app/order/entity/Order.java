@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @AllArgsConstructor
 @Entity
@@ -20,4 +18,7 @@ public class Order {
 
     @Column(nullable = false)
     private Long userId;
+
+    @Column(nullable = false)
+    private Long scheduleId;
 }

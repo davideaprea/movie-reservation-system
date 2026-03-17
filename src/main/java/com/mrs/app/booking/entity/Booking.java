@@ -14,7 +14,7 @@ public class Booking {
     private Long id;
 
     @Column(nullable = false)
-    private Long scheduleId;
+    private Long orderId;
 
     @Column(nullable = false, unique = true)
     private Long scheduleSeatId;
