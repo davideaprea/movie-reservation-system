@@ -8,6 +8,7 @@ import com.mrs.app.payment.exception.PaymentGatewayException;
 import com.mrs.app.payment.mapper.PayPalOrderMapper;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.PaymentDAO;
+import com.mrs.app.payment.util.PayPalOrderUtils;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
 import com.mrs.app.shared.exception.EntityNotFondException;
@@ -16,11 +17,10 @@ import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -48,14 +48,20 @@ public class PaymentService {
         return paymentMapper.toResponse(savedPayment);
     }
 
+    @Transactional
     public PaymentResponse complete(long id) {
-        Payment pendingPayment = paymentDAO
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
-                        Payment.class.getSimpleName(),
-                        Map.of("id", id)
-                )));
+        Payment pendingPayment = findById(id);
+        Order order = capture(pendingPayment);
+        String captureId = PayPalOrderUtils
+                .extractCaptureIdFromOrder(order)
+                .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
 
+        saveCompletionId(pendingPayment, captureId);
+
+        return paymentMapper.toResponse(pendingPayment);
+    }
+
+    private Order capture(Payment pendingPayment) {
         if (!PaymentStatus.PENDING.equals(pendingPayment.getStatus())) {
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected payment is already closed.",
@@ -63,38 +69,25 @@ public class PaymentService {
             ));
         }
 
-        Order capturedOrder;
-
         try {
-            capturedOrder = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
+            return paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
                     .Builder()
                     .id(pendingPayment.getGatewayOrder().getOrderId())
                     .build()).getResult();
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());
         }
+    }
 
-        String captureId = Optional.ofNullable(capturedOrder.getPurchaseUnits())
-                .map(List::getFirst)
-                .map(PurchaseUnit::getPayments)
-                .map(PaymentCollection::getCaptures)
-                .map(List::getFirst)
-                .map(OrdersCapture::getId)
-                .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
+    private void saveCompletionId(Payment payment, String completionId) {
+        payment.setStatus(PaymentStatus.COMPLETED);
+        payment.getGatewayOrder().setCompletionId(completionId);
 
-        pendingPayment.setStatus(PaymentStatus.COMPLETED);
-        pendingPayment.getGatewayOrder().setCompletionId(captureId);
-
-        return paymentMapper.toResponse(paymentDAO.save(pendingPayment));
+        paymentMapper.toResponse(paymentDAO.save(payment));
     }
 
     public PaymentResponse refund(long id) {
-        Payment payment = paymentDAO
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
-                        Payment.class.getSimpleName(),
-                        Map.of("id", id)
-                )));
+        Payment payment = findById(id);
 
         if (!PaymentStatus.COMPLETED.equals(payment.getStatus())) {
             throw new DomainRequirementException(new DomainRequirementError(
@@ -114,5 +107,14 @@ public class PaymentService {
         }
 
         return paymentMapper.toResponse(paymentDAO.save(payment));
+    }
+
+    private Payment findById(long id) {
+        return paymentDAO
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Payment.class.getSimpleName(),
+                        Map.of("id", id)
+                )));
     }
 }

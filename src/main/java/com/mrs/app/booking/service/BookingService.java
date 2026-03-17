@@ -6,23 +6,35 @@ import com.mrs.app.booking.mapper.BookingMapper;
 import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.repository.BookingDAO;
-import com.mrs.app.shared.exception.EntityNotFondException;
-import com.mrs.app.shared.exception.EntityNotFoundError;
+import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.schedule.service.ScheduleService;
+import com.mrs.app.shared.exception.DomainRequirementError;
+import com.mrs.app.shared.exception.DomainRequirementException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Map;
 
 @AllArgsConstructor
 @Service
 public class BookingService {
     private final BookingDAO bookingDAO;
     private final BookingMapper bookingMapper;
+    private final ScheduleService scheduleService;
 
     @Transactional
     public BookingResponse create(BookingCreateRequest createRequest) {
+        ScheduleResponse schedule = scheduleService.findById(createRequest.scheduleId());
+
+        if (LocalDateTime.now().isAfter(schedule.startTime())) {
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "The selected schedule is already over.",
+                    "scheduleId"
+            ));
+        }
+
         Booking bookingToSave = new Booking(null, new ArrayList<>(), createRequest.scheduleId());
 
         createRequest.scheduleSeatIds().forEach(seatId -> bookingToSave.addSeatReservation(new SeatReservation(null, seatId, bookingToSave)));
@@ -34,13 +46,16 @@ public class BookingService {
 
     @Transactional
     public void deleteById(long id) {
-        long deleteCount = bookingDAO.deleteById(id);
+        Booking booking = bookingDAO.findById(id).orElseThrow();
+        ScheduleResponse schedule = scheduleService.findById(booking.getScheduleId());
 
-        if (deleteCount == 0) {
-            throw new EntityNotFondException(new EntityNotFoundError(
-                    Booking.class.getSimpleName(),
-                    Map.of("id", id)
+        if (LocalDateTime.now().isAfter(schedule.startTime())) {
+            throw new DomainRequirementException(new DomainRequirementError(
+                    "The selected schedule is already over.",
+                    "scheduleId"
             ));
         }
+
+        bookingDAO.deleteById(id);
     }
 }
