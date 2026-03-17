@@ -1,10 +1,11 @@
 package com.mrs.app.payment.service;
 
+import com.mrs.app.payment.component.PaymentGateway;
+import com.mrs.app.payment.dto.PaymentGatewayOrderRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
-import com.mrs.app.payment.exception.PaymentGatewayException;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.payment.util.PayPalOrderUtils;
@@ -12,7 +13,6 @@ import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
-import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,22 +23,15 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 @Service
 public class PaymentService {
-    private final PaypalServerSdkClient paymentGateway;
+    private final PaymentGateway paymentGateway;
     private final PaymentDAO paymentDAO;
     private final PaymentMapper paymentMapper;
 
     public PaymentResponse create(PaymentCreateRequest createRequest) {
-        Order createdOrder;
-
-        try {
-            createdOrder = paymentGateway
-                    .getOrdersController()
-                    .createOrder(paymentMapper.toCreateOrderInput(createRequest))
-                    .getResult();
-        } catch (Exception e) {
-            throw new PaymentGatewayException(e.getMessage());
-        }
-
+        Order createdOrder = paymentGateway.createOrder(new PaymentGatewayOrderRequest(
+                createRequest.totalPrice(),
+                "EUR"
+        ));
         Payment paymentToSave = paymentMapper.toEntity(createRequest, createdOrder);
         Payment savedPayment = paymentDAO.save(paymentToSave);
 
@@ -55,17 +48,7 @@ public class PaymentService {
             ));
         }
 
-        Order order;
-
-        try {
-            order = paymentGateway.getOrdersController().captureOrder(new CaptureOrderInput
-                    .Builder()
-                    .id(pendingPayment.getGatewayOrder().getOrderId())
-                    .build()).getResult();
-        } catch (Exception e) {
-            throw new PaymentGatewayException(e.getMessage());
-        }
-
+        Order order = paymentGateway.completeOrder(pendingPayment.getGatewayOrder().getOrderId());
         String captureId = PayPalOrderUtils
                 .extractCaptureIdFromOrder(order)
                 .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
@@ -87,14 +70,7 @@ public class PaymentService {
         }
 
         payment.setStatus(PaymentStatus.REFUNDED);
-
-        try {
-            paymentGateway.getPaymentsController().refundCapturedPayment(new RefundCapturedPaymentInput.Builder()
-                    .captureId(payment.getGatewayOrder().getCompletionId())
-                    .build());
-        } catch (Exception e) {
-            throw new PaymentGatewayException(e.getMessage());
-        }
+        paymentGateway.refundOrder(payment.getGatewayOrder().getCompletionId());
 
         return paymentMapper.toResponse(paymentDAO.save(payment));
     }

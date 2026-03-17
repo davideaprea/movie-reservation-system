@@ -9,7 +9,6 @@ import com.paypal.sdk.models.*;
 import org.mapstruct.Mapper;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
@@ -29,25 +28,5 @@ public interface PaymentMapper {
                 LocalDateTime.now(),
                 PaymentStatus.PENDING
         );
-    }
-
-    default CreateOrderInput toCreateOrderInput(PaymentCreateRequest createRequest) {
-        OrderRequest paypalOrder = new OrderRequest
-                .Builder()
-                .intent(CheckoutPaymentIntent.CAPTURE)
-                .purchaseUnits(List.of(new PurchaseUnitRequest
-                        .Builder()
-                        .amount(new AmountWithBreakdown
-                                .Builder()
-                                .currencyCode("EUR")
-                                .value(createRequest.totalPrice().toString())
-                                .build())
-                        .build()))
-                .build();
-
-        return new CreateOrderInput
-                .Builder()
-                .body(paypalOrder)
-                .build();
     }
 }
