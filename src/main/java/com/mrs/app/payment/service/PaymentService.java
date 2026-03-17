@@ -2,27 +2,27 @@ package com.mrs.app.payment.service;
 
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.*;
+import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Payment;
-import com.mrs.app.payment.enumeration.PaymentStatus;
+import com.mrs.app.payment.entity.Refund;
 import com.mrs.app.payment.mapper.PaymentMapper;
+import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.PaymentDAO;
-import com.mrs.app.payment.util.PayPalOrderUtils;
-import com.mrs.app.shared.exception.DomainRequirementError;
-import com.mrs.app.shared.exception.DomainRequirementException;
+import com.mrs.app.payment.repository.RefundDAO;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
-import com.paypal.sdk.models.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Service
 public class PaymentService {
     private final PaymentGateway paymentGateway;
     private final PaymentDAO paymentDAO;
+    private final CompletionDAO completionDAO;
+    private final RefundDAO refundDAO;
     private final PaymentMapper paymentMapper;
 
     public PaymentResponse create(PaymentCreateRequest createRequest) {
@@ -36,46 +36,28 @@ public class PaymentService {
         return paymentMapper.toResponse(savedPayment);
     }
 
-    public PaymentResponse complete(long id) {
-        Payment pendingPayment = findById(id);
-
-        if (!PaymentStatus.PENDING.equals(pendingPayment.getStatus())) {
-            throw new DomainRequirementException(new DomainRequirementError(
-                    "The selected payment is already closed.",
-                    "id"
-            ));
-        }
-
-        GatewayOrderCompletionResponse order = paymentGateway.completeOrder(pendingPayment.getGatewayOrder().getOrderId());
-
-        pendingPayment.setStatus(PaymentStatus.COMPLETED);
-        pendingPayment.getGatewayOrder().setCompletionId(order.completionId());
-
-        return paymentMapper.toResponse(paymentDAO.save(pendingPayment));
-    }
-
-    public PaymentResponse refund(long id) {
-        Payment payment = findById(id);
-
-        if (!PaymentStatus.COMPLETED.equals(payment.getStatus())) {
-            throw new DomainRequirementException(new DomainRequirementError(
-                    "The selected payment is not completed.",
-                    "id"
-            ));
-        }
-
-        payment.setStatus(PaymentStatus.REFUNDED);
-        paymentGateway.refundOrder(payment.getGatewayOrder().getCompletionId());
-
-        return paymentMapper.toResponse(paymentDAO.save(payment));
-    }
-
-    private Payment findById(long id) {
-        return paymentDAO
-                .findById(id)
+    public CompletionResponse complete(long paymentId) {
+        Payment payment = paymentDAO
+                .findById(paymentId)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Payment.class.getSimpleName(),
-                        Map.of("id", id)
+                        Map.of("id", paymentId)
                 )));
+        GatewayOrderCompletionResponse order = paymentGateway.completeOrder(payment.getGatewayOrderId());
+        Completion completion = completionDAO.save(new Completion(null, payment, order.completionId()));
+
+        return new CompletionResponse(completion.getId(), paymentId, order.completionId());
+    }
+
+    public void refund(long completionId) {
+        Completion completion = completionDAO
+                .findById(completionId)
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Completion.class.getSimpleName(),
+                        Map.of("id", completionId)
+                )));
+
+        refundDAO.save(new Refund(null, completion));
+        paymentGateway.refundOrder(completion.getGatewayCompletionId());
     }
 }

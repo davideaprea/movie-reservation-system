@@ -1,7 +1,6 @@
 package com.mrs.app.payment.mapper;
 
 import com.mrs.app.payment.dto.PaymentResponse;
-import com.mrs.app.payment.entity.GatewayOrder;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
 import org.mapstruct.Mapper;
