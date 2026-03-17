@@ -20,5 +20,5 @@ public class Order {
     private Long userId;
 
     @Column(nullable = false)
-    private Long scheduleId;
+    private Long reservationId;
 }

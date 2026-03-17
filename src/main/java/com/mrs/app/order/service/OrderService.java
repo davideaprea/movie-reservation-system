@@ -51,7 +51,7 @@ public class OrderService {
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
         Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), createRequest.scheduleId()));
         List<BookingResponse> bookings = createRequest.seatIds().stream()
-                .map(seatId -> bookingService.create(new BookingCreateRequest(seatId, order.getId())))
+                .map(seatId -> bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds())))
                 .toList();
 
         return new OrderCreateResponse(order.getId(), bookings, payment);
@@ -81,7 +81,7 @@ public class OrderService {
             ));
         }
 
-        bookingService.deleteByOrderId(order.getId());
+        bookingService.deleteById(order.getId());
 
         PaymentResponse payment = paymentService.refund(order.getPaymentId());
 
