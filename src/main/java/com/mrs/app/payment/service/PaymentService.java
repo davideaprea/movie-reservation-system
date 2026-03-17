@@ -1,9 +1,7 @@
 package com.mrs.app.payment.service;
 
 import com.mrs.app.payment.component.PaymentGateway;
-import com.mrs.app.payment.dto.PaymentGatewayOrderRequest;
-import com.mrs.app.payment.dto.PaymentResponse;
-import com.mrs.app.payment.dto.PaymentCreateRequest;
+import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.enumeration.PaymentStatus;
 import com.mrs.app.payment.mapper.PaymentMapper;
@@ -28,11 +26,11 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
 
     public PaymentResponse create(PaymentCreateRequest createRequest) {
-        Order createdOrder = paymentGateway.createOrder(new PaymentGatewayOrderRequest(
+        GatewayOrderCreateResponse createdOrder = paymentGateway.createOrder(new GatewayOrderCreateRequest(
                 createRequest.totalPrice(),
                 "EUR"
         ));
-        Payment paymentToSave = paymentMapper.toEntity(createRequest, createdOrder);
+        Payment paymentToSave = paymentMapper.toEntity(createRequest.totalPrice(), createdOrder.id());
         Payment savedPayment = paymentDAO.save(paymentToSave);
 
         return paymentMapper.toResponse(savedPayment);
@@ -48,13 +46,10 @@ public class PaymentService {
             ));
         }
 
-        Order order = paymentGateway.completeOrder(pendingPayment.getGatewayOrder().getOrderId());
-        String captureId = PayPalOrderUtils
-                .extractCaptureIdFromOrder(order)
-                .orElseThrow(() -> new NoSuchElementException("The PayPal gateway hasn't returned the expected capture id."));
+        GatewayOrderCompletionResponse order = paymentGateway.completeOrder(pendingPayment.getGatewayOrder().getOrderId());
 
         pendingPayment.setStatus(PaymentStatus.COMPLETED);
-        pendingPayment.getGatewayOrder().setCompletionId(captureId);
+        pendingPayment.getGatewayOrder().setCompletionId(order.completionId());
 
         return paymentMapper.toResponse(paymentDAO.save(pendingPayment));
     }

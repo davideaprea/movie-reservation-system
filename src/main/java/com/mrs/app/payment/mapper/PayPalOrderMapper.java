@@ -1,6 +1,6 @@
 package com.mrs.app.payment.mapper;
 
-import com.mrs.app.payment.dto.PaymentGatewayOrderRequest;
+import com.mrs.app.payment.dto.GatewayOrderCreateRequest;
 import com.paypal.sdk.models.*;
 import org.mapstruct.Mapper;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface PayPalOrderMapper {
-    default CreateOrderInput toCreateOrderInput(PaymentGatewayOrderRequest request) {
+    default CreateOrderInput toCreateOrderInput(GatewayOrderCreateRequest request) {
         OrderRequest paypalOrder = new OrderRequest
                 .Builder()
                 .intent(CheckoutPaymentIntent.CAPTURE)
