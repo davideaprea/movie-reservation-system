@@ -4,13 +4,12 @@ import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.order.dao.OrderDAO;
-import com.mrs.app.order.dto.OrderCreateRequest;
-import com.mrs.app.order.dto.OrderCreateResponse;
-import com.mrs.app.order.dto.OrderUpdateRequest;
-import com.mrs.app.order.dto.OrderUpdateResponse;
+import com.mrs.app.order.dto.*;
 import com.mrs.app.order.entity.Order;
+import com.mrs.app.payment.dto.CompletionResponse;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
+import com.mrs.app.payment.dto.RefundResponse;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import lombok.AllArgsConstructor;
@@ -42,26 +41,25 @@ public class OrderService {
         return new OrderCreateResponse(order.getId(), bookings, payment);
     }
 
-    public OrderUpdateResponse confirm(OrderUpdateRequest request) {
+    public OrderCompletionResponse complete(OrderUpdateRequest request) {
         Order order = orderDAO
                 .findById(request.orderId())
                 .filter(o -> o.getUserId() == request.userId())
                 .orElseThrow();
-        PaymentResponse payment = paymentService.complete(order.getPaymentId());
+        CompletionResponse payment = paymentService.complete(order.getPaymentId());
 
-        return new OrderUpdateResponse(order.getId(), order.getUserId(), payment);
+        return new OrderCompletionResponse(order.getId(), order.getUserId(), payment);
     }
 
-    public OrderUpdateResponse cancel(OrderUpdateRequest request) {
+    public OrderCancellationResponse cancel(OrderUpdateRequest request) {
         Order order = orderDAO
                 .findById(request.orderId())
                 .filter(o -> o.getUserId() == request.userId())
                 .orElseThrow();
+        RefundResponse refund = paymentService.refund(order.getPaymentId());
 
         bookingService.deleteById(order.getId());
 
-        PaymentResponse payment = paymentService.refund(order.getPaymentId());
-
-        return new OrderUpdateResponse(order.getId(), order.getUserId(), payment);
+        return new OrderCancellationResponse(order.getId(), order.getUserId(), refund);
     }
 }

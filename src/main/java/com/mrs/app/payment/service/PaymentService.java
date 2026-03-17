@@ -49,15 +49,17 @@ public class PaymentService {
         return new CompletionResponse(completion.getId(), paymentId, order.completionId());
     }
 
-    public void refund(long completionId) {
+    public RefundResponse refund(long completionId) {
         Completion completion = completionDAO
                 .findById(completionId)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Completion.class.getSimpleName(),
                         Map.of("id", completionId)
                 )));
+        Refund refund = refundDAO.save(new Refund(null, completion));
 
-        refundDAO.save(new Refund(null, completion));
         paymentGateway.refundOrder(completion.getGatewayCompletionId());
+
+        return new RefundResponse(refund.getId(), completionId);
     }
 }
