@@ -11,7 +11,8 @@ import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.RefundResponse;
 import com.mrs.app.payment.service.PaymentService;
-import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.schedule.dto.ScheduleSeatResponse;
+import com.mrs.app.schedule.service.ScheduleSeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -26,11 +27,13 @@ public class OrderService {
     private final OrderDAO orderDAO;
     private final BookingService bookingService;
     private final PaymentService paymentService;
+    private final ScheduleSeatService scheduleSeatService;
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
-        BigDecimal totalPrice = schedule.seats().stream()
-                .map(ScheduleResponse.SeatDTO::price)
+        BigDecimal totalPrice = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
+                .stream()
+                .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
         Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), createRequest.scheduleId()));

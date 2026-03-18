@@ -5,7 +5,6 @@ import com.mrs.app.hall.service.HallService;
 import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
-import com.mrs.app.schedule.dto.ScheduleGetRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.SchedulesGetFilters;
 import com.mrs.app.schedule.entity.Schedule;
@@ -64,17 +63,6 @@ public class ScheduleService {
         return scheduleMapper.toDTO(schedule);
     }
 
-    public ScheduleResponse findById(ScheduleGetRequest getRequest) {
-        return scheduleDAO
-                .findByIdWithSeats(getRequest.id(), getRequest.seatIds())
-                .map(scheduleMapper::toDTO)
-                .filter(schedule -> schedule.seats().size() == getRequest.seatIds().size())
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
-                        Schedule.class.getSimpleName(),
-                        getRequest
-                )));
-    }
-
     public ScheduleResponse findById(long id) {
         return scheduleDAO
                 .findById(id)
@@ -91,17 +79,5 @@ public class ScheduleService {
                 .stream()
                 .map(scheduleMapper::toDTO)
                 .toList();
-    }
-
-    @Transactional
-    public void deleteById(long id) {
-        long deleteCount = scheduleDAO.deleteById(id);
-
-        if (deleteCount == 0) {
-            throw new EntityNotFondException(new EntityNotFoundError(
-                    Schedule.class.getSimpleName(),
-                    Map.of("id", id)
-            ));
-        }
     }
 }
