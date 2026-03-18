@@ -5,8 +5,10 @@ import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
@@ -14,9 +16,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@SpringBootTest
+@AllArgsConstructor
 public class ScheduleControllerTest {
-    private RestTestClient restTestClient;
-    private ScheduleDAO scheduleDAO;
+    private final RestTestClient restTestClient;
+    private final ScheduleDAO scheduleDAO;
 
     @SneakyThrows
     @Test
