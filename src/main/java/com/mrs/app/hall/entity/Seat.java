@@ -5,7 +5,7 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 @Entity
 @Table(name = "seats", uniqueConstraints = {

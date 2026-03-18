@@ -8,7 +8,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 @Entity
 @Table(name = "movies")

@@ -4,6 +4,7 @@ import com.mrs.app.hall.enumeration.HallStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -28,4 +29,12 @@ public class Hall {
             orphanRemoval = true
     )
     private List<Seat> seats;
+
+    public void addSeat(Seat seat) {
+        if (seats == null) {
+            seats = new ArrayList<>();
+        }
+
+        seats.add(seat);
+    }
 }
