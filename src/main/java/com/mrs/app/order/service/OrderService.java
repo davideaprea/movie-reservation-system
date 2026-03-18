@@ -15,8 +15,6 @@ import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,7 +27,6 @@ public class OrderService {
     private final PaymentService paymentService;
     private final ScheduleSeatService scheduleSeatService;
 
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
         BigDecimal totalPrice = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
                 .stream()
