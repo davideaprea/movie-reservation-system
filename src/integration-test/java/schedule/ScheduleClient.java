@@ -23,7 +23,7 @@ public class ScheduleClient {
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
-    public HttpResponse<ScheduleResponse> create(ScheduleCreateRequest payload) {
+    public <T> HttpResponse<T> create(ScheduleCreateRequest payload, Class<T> responseType) {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/schedules")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -32,7 +32,7 @@ public class ScheduleClient {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        ScheduleResponse body = objectMapper.readValue(response.getContentAsString(), ScheduleResponse.class);
+        T body = objectMapper.readValue(response.getContentAsString(), responseType);
 
         return new HttpResponse<>(body, HttpStatus.valueOf(response.getStatus()));
     }

@@ -18,13 +18,15 @@ public class ScheduleControllerTest {
     @SneakyThrows
     @Test
     void test() {
-        HttpResponse<ScheduleResponse> response = scheduleClient.create(new ScheduleCreateRequest(
+        ScheduleCreateRequest request = new ScheduleCreateRequest(
                 1,
                 1,
                 LocalDateTime.now().plusDays(1),
                 Map.of("STANDARD", BigDecimal.valueOf(5))
-        ));
+        );
+        HttpResponse<ScheduleResponse> response = scheduleClient.create(request, ScheduleResponse.class);
 
         Assertions.assertEquals(HttpStatus.CREATED, response.status());
+        Assertions.assertNotNull(response.body());
     }
 }
