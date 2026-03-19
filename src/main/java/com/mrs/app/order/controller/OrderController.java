@@ -30,7 +30,7 @@ public class OrderController {
         return new ResponseEntity<>(orderService.complete(new OrderUpdateRequest(loggedUser.getId(), orderId)), HttpStatus.OK);
     }
 
-    @PatchMapping("/{orderId}")
+    @DeleteMapping("/{orderId}")
     public ResponseEntity<OrderCancellationResponse> cancel(
             @PathVariable @Valid @Positive long orderId,
             @AuthenticationPrincipal AuthUserDetails loggedUser

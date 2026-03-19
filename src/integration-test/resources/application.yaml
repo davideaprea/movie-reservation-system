@@ -8,8 +8,9 @@ spring:
 
 jwt:
   secret: Aymga2LNFrM+tnkr6MYLFY2Jou46h2/Omogeu0iMCRQ=
-  exp-time: 99999999999999999999
+  exp-time: 999999
 
 paypal:
+  environment: SANDBOX
   client-id: fake_client_id
-  secret: fake_client_secret
+  client-secret: fake_client_secret

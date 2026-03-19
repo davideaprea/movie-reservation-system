@@ -30,7 +30,7 @@ public class PaymentService {
                 createRequest.totalPrice(),
                 "EUR"
         ));
-        Payment paymentToSave = paymentMapper.toEntity(createRequest.totalPrice(), createdOrder.id());
+        Payment paymentToSave = new Payment(null, createdOrder.id(), createRequest.totalPrice());
         Payment savedPayment = paymentDAO.save(paymentToSave);
 
         return paymentMapper.toResponse(savedPayment);

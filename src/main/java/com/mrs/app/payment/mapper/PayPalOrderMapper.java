@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PayPalOrderMapper {
     default CreateOrderInput toCreateOrderInput(GatewayOrderCreateRequest request) {
         OrderRequest paypalOrder = new OrderRequest

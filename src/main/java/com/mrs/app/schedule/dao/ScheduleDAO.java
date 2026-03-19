@@ -12,7 +12,7 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, JpaSpecifica
     @Query("""
                 SELECT DISTINCT sc
                 FROM Schedule sc
-                JOIN FETCH s.seats se
+                JOIN FETCH sc.seats se
                 WHERE sc.id = :scheduleId
                 AND se.seatId IN :seatIds
             """)
