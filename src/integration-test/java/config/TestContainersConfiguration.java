@@ -14,7 +14,7 @@ public class TestContainersConfiguration {
         final DockerImageName imageName = DockerImageName.parse("postgres:17-alpine");
 
         try (var dbContainer = new PostgreSQLContainer<>(imageName)) {
-            return dbContainer.withDatabaseName("cinema");
+            return dbContainer.withDatabaseName("mrs");
         }
     }
 }

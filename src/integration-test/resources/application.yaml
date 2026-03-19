@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mrs
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+jwt:
+  secret: Aymga2LNFrM+tnkr6MYLFY2Jou46h2/Omogeu0iMCRQ=
+  exp-time: 99999999999999999999
+
+paypal:
+  client-id: fake_client_id
+  secret: fake_client_secret
