@@ -11,12 +11,14 @@ import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import config.TestContainersConfiguration;
 import factory.HallFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +33,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(TestContainersConfiguration.class)
 @Transactional
-@SpringBootTest
 @RequiredArgsConstructor
 public class ScheduleControllerTest {
     private final RestTestClient restTestClient;
