@@ -11,7 +11,7 @@ import java.util.List;
 @FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 @Entity
 @Table(name = "schedules")
@@ -22,6 +22,9 @@ public class Schedule {
 
     @Column(nullable = false)
     private Long movieId;
+
+    @Column(nullable = false)
+    private Long hallId;
 
     @OneToMany(
             mappedBy = "schedule",

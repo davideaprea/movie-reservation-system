@@ -2,14 +2,14 @@ package schedule;
 
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.movie.entity.Movie;
-import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import factory.TestDataFactory;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -22,17 +22,23 @@ import java.util.Map;
 
 @Transactional
 @SpringBootTest
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ScheduleControllerTest {
     private final RestTestClient restTestClient;
-    private final ScheduleDAO scheduleDAO;
     private final TestDataFactory testDataFactory;
+
+    private Movie movie;
+    private Hall hall;
+
+    @BeforeEach
+    void setup() {
+        movie = testDataFactory.createMovie();
+        hall = testDataFactory.createHall();
+    }
 
     @SneakyThrows
     @Test
     void givenValidPayload_whenCreatingSchedule_thenStatusCreated() {
-        Movie movie = testDataFactory.createMovie();
-        Hall hall = testDataFactory.createHall();
         ScheduleCreateRequest request = new ScheduleCreateRequest(
                 movie.getId(),
                 hall.getId(),
@@ -48,13 +54,11 @@ public class ScheduleControllerTest {
     @SneakyThrows
     @Test
     void givenConflictingTimeRange_whenCreatingSchedule_thenStatusConflict() {
-        LocalDateTime scheduleStartTime = LocalDateTime.now().plusDays(1);
-        LocalDateTime scheduleEndTime = scheduleStartTime.plusHours(2);
-        Schedule schedule = scheduleDAO.save(new Schedule(null, 1L, null, scheduleStartTime, scheduleEndTime));
+        Schedule schedule = testDataFactory.createSchedule(movie.getId(), hall.getSeats());
         ScheduleCreateRequest conflictingRequest = new ScheduleCreateRequest(
-                1,
-                1,
-                scheduleStartTime,
+                schedule.getMovieId(),
+                schedule.getHallId(),
+                schedule.getStartTime(),
                 Map.of("STANDARD", BigDecimal.valueOf(5))
         );
 

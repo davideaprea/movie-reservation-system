@@ -2,10 +2,12 @@ package com.mrs.app.schedule.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
+@Builder
 @AllArgsConstructor
 @Getter
 @Entity
