@@ -1,7 +1,10 @@
 package schedule;
 
+import com.mrs.app.MRSApplication;
 import com.mrs.app.hall.entity.Hall;
+import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.repository.HallDAO;
+import com.mrs.app.hall.repository.SeatTypeDAO;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.repository.MovieDAO;
 import com.mrs.app.schedule.dao.ScheduleDAO;
@@ -11,12 +14,15 @@ import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import config.TestContainersConfiguration;
 import factory.HallFactory;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -32,24 +38,40 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+@Import(TestContainersConfiguration.class)
 @WithMockUser(roles = "ADMIN")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = MRSApplication.class
+)
 @Transactional
-@RequiredArgsConstructor
 public class ScheduleControllerTest {
-    private final RestTestClient restTestClient;
-    private final ScheduleDAO scheduleDAO;
-    private final MovieDAO movieDAO;
-    private final HallDAO hallDAO;
-    private final ScheduleMapper scheduleMapper;
+    private RestTestClient restTestClient;
+    @Autowired
+    private ScheduleDAO scheduleDAO;
+    @Autowired
+    private MovieDAO movieDAO;
+    @Autowired
+    private HallDAO hallDAO;
+    @Autowired
+    private ScheduleMapper scheduleMapper;
+    @Autowired
+    private SeatTypeDAO seatTypeDAO;
+    @LocalServerPort
+    private int port;
 
     private Movie movie;
     private Hall hall;
 
     @BeforeEach
     void setup() {
+        restTestClient = RestTestClient
+                .bindToServer()
+                .baseUrl("http://localhost:%d/schedules".formatted(port))
+                .build();
+        SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
         movie = movieDAO.save(MovieFactory.create());
-        hall = hallDAO.save(HallFactory.create());
+        hall = hallDAO.save(HallFactory.create(seatType));
     }
 
     @SneakyThrows

@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "seats", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "hall_id, row_number, seat_number")
+        @UniqueConstraint(columnNames = {"hall_id", "row_number", "seat_number"})
 })
 public class Seat {
     @Id
