@@ -1,6 +1,6 @@
-package schedule;
+package module.schedule;
 
-import com.mrs.app.MRSApplication;
+import annotation.ContainerizedContextTest;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.repository.HallDAO;
@@ -18,20 +18,15 @@ import com.mrs.app.security.dao.UserDAO;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
-import config.DataBaseCleaner;
-import config.TestContainersConfiguration;
 import factory.HallFactory;
 import factory.UserFactory;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import factory.MovieFactory;
 import factory.ScheduleFactory;
@@ -41,19 +36,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-@TestExecutionListeners(
-        value = DataBaseCleaner.class,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
-)
-@Import(TestContainersConfiguration.class)
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = MRSApplication.class
-)
-public class ScheduleControllerTest {
+@ContainerizedContextTest
+public class ScheduleTest {
     private RestTestClient restTestClient;
     @Autowired
     private ScheduleDAO scheduleDAO;
