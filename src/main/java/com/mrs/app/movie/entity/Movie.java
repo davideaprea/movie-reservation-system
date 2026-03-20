@@ -6,11 +6,11 @@ import lombok.*;
 import java.time.Duration;
 import java.util.List;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "movies")
 public class Movie {
     @Id

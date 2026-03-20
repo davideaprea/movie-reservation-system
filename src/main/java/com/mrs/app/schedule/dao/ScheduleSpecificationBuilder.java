@@ -24,7 +24,7 @@ public class ScheduleSpecificationBuilder {
                     root,
                     query,
                     criteriaBuilder
-            ) -> criteriaBuilder.greaterThan(root.get(Schedule.Fields.startTime), filters.startTimeFrom()));
+            ) -> criteriaBuilder.greaterThanOrEqualTo(root.get(Schedule.Fields.startTime), filters.startTimeFrom()));
         }
 
         if (filters.endTimeTo() != null) {
@@ -32,7 +32,15 @@ public class ScheduleSpecificationBuilder {
                     root,
                     query,
                     criteriaBuilder
-            ) -> criteriaBuilder.lessThan(root.get(Schedule.Fields.endTime), filters.endTimeTo()));
+            ) -> criteriaBuilder.lessThanOrEqualTo(root.get(Schedule.Fields.endTime), filters.endTimeTo()));
+        }
+
+        if (filters.hallId() != null) {
+            finalSpecification = finalSpecification.and((
+                    root,
+                    query,
+                    criteriaBuilder
+            ) -> criteriaBuilder.equal(root.get(Schedule.Fields.hallId), filters.hallId()));
         }
 
         return finalSpecification;

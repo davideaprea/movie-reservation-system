@@ -12,6 +12,8 @@ public record SchedulesGetFilters(
         LocalDateTime startTimeFrom,
 
         @NotNull @FutureOrPresent
-        LocalDateTime endTimeTo
+        LocalDateTime endTimeTo,
+
+        Long hallId
 ) {
 }

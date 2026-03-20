@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "seat_reservations")
 public class SeatReservation {
     @Id

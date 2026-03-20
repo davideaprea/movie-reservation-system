@@ -37,7 +37,7 @@ public class ScheduleService {
         MovieGetResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
         Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
-        List<ScheduleResponse> conflictingSchedules = findByFilters(new SchedulesGetFilters(dto.movieId(), dto.startTime(), scheduleEndTime));
+        List<ScheduleResponse> conflictingSchedules = findByFilters(new SchedulesGetFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
 
         if (!conflictingSchedules.isEmpty()) {
             ConflictingResourceError error = new ConflictingResourceError(
@@ -53,7 +53,7 @@ public class ScheduleService {
                 .findById(dto.hallId())
                 .seats()
                 .forEach(seat -> {
-                    BigDecimal seatPrice = dto.seatPriceOptions().get(seat.seatType().name());
+                    BigDecimal seatPrice = dto.seatPriceOptions().get(seat.type().name());
 
                     scheduleToSave.addSeat(new ScheduleSeat(null, seat.id(), scheduleToSave, seatPrice));
                 });

@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @FieldNameConstants
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "schedules")
 public class Schedule {
     @Id

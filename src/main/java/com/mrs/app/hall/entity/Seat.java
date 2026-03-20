@@ -3,11 +3,11 @@ package com.mrs.app.hall.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "seats", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"hall_id", "row_number", "seat_number"})
 })

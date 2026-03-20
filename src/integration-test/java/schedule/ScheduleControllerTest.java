@@ -129,7 +129,7 @@ public class ScheduleControllerTest {
     @SneakyThrows
     @Test
     void givenConflictingTimeRange_whenCreatingSchedule_thenStatusConflict() {
-        Schedule preExistingSchedule = scheduleDAO.save(ScheduleFactory.create(hall.getId(), movie.getId(), hall.getSeats()));
+        Schedule preExistingSchedule = scheduleDAO.save(ScheduleFactory.create(hall, movie));
         ScheduleCreateRequest conflictingRequest = new ScheduleCreateRequest(
                 preExistingSchedule.getMovieId(),
                 preExistingSchedule.getHallId(),

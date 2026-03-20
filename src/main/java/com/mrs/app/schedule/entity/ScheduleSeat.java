@@ -1,9 +1,7 @@
 package com.mrs.app.schedule.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,6 +9,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "schedule_seats")
 public class ScheduleSeat {
     @Id

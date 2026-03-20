@@ -2,15 +2,12 @@ package com.mrs.app.security.entity;
 
 import com.mrs.app.security.enumeration.Roles;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 public class User {
     @Id
