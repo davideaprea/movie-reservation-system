@@ -1,4 +1,4 @@
-package module.order;
+package module;
 
 import annotation.ContainerizedContextTest;
 
