@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -136,17 +137,16 @@ public class ScheduleControllerTest {
                 preExistingSchedule.getStartTime(),
                 Map.of("STANDARD", BigDecimal.valueOf(5))
         );
-        ConflictingResourceError response = restTestClient.post().body(conflictingRequest).exchange()
+        ConflictingResourceError<ScheduleResponse> response = restTestClient.post().body(conflictingRequest).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
-                .expectBody(ConflictingResourceError.class)
+                .expectBody(new ParameterizedTypeReference<ConflictingResourceError<ScheduleResponse>>() {
+                })
                 .returnResult().getResponseBody();
 
         assertThat(scheduleDAO.count()).isEqualTo(1);
-        assertTrue(scheduleDAO.existsById(preExistingSchedule.getId()));
-        assertThat(response).isEqualTo(new ConflictingResourceError(
-                List.of(scheduleMapper.toDTO(preExistingSchedule)),
-                List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId),
-                "This hall is already taken."
-        ));
+        assertThat(scheduleDAO.existsById(preExistingSchedule.getId())).isTrue();
+        assertThat(response.conflictingResources().size()).isEqualTo(1);
+        assertThat(response.conflictingResources().getFirst().id()).isEqualTo(preExistingSchedule.getId());
+        assertThat(response.violatingFields()).isEqualTo(List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId));
     }
 }

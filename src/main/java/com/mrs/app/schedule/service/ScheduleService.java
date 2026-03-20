@@ -40,7 +40,7 @@ public class ScheduleService {
         List<ScheduleResponse> conflictingSchedules = findByFilters(new SchedulesGetFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
 
         if (!conflictingSchedules.isEmpty()) {
-            ConflictingResourceError error = new ConflictingResourceError(
+            ConflictingResourceError<ScheduleResponse> error = new ConflictingResourceError<>(
                     conflictingSchedules,
                     List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId),
                     "This hall is already taken."

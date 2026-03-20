@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class ConflictingEntityException extends RuntimeException {
-    public final ConflictingResourceError error;
+    public final ConflictingResourceError<?> error;
 
-    public ConflictingEntityException(ConflictingResourceError error) {
+    public ConflictingEntityException(ConflictingResourceError<?> error) {
         super("Submitted resource is conflicting with other existing resources. Details: %s".formatted(error));
 
         this.error = error;

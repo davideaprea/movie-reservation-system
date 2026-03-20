@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConflictingEntityException.class)
-    public ResponseEntity<ConflictingResourceError> handle(ConflictingEntityException exception) {
+    public ResponseEntity<ConflictingResourceError<?>> handle(ConflictingEntityException exception) {
         return new ResponseEntity<>(exception.getError(), HttpStatus.CONFLICT);
     }
 
