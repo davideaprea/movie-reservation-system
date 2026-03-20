@@ -12,12 +12,18 @@ import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.security.component.JWTCreator;
+import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.dto.JWTClaims;
+import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import factory.HallFactory;
+import factory.UserFactory;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -33,7 +39,6 @@ import static org.assertj.core.api.Assertions.*;
 
 @ContainerizedContextTest
 public class ScheduleTest {
-    @Autowired
     private RestTestClient restTestClient;
     @Autowired
     private ScheduleDAO scheduleDAO;
@@ -43,12 +48,25 @@ public class ScheduleTest {
     private HallDAO hallDAO;
     @Autowired
     private SeatTypeDAO seatTypeDAO;
+    @Autowired
+    private UserDAO userDAO;
+    @Autowired
+    private JWTCreator jwtCreator;
+    @LocalServerPort
+    private int port;
 
     private Movie movie;
     private Hall hall;
 
     @BeforeEach
     void setup() {
+        User user = userDAO.save(UserFactory.createAdmin());
+        String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
+        restTestClient = RestTestClient
+                .bindToServer()
+                .baseUrl("http://localhost:%d".formatted(port))
+                .defaultHeader("Authorization", "Bearer " + jwt)
+                .build();
         SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
         movie = movieDAO.save(MovieFactory.create());
         hall = hallDAO.save(HallFactory.create(seatType));

@@ -10,4 +10,8 @@ public class UserFactory {
     public static User createAdmin() {
         return new User(null, "admin@domain.com", "bcrypt password", Roles.ADMIN);
     }
+
+    public static User createUser() {
+        return new User(null, "user@domain.com", "bcrypt password", Roles.USER);
+    }
 }
