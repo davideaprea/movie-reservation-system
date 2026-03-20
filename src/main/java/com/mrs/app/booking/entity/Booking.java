@@ -22,7 +22,8 @@ public class Booking {
     @OneToMany(
             mappedBy = "booking",
             orphanRemoval = true,
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
     )
     private List<SeatReservation> seatReservations;
 

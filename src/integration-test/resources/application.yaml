@@ -12,8 +12,8 @@ jwt:
 
 paypal:
   environment: SANDBOX
-  client-id: fake_client_id
-  client-secret: fake_client_secret
+  client-id: ${PAYPAL_CLIENT_ID}
+  client-secret: ${PAYPAL_CLIENT_SECRET}
 
 logging:
   level:

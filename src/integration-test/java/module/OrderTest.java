@@ -4,6 +4,7 @@ import annotation.ContainerizedContextTest;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.repository.BookingDAO;
+import com.mrs.app.booking.repository.SeatReservationDAO;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.repository.HallDAO;
@@ -55,6 +56,8 @@ public class OrderTest {
     private BookingDAO bookingDAO;
     @Autowired
     private CompletionDAO completionDAO;
+    @Autowired
+    private SeatReservationDAO seatReservationDAO;
 
     private Schedule schedule;
 
@@ -88,22 +91,23 @@ public class OrderTest {
 
         assertThat(paymentDAO.count()).isEqualTo(1);
         assertThat(payment.getGatewayOrderId()).isNotBlank();
-        assertThat(payment.getPrice()).isEqualTo(selectedSeats.stream()
+        assertThat(payment.getPrice()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
         Booking booking = bookingDAO.findById(response.booking().id()).get();
 
-        assertThat(bookingDAO.count()).isEqualTo(request.seatIds().size());
+        assertThat(bookingDAO.count()).isEqualTo(1);
+        assertThat(seatReservationDAO.count()).isEqualTo(selectedSeats.size());
         assertThat(booking.getScheduleId()).isEqualTo(schedule.getId());
         assertThat(booking.getSeatReservations().size()).isEqualTo(selectedSeats.size());
         assertThat(booking.getSeatReservations())
-                .extracting(SeatReservation::getId)
+                .extracting(SeatReservation::getScheduleSeatId)
                 .containsExactlyInAnyOrderElementsOf(request.seatIds());
 
         OrderCompletionResponse completionResponse = restTestClient.patch().uri("/orders/" + response.id())
                 .body(request).exchange()
-                .expectStatus().isCreated()
+                .expectStatus().isOk()
                 .expectBody(OrderCompletionResponse.class)
                 .returnResult().getResponseBody();
 

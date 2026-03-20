@@ -25,6 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PaymentGatewayException.class)
     public ResponseEntity<Void> handle(PaymentGatewayException exception) {
+        System.out.println(exception);
         return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
     }
 
