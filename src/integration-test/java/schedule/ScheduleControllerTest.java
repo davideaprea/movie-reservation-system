@@ -13,9 +13,15 @@ import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
+import com.mrs.app.security.component.JWTCreator;
+import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.dto.JWTClaims;
+import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import config.DataBaseCleaner;
 import config.TestContainersConfiguration;
 import factory.HallFactory;
+import factory.UserFactory;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.client.RestTestClient;
-import org.springframework.transaction.annotation.Transactional;
 import factory.MovieFactory;
 import factory.ScheduleFactory;
 
@@ -38,13 +43,15 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+@TestExecutionListeners(
+        value = DataBaseCleaner.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 @Import(TestContainersConfiguration.class)
-@WithMockUser(roles = "ADMIN")
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = MRSApplication.class
 )
-@Transactional
 public class ScheduleControllerTest {
     private RestTestClient restTestClient;
     @Autowired
@@ -59,15 +66,22 @@ public class ScheduleControllerTest {
     private SeatTypeDAO seatTypeDAO;
     @LocalServerPort
     private int port;
+    @Autowired
+    private JWTCreator jwtCreator;
+    @Autowired
+    private UserDAO userDAO;
 
     private Movie movie;
     private Hall hall;
 
     @BeforeEach
     void setup() {
+        User user = userDAO.save(UserFactory.createAdmin());
+        String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d/schedules".formatted(port))
+                .defaultHeader("Authorization", "Bearer " + jwt)
                 .build();
         SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
         movie = movieDAO.save(MovieFactory.create());
