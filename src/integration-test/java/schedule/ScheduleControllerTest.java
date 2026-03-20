@@ -103,6 +103,9 @@ public class ScheduleControllerTest {
                 .expectStatus().isCreated()
                 .expectBody(ScheduleResponse.class)
                 .returnResult().getResponseBody();
+
+        assert actualResponse != null;
+
         ScheduleResponse expectedResponse = new ScheduleResponse(
                 actualResponse.id(),
                 request.movieId(),
@@ -142,6 +145,8 @@ public class ScheduleControllerTest {
                 .expectBody(new ParameterizedTypeReference<ConflictingResourceError<ScheduleResponse>>() {
                 })
                 .returnResult().getResponseBody();
+
+        assert response != null;
 
         assertThat(scheduleDAO.count()).isEqualTo(1);
         assertThat(scheduleDAO.existsById(preExistingSchedule.getId())).isTrue();
