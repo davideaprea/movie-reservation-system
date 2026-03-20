@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -33,12 +32,10 @@ public class OrderService {
                 .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
-        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), createRequest.scheduleId()));
-        List<BookingResponse> bookings = createRequest.seatIds().stream()
-                .map(seatId -> bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds())))
-                .toList();
+        BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
+        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), booking.id()));
 
-        return new OrderCreateResponse(order.getId(), bookings, payment);
+        return new OrderCreateResponse(order.getId(), booking, payment);
     }
 
     public OrderCompletionResponse complete(OrderUpdateRequest request) {

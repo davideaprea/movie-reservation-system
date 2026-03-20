@@ -18,8 +18,15 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderCreateResponse> create(@RequestBody @Valid OrderCreateRequest request) {
-        return new ResponseEntity<>(orderService.create(request), HttpStatus.CREATED);
+    public ResponseEntity<OrderCreateResponse> create(
+            @RequestBody @Valid HTTPOrderCreateRequest request,
+            @AuthenticationPrincipal AuthUserDetails loggedUser
+    ) {
+        return new ResponseEntity<>(orderService.create(new OrderCreateRequest(
+                loggedUser.getId(),
+                request.scheduleId(),
+                request.seatIds()
+        )), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{orderId}")

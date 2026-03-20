@@ -2,8 +2,7 @@ package com.mrs.app.booking.dto;
 
 public record BookingResponse(
         long id,
-        long scheduleId,
-        long userId
+        long scheduleId
 ) {
     public record SeatReservationResponse(
             long id,
