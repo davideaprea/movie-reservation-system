@@ -8,14 +8,18 @@ import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.repository.BookingDAO;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
+import com.mrs.app.shared.exception.ConflictingEntityException;
+import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -39,7 +43,17 @@ public class BookingService {
 
         createRequest.scheduleSeatIds().forEach(seatId -> bookingToSave.addSeatReservation(new SeatReservation(null, seatId, bookingToSave)));
 
-        Booking savedBooking = bookingDAO.save(bookingToSave);
+        Booking savedBooking;
+
+        try {
+            savedBooking = bookingDAO.save(bookingToSave);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictingEntityException(new ConflictingResourceError<>(
+                    List.of(),
+                    List.of(BookingCreateRequest.Fields.scheduleSeatIds),
+                    "These seats are already booked."
+            ));
+        }
 
         return bookingMapper.toResponse(savedBooking);
     }

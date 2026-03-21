@@ -31,8 +31,8 @@ public class OrderService {
                 .stream()
                 .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
         BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
+        PaymentResponse payment = paymentService.create(new PaymentCreateRequest(createRequest.userId(), totalPrice));
         Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), booking.id()));
 
         return new OrderCreateResponse(order.getId(), booking, payment);

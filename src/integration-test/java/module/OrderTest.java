@@ -30,6 +30,7 @@ import com.mrs.app.security.component.JWTCreator;
 import com.mrs.app.security.dao.UserDAO;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
+import com.mrs.app.shared.exception.ConflictingResourceError;
 import factory.HallFactory;
 import factory.MovieFactory;
 import factory.ScheduleFactory;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
@@ -135,6 +137,30 @@ public class OrderTest {
         assertThat(booking.getSeatReservations())
                 .extracting(SeatReservation::getScheduleSeatId)
                 .containsExactlyInAnyOrderElementsOf(request.seatIds());
+    }
+
+    @Test
+    void givenAlreadyBookedSeats_whenBookingScheduleSeats_thenStatusConflict() {
+        Booking preExistingBooking = new Booking(null, new ArrayList<>(), schedule.getId());
+
+        preExistingBooking.addSeatReservation(new SeatReservation(null, schedule.getSeats().getFirst().getId(), preExistingBooking));
+
+        Booking booking = bookingDAO.save(preExistingBooking);
+        HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
+                schedule.getId(),
+                List.of(preExistingBooking.getSeatReservations().getFirst().getId())
+        );
+        ConflictingResourceError<?> response = restTestClient.post().uri("/orders")
+                .body(request).exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                .expectBody(ConflictingResourceError.class)
+                .returnResult().getResponseBody();
+
+        assertThat(bookingDAO.count()).isEqualTo(1);
+        assertThat(bookingDAO.existsById(booking.getId()));
+        assertThat(seatReservationDAO.count()).isEqualTo(booking.getSeatReservations().size());
+        assertThat(orderDAO.count()).isEqualTo(0);
+        assertThat(paymentDAO.count()).isEqualTo(0);
     }
 
     @SneakyThrows
