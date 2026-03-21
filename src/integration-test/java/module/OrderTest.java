@@ -100,7 +100,8 @@ public class OrderTest {
     @SneakyThrows
     @Test
     void givenValidPayload_whenBookingScheduleSeats_thenStatusCreated() {
-        Mockito.when(paymentGateway.createOrder(Mockito.any())).thenReturn(new GatewayOrderCreateResponse("order-id"));
+        GatewayOrderCreateResponse gatewayOrderCreateResponse = new GatewayOrderCreateResponse("order-id");
+        Mockito.when(paymentGateway.createOrder(Mockito.any())).thenReturn(gatewayOrderCreateResponse);
 
         List<ScheduleSeat> selectedSeats = schedule.getSeats().subList(0, 2);
         HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
@@ -120,7 +121,7 @@ public class OrderTest {
         Payment payment = paymentDAO.findById(response.payment().id()).get();
 
         assertThat(paymentDAO.count()).isEqualTo(1);
-        assertThat(payment.getGatewayOrderId()).isNotBlank();
+        assertThat(payment.getGatewayOrderId()).isEqualTo(gatewayOrderCreateResponse.id());
         assertThat(payment.getPrice()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
@@ -139,7 +140,8 @@ public class OrderTest {
     @SneakyThrows
     @Test
     void givenValidPayload_whenCompletingBookingPayment_thenStatusOk() {
-        Mockito.when(paymentGateway.completeOrder(Mockito.any())).thenReturn(new GatewayOrderCompletionResponse("order-id", "capture-id"));
+        GatewayOrderCompletionResponse gatewayOrderCompletionResponse = new GatewayOrderCompletionResponse("order-id", "capture-id");
+        Mockito.when(paymentGateway.completeOrder(Mockito.any())).thenReturn(gatewayOrderCompletionResponse);
 
         Booking bookingToSave = new Booking(null, new ArrayList<>(), schedule.getId());
 
@@ -159,7 +161,7 @@ public class OrderTest {
         Completion completion = completionDAO.findById(completionResponse.id()).get();
 
         assertThat(completionDAO.count()).isEqualTo(1);
-        assertThat(completion.getGatewayCompletionId()).isNotBlank();
+        assertThat(completion.getGatewayCompletionId()).isEqualTo(gatewayOrderCompletionResponse.completionId());
         assertThat(completion.getPayment().getId()).isEqualTo(payment.getId());
     }
 }
