@@ -42,17 +42,13 @@ public class HallService {
             HallCreateRequest.SeatDTO curr = seats.get(i);
             HallCreateRequest.SeatDTO prev = seats.get(i - 1);
             boolean sameRow = curr.rowNumber() == prev.rowNumber();
+            boolean areSeatsNonAdjacent = sameRow && curr.seatNumber() != prev.seatNumber() + 1;
+            boolean areRowsNonAdjacent = !sameRow && curr.rowNumber() != prev.rowNumber() + 1;
+            boolean isCurrSeatNamedFirst = !sameRow && curr.seatNumber() != 1;
 
-            if (sameRow && curr.seatNumber() != prev.seatNumber() + 1) {
+            if (areSeatsNonAdjacent || areRowsNonAdjacent || isCurrSeatNamedFirst) {
                 throw new DomainRequirementException(new DomainRequirementError(
-                        "Gap between seat %d and %d at row n. %d.".formatted(prev.seatNumber(), curr.seatNumber(), curr.rowNumber()),
-                        "seatNumber"
-                ));
-            }
-
-            if (!sameRow && (curr.rowNumber() != prev.rowNumber() + 1 || curr.seatNumber() != 1)) {
-                throw new DomainRequirementException(new DomainRequirementError(
-                        "Gap between row %d and %d.".formatted(prev.rowNumber(), prev.rowNumber()),
+                        "Gaps are not allowed: %s, %s.".formatted(prev, curr),
                         "seatNumber"
                 ));
             }
