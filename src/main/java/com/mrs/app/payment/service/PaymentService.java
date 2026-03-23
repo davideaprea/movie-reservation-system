@@ -9,11 +9,14 @@ import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.payment.repository.RefundDAO;
+import com.mrs.app.shared.exception.ConflictingEntityException;
+import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -37,6 +40,14 @@ public class PaymentService {
     }
 
     public CompletionResponse complete(long paymentId) {
+        if (completionDAO.existsByPaymentId(paymentId)) {
+            throw new ConflictingEntityException(new ConflictingResourceError<>(
+                    List.of(),
+                    List.of("paymentId"),
+                    "The payment is already completed."
+            ));
+        }
+
         Payment payment = paymentDAO
                 .findById(paymentId)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(

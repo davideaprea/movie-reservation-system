@@ -31,10 +31,7 @@ import com.mrs.app.security.dao.UserDAO;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
-import factory.HallFactory;
-import factory.MovieFactory;
-import factory.ScheduleFactory;
-import factory.UserFactory;
+import factory.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,20 +138,16 @@ public class OrderTest {
 
     @Test
     void givenAlreadyBookedSeats_whenBookingScheduleSeats_thenStatusConflict() {
-        Booking preExistingBooking = new Booking(null, new ArrayList<>(), schedule.getId());
-
-        preExistingBooking.addSeatReservation(new SeatReservation(null, schedule.getSeats().getFirst().getId(), preExistingBooking));
-
-        Booking booking = bookingDAO.save(preExistingBooking);
+        Booking booking = bookingDAO.save(BookingFactory.create(schedule));
         HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
                 schedule.getId(),
-                List.of(preExistingBooking.getSeatReservations().getFirst().getId())
+                List.of(booking.getSeatReservations().getFirst().getId())
         );
-        ConflictingResourceError<?> response = restTestClient.post().uri("/orders")
+
+        restTestClient.post().uri("/orders")
                 .body(request).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
-                .expectBody(ConflictingResourceError.class)
-                .returnResult().getResponseBody();
+                .expectBody(ConflictingResourceError.class);
 
         assertThat(bookingDAO.count()).isEqualTo(1);
         assertThat(bookingDAO.existsById(booking.getId()));
@@ -169,12 +162,8 @@ public class OrderTest {
         GatewayOrderCompletionResponse gatewayOrderCompletionResponse = new GatewayOrderCompletionResponse("order-id", "capture-id");
         Mockito.when(paymentGateway.completeOrder(Mockito.any())).thenReturn(gatewayOrderCompletionResponse);
 
-        Booking bookingToSave = new Booking(null, new ArrayList<>(), schedule.getId());
-
-        bookingToSave.addSeatReservation(new SeatReservation(null, schedule.getSeats().getFirst().getId(), bookingToSave));
-
-        Booking booking = bookingDAO.save(bookingToSave);
-        Payment payment = paymentDAO.save(new Payment(null, "order-id", BigDecimal.valueOf(5)));
+        Booking booking = bookingDAO.save(BookingFactory.create(schedule));
+        Payment payment = paymentDAO.save(PaymentFactory.create());
         Order order = orderDAO.save(new Order(null, payment.getId(), loggedUser.getId(), booking.getId()));
         OrderCompletionResponse completionResponse = restTestClient.patch().uri("/orders/" + order.getId())
                 .exchange()
@@ -189,5 +178,22 @@ public class OrderTest {
         assertThat(completionDAO.count()).isEqualTo(1);
         assertThat(completion.getGatewayCompletionId()).isEqualTo(gatewayOrderCompletionResponse.completionId());
         assertThat(completion.getPayment().getId()).isEqualTo(payment.getId());
+    }
+
+    @SneakyThrows
+    @Test
+    void givenAlreadyCompletedPaymentId_whenCompletingPayment_thenStatusConflict() {
+        Booking booking = bookingDAO.save(BookingFactory.create(schedule));
+        Payment payment = paymentDAO.save(PaymentFactory.create());
+        Order order = orderDAO.save(new Order(null, payment.getId(), loggedUser.getId(), booking.getId()));
+
+        completionDAO.save(new Completion(null, payment, "completion-id"));
+        restTestClient.patch().uri("/orders/" + order.getId())
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                .expectBody(ConflictingResourceError.class);
+
+        assertThat(completionDAO.count()).isEqualTo(1);
+        Mockito.verify(paymentGateway, Mockito.never()).completeOrder(Mockito.any());
     }
 }
