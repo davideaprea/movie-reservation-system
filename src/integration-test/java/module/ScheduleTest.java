@@ -187,6 +187,7 @@ public class ScheduleTest {
 
         assert response != null;
 
+        assertThat(response.size()).isEqualTo(1);
         assertThat(response.stream().allMatch(schedule ->
                 schedule.movieId() == movie.getId() &&
                         schedule.startTime().isAfter(tomorrow) &&
