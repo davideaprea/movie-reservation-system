@@ -1,7 +1,7 @@
 package com.mrs.app.hall.controller;
 
 import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.entity.Hall;
+import com.mrs.app.hall.dto.HallResponse;
 import com.mrs.app.hall.service.HallService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ public class HallController {
     private final HallService hallService;
 
     @PostMapping
-    public ResponseEntity<Hall> create(HallCreateRequest createRequest) {
+    public ResponseEntity<HallResponse> create(HallCreateRequest createRequest) {
         return new ResponseEntity<>(
                 hallService.create(createRequest),
                 HttpStatus.CREATED

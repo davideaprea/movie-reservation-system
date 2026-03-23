@@ -1,12 +1,10 @@
 package com.mrs.app.hall.dto;
 
-import com.mrs.app.hall.enumeration.HallStatus;
-
 import java.util.List;
 
-public record HallGetResponse(
+public record HallResponse(
         long id,
-        HallStatus status,
+        String name,
         List<SeatGetResponse> seats
 ) {
 }
