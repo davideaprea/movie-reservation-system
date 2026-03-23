@@ -31,6 +31,7 @@ import factory.MovieFactory;
 import factory.ScheduleFactory;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -138,5 +139,58 @@ public class ScheduleTest {
         assertThat(response.conflictingResources().size()).isEqualTo(1);
         assertThat(response.conflictingResources().getFirst().id()).isEqualTo(preExistingSchedule.getId());
         assertThat(response.violatingFields()).isEqualTo(List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId));
+    }
+
+    @SneakyThrows
+    @Test
+    void givenSearchFilters_whenGettingSchedules_thenStatusOk() {
+        Movie differentMovie = movieDAO.save(MovieFactory.create());
+        LocalDate today = LocalDate.now();
+        LocalDateTime tomorrow = today.atStartOfDay().plusDays(1);
+        LocalDateTime yesterday = today.atStartOfDay().minusDays(1);
+        LocalDateTime dayAfterTomorrow = tomorrow.plusDays(1);
+        Schedule yesterdaySchedule = Schedule.builder()
+                .hallId(hall.getId())
+                .movieId(movie.getId())
+                .startTime(yesterday.withHour(10))
+                .endTime(yesterday.withHour(12))
+                .build();
+        Schedule tomorrowSchedule = Schedule.builder()
+                .hallId(hall.getId())
+                .movieId(movie.getId())
+                .startTime(tomorrow.withHour(10))
+                .endTime(tomorrow.withHour(12))
+                .build();
+        Schedule dayAfterTomorrowSchedule = Schedule.builder()
+                .hallId(hall.getId())
+                .movieId(movie.getId())
+                .startTime(dayAfterTomorrow.withHour(10))
+                .endTime(dayAfterTomorrow.withHour(12))
+                .build();
+        Schedule differentMovieSchedule = Schedule.builder()
+                .hallId(hall.getId())
+                .movieId(differentMovie.getId())
+                .startTime(tomorrow.withHour(14))
+                .endTime(tomorrow.withHour(16))
+                .build();
+
+        scheduleDAO.saveAll(List.of(yesterdaySchedule, tomorrowSchedule, dayAfterTomorrowSchedule, differentMovieSchedule));
+
+        List<ScheduleResponse> response = restTestClient.get().uri(uriBuilder -> uriBuilder
+                        .path("/schedules")
+                        .queryParam("movieId", movie.getId())
+                        .queryParam("startTimeFrom", tomorrow)
+                        .queryParam("endTimeTo", tomorrow.withHour(23)).build())
+                .exchange().expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<List<ScheduleResponse>>() {
+                }).returnResult().getResponseBody();
+
+        assert response != null;
+
+        assertThat(response.stream().allMatch(schedule ->
+                schedule.movieId() == movie.getId() &&
+                        schedule.startTime().isAfter(tomorrow) &&
+                        schedule.endTime().isBefore(tomorrow.withHour(23))
+        )).isTrue();
     }
 }
