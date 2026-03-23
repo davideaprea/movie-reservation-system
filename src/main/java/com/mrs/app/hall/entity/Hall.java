@@ -1,6 +1,5 @@
 package com.mrs.app.hall.entity;
 
-import com.mrs.app.hall.enumeration.HallStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@Builder(access = AccessLevel.PRIVATE)
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,14 +16,12 @@ public class Hall {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private HallStatus status;
+    @Column(unique = true, nullable = false)
+    private String name;
 
     @OneToMany(
             mappedBy = "hall",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     private List<Seat> seats;
