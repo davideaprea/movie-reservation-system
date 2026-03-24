@@ -1,6 +1,7 @@
 package com.mrs.app.hall.service;
 
 import com.mrs.app.hall.dto.HallCreateRequest;
+import com.mrs.app.hall.dto.HallGetResponse;
 import com.mrs.app.hall.dto.HallResponse;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.mapper.HallMapper;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
@@ -65,5 +67,11 @@ public class HallService {
                         Hall.class.getSimpleName(),
                         Map.of("id", id)
                 )));
+    }
+
+    public List<HallGetResponse> findAll() {
+        return StreamSupport.stream(hallDAO.findAll().spliterator(), false)
+                .map(hallMapper::toGetResponse)
+                .toList();
     }
 }
