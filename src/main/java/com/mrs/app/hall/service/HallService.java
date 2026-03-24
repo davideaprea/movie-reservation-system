@@ -4,17 +4,17 @@ import com.mrs.app.hall.dto.HallCreateRequest;
 import com.mrs.app.hall.dto.HallGetResponse;
 import com.mrs.app.hall.dto.HallResponse;
 import com.mrs.app.hall.entity.Hall;
+import com.mrs.app.hall.entity.Seat;
+import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.mapper.HallMapper;
 import com.mrs.app.hall.repository.HallDAO;
-import com.mrs.app.shared.exception.DomainRequirementError;
-import com.mrs.app.shared.exception.DomainRequirementException;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -27,36 +27,24 @@ public class HallService {
 
     @Transactional
     public HallResponse create(HallCreateRequest createRequest) {
-        List<HallCreateRequest.SeatDTO> seats = createRequest.seats();
+        Hall hall = new Hall(null, createRequest.name(), new ArrayList<>());
 
-        seats.sort(Comparator
-                .comparingLong(HallCreateRequest.SeatDTO::rowNumber)
-                .thenComparing(HallCreateRequest.SeatDTO::seatNumber));
+        for (int rowNumber = 0; rowNumber < createRequest.seatRows().size(); rowNumber++) {
+            List<HallCreateRequest.SeatCreateRequest> row = createRequest.seatRows().get(rowNumber);
 
-        if (seats.getFirst().rowNumber() != 1) {
-            throw new DomainRequirementException(new DomainRequirementError(
-                    "Rows should start from 1.",
-                    "rowNumber"
-            ));
-        }
+            for (int seatNumber = 0; seatNumber < row.size(); seatNumber++) {
+                HallCreateRequest.SeatCreateRequest seat = row.get(seatNumber);
 
-        for (int i = 1; i < seats.size(); i++) {
-            HallCreateRequest.SeatDTO curr = seats.get(i);
-            HallCreateRequest.SeatDTO prev = seats.get(i - 1);
-            boolean sameRow = curr.rowNumber() == prev.rowNumber();
-            boolean areSeatsNonAdjacent = sameRow && curr.seatNumber() != prev.seatNumber() + 1;
-            boolean areRowsNonAdjacent = !sameRow && curr.rowNumber() != prev.rowNumber() + 1;
-            boolean isCurrSeatNamedFirst = !sameRow && curr.seatNumber() != 1;
-
-            if (areSeatsNonAdjacent || areRowsNonAdjacent || isCurrSeatNamedFirst) {
-                throw new DomainRequirementException(new DomainRequirementError(
-                        "Gaps are not allowed: %s, %s.".formatted(prev, curr),
-                        "seatNumber"
-                ));
+                hall.addSeat(Seat.builder()
+                        .rowNumber(rowNumber + 1)
+                        .seatNumber(seatNumber + 1)
+                        .hall(hall)
+                        .type(new SeatType(seat.seatTypeId(), null))
+                        .build());
             }
         }
 
-        return hallMapper.toResponse(hallDAO.save(hallMapper.toEntity(createRequest)));
+        return hallMapper.toResponse(hallDAO.save(hall));
     }
 
     public HallResponse findById(long id) {
