@@ -21,6 +21,7 @@ public class SecurityFilterChainConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/swagger/**").permitAll()
                         .requestMatchers("/schedules").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers("/halls").hasRole(Roles.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

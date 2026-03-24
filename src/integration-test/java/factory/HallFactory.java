@@ -29,13 +29,17 @@ public class HallFactory {
         return hall;
     }
 
-    public static HallCreateRequest createRequest(long seatTypeId) {
-        List<HallCreateRequest.SeatDTO> seats = new ArrayList<>();
+    public static HallCreateRequest createRequest(long seatTypeId, int rowsNumber, int seatsPerRow) {
+        List<List<HallCreateRequest.SeatCreateRequest>> seats = new ArrayList<>();
 
-        for (int rowNumber = 1; rowNumber <= 5; rowNumber++) {
-            for (int seatNumber = 1; seatNumber <= 5; seatNumber++) {
-                seats.add(new HallCreateRequest.SeatDTO(rowNumber, seatNumber, seatTypeId));
+        for (int rowNumber = 1; rowNumber <= rowsNumber; rowNumber++) {
+            List<HallCreateRequest.SeatCreateRequest> row = new ArrayList<>();
+
+            for (int seatNumber = 1; seatNumber <= seatsPerRow; seatNumber++) {
+                row.add(new HallCreateRequest.SeatCreateRequest(seatTypeId));
             }
+
+            seats.add(row);
         }
 
         return new HallCreateRequest("Hall name", seats);
