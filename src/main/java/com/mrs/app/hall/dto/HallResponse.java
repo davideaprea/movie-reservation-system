@@ -5,6 +5,6 @@ import java.util.List;
 public record HallResponse(
         long id,
         String name,
-        List<SeatGetResponse> seats
+        List<SeatResponse> seats
 ) {
 }

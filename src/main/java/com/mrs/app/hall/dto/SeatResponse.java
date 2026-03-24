@@ -1,6 +1,6 @@
 package com.mrs.app.hall.dto;
 
-public record SeatGetResponse(
+public record SeatResponse(
         long id,
         long hallId,
         long rowNumber,
