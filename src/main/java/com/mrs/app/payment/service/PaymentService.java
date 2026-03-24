@@ -57,7 +57,7 @@ public class PaymentService {
                         Intent.class.getSimpleName(),
                         Map.of("id", paymentId)
                 )));
-        GatewayOrderCompletionResponse gatewayPaymentCompletion = paymentGateway.completePayment(intent.getGatewayOrderId());
+        GatewayOrderCompletionResponse gatewayPaymentCompletion = paymentGateway.completePayment(intent.getGatewayIntentId());
         Completion completion = completionDAO.save(new Completion(null, intent, gatewayPaymentCompletion.completionId()));
 
         return new CompletionResponse(completion.getId(), paymentId, gatewayPaymentCompletion.completionId());

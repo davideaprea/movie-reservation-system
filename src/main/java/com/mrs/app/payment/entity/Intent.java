@@ -16,7 +16,7 @@ public class Intent {
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
-    private String gatewayOrderId;
+    private String gatewayIntentId;
 
     @Column(nullable = false)
     private BigDecimal price;

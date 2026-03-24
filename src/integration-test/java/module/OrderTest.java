@@ -119,7 +119,7 @@ public class OrderTest {
         Intent intent = paymentDAO.findById(response.payment().id()).get();
 
         assertThat(paymentDAO.count()).isEqualTo(1);
-        assertThat(intent.getGatewayOrderId()).isEqualTo(gatewayIntentCreateResponse.id());
+        assertThat(intent.getGatewayIntentId()).isEqualTo(gatewayIntentCreateResponse.id());
         assertThat(intent.getPrice()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
