@@ -30,12 +30,12 @@ public class BookingService {
 
     @Transactional
     public BookingResponse create(BookingCreateRequest createRequest) {
-        ScheduleResponse schedule = scheduleService.findById(createRequest.scheduleId());
+        ScheduleResponse selectedSchedule = scheduleService.findById(createRequest.scheduleId());
 
-        if (LocalDateTime.now().isAfter(schedule.startTime())) {
+        if (LocalDateTime.now().isAfter(selectedSchedule.startTime())) {
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected schedule is already over.",
-                    "scheduleId"
+                    BookingCreateRequest.Fields.scheduleId
             ));
         }
 
@@ -60,10 +60,10 @@ public class BookingService {
 
     @Transactional
     public void deleteById(long id) {
-        Booking booking = bookingDAO.findById(id).orElseThrow();
-        ScheduleResponse schedule = scheduleService.findById(booking.getScheduleId());
+        Booking bookingToDelete = bookingDAO.findById(id).orElseThrow();
+        ScheduleResponse bookingSchedule = scheduleService.findById(bookingToDelete.getScheduleId());
 
-        if (LocalDateTime.now().isAfter(schedule.startTime())) {
+        if (LocalDateTime.now().isAfter(bookingSchedule.startTime())) {
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected schedule is already over.",
                     "scheduleId"

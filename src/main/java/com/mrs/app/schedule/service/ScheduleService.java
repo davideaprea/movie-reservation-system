@@ -37,7 +37,7 @@ public class ScheduleService {
         MovieResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
         Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
-        List<ScheduleResponse> conflictingSchedules = findByFilters(new ScheduleGetRequestFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
+        List<ScheduleResponse> conflictingSchedules = findAllByFilters(new ScheduleGetRequestFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
 
         if (!conflictingSchedules.isEmpty()) {
             ConflictingResourceError<ScheduleResponse> error = new ConflictingResourceError<>(
@@ -58,9 +58,7 @@ public class ScheduleService {
                     scheduleToSave.addSeat(new ScheduleSeat(null, seat.id(), scheduleToSave, seatPrice));
                 });
 
-        Schedule schedule = scheduleDAO.save(scheduleToSave);
-
-        return scheduleMapper.toResponse(schedule);
+        return scheduleMapper.toResponse(scheduleDAO.save(scheduleToSave));
     }
 
     public ScheduleResponse findById(long id) {
@@ -73,7 +71,7 @@ public class ScheduleService {
                 )));
     }
 
-    public List<ScheduleResponse> findByFilters(ScheduleGetRequestFilters filters) {
+    public List<ScheduleResponse> findAllByFilters(ScheduleGetRequestFilters filters) {
         return scheduleDAO
                 .findAll(ScheduleSpecificationBuilder.fromFilters(filters))
                 .stream()

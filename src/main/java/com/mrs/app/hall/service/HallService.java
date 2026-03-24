@@ -27,7 +27,7 @@ public class HallService {
 
     @Transactional
     public HallResponse create(HallCreateRequest createRequest) {
-        Hall hall = new Hall(null, createRequest.name(), new ArrayList<>());
+        Hall hallToSave = new Hall(null, createRequest.name(), new ArrayList<>());
 
         for (int rowNumber = 0; rowNumber < createRequest.seatRows().size(); rowNumber++) {
             List<HallCreateRequest.SeatCreateRequest> row = createRequest.seatRows().get(rowNumber);
@@ -35,16 +35,16 @@ public class HallService {
             for (int seatNumber = 0; seatNumber < row.size(); seatNumber++) {
                 HallCreateRequest.SeatCreateRequest seat = row.get(seatNumber);
 
-                hall.addSeat(Seat.builder()
+                hallToSave.addSeat(Seat.builder()
                         .rowNumber(rowNumber + 1)
                         .seatNumber(seatNumber + 1)
-                        .hall(hall)
+                        .hall(hallToSave)
                         .type(new SeatType(seat.seatTypeId(), null))
                         .build());
             }
         }
 
-        return hallMapper.toResponse(hallDAO.save(hall));
+        return hallMapper.toResponse(hallDAO.save(hallToSave));
     }
 
     public HallResponse findById(long id) {

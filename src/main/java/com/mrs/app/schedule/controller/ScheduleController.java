@@ -24,8 +24,8 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findByFilters(@ModelAttribute @Valid ScheduleGetRequestFilters filters) {
-        return new ResponseEntity<>(scheduleService.findByFilters(filters), HttpStatus.OK);
+    public ResponseEntity<List<ScheduleResponse>> findAllByFilters(@ModelAttribute @Valid ScheduleGetRequestFilters filters) {
+        return new ResponseEntity<>(scheduleService.findAllByFilters(filters), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
