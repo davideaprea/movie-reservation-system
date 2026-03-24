@@ -23,5 +23,5 @@ public class Order {
     private Long userId;
 
     @Column(nullable = false)
-    private Long reservationId;
+    private Long bookingId;
 }

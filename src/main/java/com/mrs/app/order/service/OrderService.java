@@ -32,10 +32,10 @@ public class OrderService {
                 .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
-        IntentResponse payment = paymentService.create(new IntentCreateRequest(createRequest.userId(), totalPrice));
-        Order order = orderDAO.save(new Order(null, payment.id(), createRequest.userId(), booking.id()));
+        IntentResponse paymentIntent = paymentService.create(new IntentCreateRequest(createRequest.userId(), totalPrice));
+        Order order = orderDAO.save(new Order(null, paymentIntent.id(), createRequest.userId(), booking.id()));
 
-        return new OrderCreateResponse(order.getId(), booking, payment);
+        return new OrderCreateResponse(order.getId(), booking, paymentIntent);
     }
 
     public OrderCompletionResponse complete(OrderUpdateRequest request) {
@@ -43,9 +43,9 @@ public class OrderService {
                 .findById(request.orderId())
                 .filter(o -> o.getUserId() == request.userId())
                 .orElseThrow();
-        CompletionResponse payment = paymentService.complete(order.getPaymentId());
+        CompletionResponse paymentCompletion = paymentService.complete(order.getPaymentId());
 
-        return new OrderCompletionResponse(order.getId(), order.getUserId(), payment);
+        return new OrderCompletionResponse(order.getId(), order.getUserId(), paymentCompletion);
     }
 
     public OrderCancellationResponse cancel(OrderUpdateRequest request) {
