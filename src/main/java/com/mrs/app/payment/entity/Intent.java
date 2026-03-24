@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "payments")
-public class Payment {
+@Table(name = "intents")
+public class Intent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

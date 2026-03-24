@@ -1,10 +1,10 @@
 package com.mrs.app.order.dto;
 
-import com.mrs.app.payment.dto.PaymentResponse;
+import com.mrs.app.payment.dto.IntentResponse;
 
 public record OrderUpdateResponse(
         long id,
         long userId,
-        PaymentResponse payment
+        IntentResponse payment
 ) {
 }

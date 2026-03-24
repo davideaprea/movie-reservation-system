@@ -1,6 +1,6 @@
 package com.mrs.app.payment.configuration;
 
-import com.mrs.app.payment.dto.PayPalClientConfigProps;
+import com.mrs.app.payment.dto.gateway.PayPalClientConfigProps;
 import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.authentication.ClientCredentialsAuthModel;
 import org.springframework.context.annotation.Bean;

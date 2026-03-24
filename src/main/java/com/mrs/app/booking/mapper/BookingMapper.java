@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
-    BookingResponse toResponse(Booking seatReservation);
+    BookingResponse toResponse(Booking booking);
 }

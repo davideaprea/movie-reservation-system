@@ -1,4 +1,4 @@
-package com.mrs.app.payment.dto;
+package com.mrs.app.payment.dto.gateway;
 
 public record GatewayOrderCompletionResponse(
         String id,

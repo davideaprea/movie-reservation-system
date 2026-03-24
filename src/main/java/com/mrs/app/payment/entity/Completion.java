@@ -15,7 +15,7 @@ public class Completion {
 
     @OneToOne
     @JoinColumn(unique = true)
-    private Payment payment;
+    private Intent intent;
 
     @Setter
     @Column(unique = true)

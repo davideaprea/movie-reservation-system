@@ -1,4 +1,4 @@
-package com.mrs.app.payment.dto;
+package com.mrs.app.payment.dto.gateway;
 
 import com.paypal.sdk.Environment;
 import org.springframework.boot.context.properties.ConfigurationProperties;

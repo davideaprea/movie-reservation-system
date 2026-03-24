@@ -2,8 +2,11 @@ package com.mrs.app.payment.service;
 
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.*;
+import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
+import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
+import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
 import com.mrs.app.payment.entity.Completion;
-import com.mrs.app.payment.entity.Payment;
+import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.entity.Refund;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
@@ -28,15 +31,15 @@ public class PaymentService {
     private final RefundDAO refundDAO;
     private final PaymentMapper paymentMapper;
 
-    public PaymentResponse create(PaymentCreateRequest createRequest) {
-        GatewayOrderCreateResponse createdOrder = paymentGateway.createOrder(new GatewayOrderCreateRequest(
+    public IntentResponse create(IntentCreateRequest createRequest) {
+        GatewayIntentCreateResponse createdIntent = paymentGateway.createIntent(new GatewayIntentCreateRequest(
                 createRequest.totalPrice(),
                 "EUR"
         ));
-        Payment paymentToSave = new Payment(null, createdOrder.id(), createRequest.totalPrice());
-        Payment savedPayment = paymentDAO.save(paymentToSave);
+        Intent intentToSave = new Intent(null, createdIntent.id(), createRequest.totalPrice());
+        Intent savedIntent = paymentDAO.save(intentToSave);
 
-        return paymentMapper.toResponse(savedPayment);
+        return paymentMapper.toResponse(savedIntent);
     }
 
     public CompletionResponse complete(long paymentId) {
@@ -44,20 +47,20 @@ public class PaymentService {
             throw new ConflictingEntityException(new ConflictingResourceError<>(
                     List.of(),
                     List.of("paymentId"),
-                    "The payment is already completed."
+                    "The intent is already completed."
             ));
         }
 
-        Payment payment = paymentDAO
+        Intent intent = paymentDAO
                 .findById(paymentId)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
-                        Payment.class.getSimpleName(),
+                        Intent.class.getSimpleName(),
                         Map.of("id", paymentId)
                 )));
-        GatewayOrderCompletionResponse order = paymentGateway.completeOrder(payment.getGatewayOrderId());
-        Completion completion = completionDAO.save(new Completion(null, payment, order.completionId()));
+        GatewayOrderCompletionResponse gatewayPaymentCompletion = paymentGateway.completePayment(intent.getGatewayOrderId());
+        Completion completion = completionDAO.save(new Completion(null, intent, gatewayPaymentCompletion.completionId()));
 
-        return new CompletionResponse(completion.getId(), paymentId, order.completionId());
+        return new CompletionResponse(completion.getId(), paymentId, gatewayPaymentCompletion.completionId());
     }
 
     public RefundResponse refund(long completionId) {
@@ -69,7 +72,7 @@ public class PaymentService {
                 )));
         Refund refund = refundDAO.save(new Refund(null, completion));
 
-        paymentGateway.refundOrder(completion.getGatewayCompletionId());
+        paymentGateway.refundPayment(completion.getGatewayCompletionId());
 
         return new RefundResponse(refund.getId(), completionId);
     }

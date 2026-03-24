@@ -1,8 +1,8 @@
 package com.mrs.app.payment.component;
 
-import com.mrs.app.payment.dto.GatewayOrderCompletionResponse;
-import com.mrs.app.payment.dto.GatewayOrderCreateRequest;
-import com.mrs.app.payment.dto.GatewayOrderCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
+import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
+import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
 import com.mrs.app.payment.exception.PaymentGatewayException;
 import com.mrs.app.payment.mapper.PayPalOrderMapper;
 import com.mrs.app.payment.util.PayPalOrderUtils;
@@ -19,7 +19,7 @@ public class PaymentGateway {
     private final PaypalServerSdkClient payPalClient;
     private final PayPalOrderMapper payPalOrderMapper;
 
-    public GatewayOrderCreateResponse createOrder(GatewayOrderCreateRequest request) {
+    public GatewayIntentCreateResponse createIntent(GatewayIntentCreateRequest request) {
         Order order;
 
         try {
@@ -31,10 +31,10 @@ public class PaymentGateway {
             throw new PaymentGatewayException(e.getMessage());
         }
 
-        return new GatewayOrderCreateResponse(order.getId());
+        return new GatewayIntentCreateResponse(order.getId());
     }
 
-    public GatewayOrderCompletionResponse completeOrder(String id) {
+    public GatewayOrderCompletionResponse completePayment(String paymentId) {
         Order order;
 
         try {
@@ -42,7 +42,7 @@ public class PaymentGateway {
                     .getOrdersController()
                     .captureOrder(new CaptureOrderInput
                             .Builder()
-                            .id(id)
+                            .id(paymentId)
                             .build())
                     .getResult();
         } catch (Exception e) {
@@ -57,12 +57,12 @@ public class PaymentGateway {
         );
     }
 
-    public void refundOrder(String completionId) {
+    public void refundPayment(String paymentCompletionId) {
         try {
             payPalClient
                     .getPaymentsController()
                     .refundCapturedPayment(new RefundCapturedPaymentInput.Builder()
-                            .captureId(completionId)
+                            .captureId(paymentCompletionId)
                             .build());
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());
