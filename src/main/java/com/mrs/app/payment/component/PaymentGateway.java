@@ -34,7 +34,7 @@ public class PaymentGateway {
         return new GatewayIntentCreateResponse(order.getId());
     }
 
-    public GatewayOrderCompletionResponse completePayment(String paymentId) {
+    public GatewayOrderCompletionResponse completePayment(String intentId) {
         Order order;
 
         try {
@@ -42,7 +42,7 @@ public class PaymentGateway {
                     .getOrdersController()
                     .captureOrder(new CaptureOrderInput
                             .Builder()
-                            .id(paymentId)
+                            .id(intentId)
                             .build())
                     .getResult();
         } catch (Exception e) {

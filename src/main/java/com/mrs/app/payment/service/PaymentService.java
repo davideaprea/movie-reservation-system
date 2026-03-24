@@ -42,25 +42,25 @@ public class PaymentService {
         return paymentMapper.toResponse(savedIntent);
     }
 
-    public CompletionResponse complete(long paymentId) {
-        if (completionDAO.existsByPaymentId(paymentId)) {
+    public CompletionResponse complete(long intentId) {
+        if (completionDAO.existsByIntentId(intentId)) {
             throw new ConflictingEntityException(new ConflictingResourceError<>(
                     List.of(),
-                    List.of("paymentId"),
+                    List.of("intentId"),
                     "The intent is already completed."
             ));
         }
 
         Intent intent = paymentDAO
-                .findById(paymentId)
+                .findById(intentId)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Intent.class.getSimpleName(),
-                        Map.of("id", paymentId)
+                        Map.of("id", intentId)
                 )));
         GatewayOrderCompletionResponse gatewayPaymentCompletion = paymentGateway.completePayment(intent.getGatewayIntentId());
         Completion completion = completionDAO.save(new Completion(null, intent, gatewayPaymentCompletion.completionId()));
 
-        return new CompletionResponse(completion.getId(), paymentId, gatewayPaymentCompletion.completionId());
+        return new CompletionResponse(completion.getId(), intentId, gatewayPaymentCompletion.completionId());
     }
 
     public RefundResponse refund(long completionId) {

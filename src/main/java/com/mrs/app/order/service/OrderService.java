@@ -43,7 +43,7 @@ public class OrderService {
                 .findById(request.orderId())
                 .filter(o -> o.getUserId() == request.userId())
                 .orElseThrow();
-        CompletionResponse paymentCompletion = paymentService.complete(order.getPaymentId());
+        CompletionResponse paymentCompletion = paymentService.complete(order.getIntentId());
 
         return new OrderCompletionResponse(order.getId(), order.getUserId(), paymentCompletion);
     }
@@ -53,7 +53,7 @@ public class OrderService {
                 .findById(request.orderId())
                 .filter(o -> o.getUserId() == request.userId())
                 .orElseThrow();
-        RefundResponse refund = paymentService.refund(order.getPaymentId());
+        RefundResponse refund = paymentService.refund(order.getIntentId());
 
         bookingService.deleteById(order.getId());
 

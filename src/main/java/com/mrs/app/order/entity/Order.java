@@ -17,7 +17,7 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
-    private Long paymentId;
+    private Long intentId;
 
     @Column(nullable = false)
     private Long userId;
