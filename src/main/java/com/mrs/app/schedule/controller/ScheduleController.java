@@ -2,7 +2,7 @@ package com.mrs.app.schedule.controller;
 
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
-import com.mrs.app.schedule.dto.SchedulesGetFilters;
+import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findByFilters(@ModelAttribute @Valid SchedulesGetFilters filters) {
+    public ResponseEntity<List<ScheduleResponse>> findByFilters(@ModelAttribute @Valid ScheduleGetRequestFilters filters) {
         return new ResponseEntity<>(scheduleService.findByFilters(filters), HttpStatus.OK);
     }
 

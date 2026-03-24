@@ -11,5 +11,5 @@ import java.time.LocalDateTime;
 public interface ScheduleMapper {
     Schedule toEntity(ScheduleCreateRequest createRequest, LocalDateTime endTime);
 
-    ScheduleResponse toDTO(Schedule schedule);
+    ScheduleResponse toResponse(Schedule schedule);
 }

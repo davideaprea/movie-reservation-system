@@ -6,7 +6,7 @@ import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
 import com.mrs.app.schedule.dto.ScheduleResponse;
-import com.mrs.app.schedule.dto.SchedulesGetFilters;
+import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.ScheduleSeat;
@@ -37,7 +37,7 @@ public class ScheduleService {
         MovieResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
         Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
-        List<ScheduleResponse> conflictingSchedules = findByFilters(new SchedulesGetFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
+        List<ScheduleResponse> conflictingSchedules = findByFilters(new ScheduleGetRequestFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
 
         if (!conflictingSchedules.isEmpty()) {
             ConflictingResourceError<ScheduleResponse> error = new ConflictingResourceError<>(
@@ -60,24 +60,24 @@ public class ScheduleService {
 
         Schedule schedule = scheduleDAO.save(scheduleToSave);
 
-        return scheduleMapper.toDTO(schedule);
+        return scheduleMapper.toResponse(schedule);
     }
 
     public ScheduleResponse findById(long id) {
         return scheduleDAO
                 .findById(id)
-                .map(scheduleMapper::toDTO)
+                .map(scheduleMapper::toResponse)
                 .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
                         Schedule.class.getSimpleName(),
                         Map.of("id", id)
                 )));
     }
 
-    public List<ScheduleResponse> findByFilters(SchedulesGetFilters filters) {
+    public List<ScheduleResponse> findByFilters(ScheduleGetRequestFilters filters) {
         return scheduleDAO
                 .findAll(ScheduleSpecificationBuilder.fromFilters(filters))
                 .stream()
-                .map(scheduleMapper::toDTO)
+                .map(scheduleMapper::toResponse)
                 .toList();
     }
 }

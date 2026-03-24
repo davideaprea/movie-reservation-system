@@ -1,6 +1,6 @@
 package com.mrs.app.schedule.dao;
 
-import com.mrs.app.schedule.dto.SchedulesGetFilters;
+import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.entity.Schedule;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -8,7 +8,7 @@ public class ScheduleSpecificationBuilder {
     private ScheduleSpecificationBuilder() {
     }
 
-    public static Specification<Schedule> fromFilters(SchedulesGetFilters filters) {
+    public static Specification<Schedule> fromFilters(ScheduleGetRequestFilters filters) {
         Specification<Schedule> finalSpecification = Specification.allOf();
 
         if (filters.movieId() != null) {
