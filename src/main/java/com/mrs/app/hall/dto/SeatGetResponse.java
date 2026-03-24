@@ -5,11 +5,6 @@ public record SeatGetResponse(
         long hallId,
         long rowNumber,
         long seatNumber,
-        SeatTypeDTO type
+        SeatTypeResponse type
 ) {
-    public record SeatTypeDTO(
-            long id,
-            String name
-    ) {
-    }
 }
