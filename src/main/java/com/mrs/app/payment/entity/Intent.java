@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+@Builder
 @AllArgsConstructor
 @Getter
 @Entity

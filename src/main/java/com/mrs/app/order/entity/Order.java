@@ -1,11 +1,9 @@
 package com.mrs.app.order.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Builder
 @Getter
 @AllArgsConstructor
 @Entity

@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -27,7 +26,7 @@ public class HallService {
 
     @Transactional
     public HallResponse create(HallCreateRequest createRequest) {
-        Hall hallToSave = new Hall(null, createRequest.name(), new ArrayList<>());
+        Hall hallToSave = Hall.builder().name(createRequest.name()).build();
 
         for (int rowNumber = 0; rowNumber < createRequest.seatRows().size(); rowNumber++) {
             List<HallCreateRequest.SeatCreateRequest> row = createRequest.seatRows().get(rowNumber);

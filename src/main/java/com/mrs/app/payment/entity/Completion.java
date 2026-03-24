@@ -3,6 +3,7 @@ package com.mrs.app.payment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Builder
 @AllArgsConstructor
 @Getter
 @Entity

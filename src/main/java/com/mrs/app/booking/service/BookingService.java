@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -39,9 +38,12 @@ public class BookingService {
             ));
         }
 
-        Booking bookingToSave = new Booking(null, new ArrayList<>(), createRequest.scheduleId());
+        Booking bookingToSave = Booking.builder().scheduleId(createRequest.scheduleId()).build();
 
-        createRequest.scheduleSeatIds().forEach(seatId -> bookingToSave.addSeatReservation(new SeatReservation(null, seatId, bookingToSave)));
+        createRequest.scheduleSeatIds().forEach(seatId -> bookingToSave.addSeatReservation(SeatReservation.builder()
+                .booking(bookingToSave)
+                .scheduleSeatId(seatId)
+                .build()));
 
         Booking savedBooking;
 

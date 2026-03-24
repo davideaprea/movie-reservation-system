@@ -55,7 +55,11 @@ public class ScheduleService {
                 .forEach(seat -> {
                     BigDecimal seatPrice = dto.seatPriceOptions().get(seat.type().name());
 
-                    scheduleToSave.addSeat(new ScheduleSeat(null, seat.id(), scheduleToSave, seatPrice));
+                    scheduleToSave.addSeat(ScheduleSeat.builder()
+                            .price(seatPrice)
+                            .seatId(seat.id())
+                            .schedule(scheduleToSave)
+                            .build());
                 });
 
         return scheduleMapper.toResponse(scheduleDAO.save(scheduleToSave));

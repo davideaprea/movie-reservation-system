@@ -36,7 +36,10 @@ public class PaymentService {
                 createRequest.totalPrice(),
                 "EUR"
         ));
-        Intent intentToSave = new Intent(null, createdIntent.id(), createRequest.totalPrice());
+        Intent intentToSave = Intent.builder()
+                .gatewayIntentId(createdIntent.id())
+                .price(createRequest.totalPrice())
+                .build();
         Intent savedIntent = paymentDAO.save(intentToSave);
 
         return paymentMapper.toResponse(savedIntent);
@@ -58,7 +61,10 @@ public class PaymentService {
                         Map.of("id", intentId)
                 )));
         GatewayOrderCompletionResponse gatewayPaymentCompletion = paymentGateway.completePayment(intent.getGatewayIntentId());
-        Completion completion = completionDAO.save(new Completion(null, intent, gatewayPaymentCompletion.completionId()));
+        Completion completion = completionDAO.save(Completion.builder()
+                .gatewayCompletionId(gatewayPaymentCompletion.completionId())
+                .intent(intent)
+                .build());
 
         return new CompletionResponse(completion.getId(), intentId, gatewayPaymentCompletion.completionId());
     }
