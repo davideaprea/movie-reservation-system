@@ -7,6 +7,7 @@ import com.mrs.app.security.entity.User;
 import com.mrs.app.security.dto.LoginCreateRequest;
 import com.mrs.app.security.dto.UserCreateRequest;
 import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -25,10 +26,11 @@ public class AuthService {
     private final PasswordEncoder encoder;
 
     public User register(UserCreateRequest credentials) {
-        return userDao.save(User.create(
-                credentials.email(),
-                encoder.encode(credentials.password())
-        ));
+        return userDao.save(User.builder()
+                .email(credentials.email())
+                .password(encoder.encode(credentials.password()))
+                .role(Role.USER)
+                .build());
     }
 
     public String login(LoginCreateRequest credentials) {

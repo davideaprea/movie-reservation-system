@@ -1,6 +1,6 @@
 package com.mrs.app.security.config;
 
-import com.mrs.app.security.enumeration.Roles;
+import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.security.filter.UserAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +20,8 @@ public class SecurityFilterChainConfig {
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/swagger/**").permitAll()
-                        .requestMatchers("/schedules").hasRole(Roles.ADMIN.toString())
-                        .requestMatchers("/halls").hasRole(Roles.ADMIN.toString())
+                        .requestMatchers("/schedules").hasRole(Role.ADMIN.toString())
+                        .requestMatchers("/halls").hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

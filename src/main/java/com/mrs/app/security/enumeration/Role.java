@@ -3,7 +3,7 @@ package com.mrs.app.security.enumeration;
 import lombok.Getter;
 
 @Getter
-public enum Roles {
+public enum Role {
     OPERATOR("OPERATOR"),
     MEDIC("MEDIC"),
     USER("USER"),
@@ -11,7 +11,7 @@ public enum Roles {
 
     private final String value;
 
-    Roles(String role) {
+    Role(String role) {
         value = "ROLE_" + role;
     }
 }

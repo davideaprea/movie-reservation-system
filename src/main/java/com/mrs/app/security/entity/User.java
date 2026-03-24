@@ -1,9 +1,10 @@
 package com.mrs.app.security.entity;
 
-import com.mrs.app.security.enumeration.Roles;
+import com.mrs.app.security.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Builder
 @AllArgsConstructor
 @Getter
 @Entity
@@ -22,13 +23,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Roles role;
-
-    public static User create(String email, String password) {
-        return new User(null, email, password, Roles.USER);
-    }
-
-    public static User createWithId(long id) {
-        return new User(id, null, null, null);
-    }
+    private Role role;
 }
