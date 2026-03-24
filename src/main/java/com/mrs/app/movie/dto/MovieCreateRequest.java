@@ -1,12 +1,13 @@
 package com.mrs.app.movie.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.time.Duration;
 import java.util.List;
 
 public record MovieCreateRequest(
-        @NotBlank
+        @NotBlank @Max(100)
         String title,
 
         @NotNull
@@ -18,7 +19,7 @@ public record MovieCreateRequest(
         @NotBlank
         String cover,
 
-        @Size(min = 1)
-        List<Long> genreIds
+        @NotEmpty
+        List<@Valid @Positive Long> genreIds
 ) {
 }

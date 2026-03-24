@@ -13,7 +13,7 @@ public class MovieFactory {
 
     public static Movie create() {
         return Movie.builder()
-                .cover("cover-link")
+                .coverImageLink("cover-link")
                 .description("Description")
                 .title(faker.book().title())
                 .duration(Duration.ofHours(2))

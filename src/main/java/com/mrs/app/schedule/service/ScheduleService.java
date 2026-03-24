@@ -1,6 +1,6 @@
 package com.mrs.app.schedule.service;
 
-import com.mrs.app.movie.dto.MovieGetResponse;
+import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.hall.service.HallService;
 import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
@@ -34,7 +34,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse create(ScheduleCreateRequest dto) {
-        MovieGetResponse movieToSchedule = movieService.findById(dto.movieId());
+        MovieResponse movieToSchedule = movieService.findById(dto.movieId());
         LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
         Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
         List<ScheduleResponse> conflictingSchedules = findByFilters(new SchedulesGetFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));

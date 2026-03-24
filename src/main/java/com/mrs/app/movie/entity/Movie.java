@@ -27,8 +27,8 @@ public class Movie {
     private String description;
 
     @Column(nullable = false)
-    private String cover;
+    private String coverImageLink;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Genre> genres;
 }
