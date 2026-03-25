@@ -3,6 +3,7 @@ package com.mrs.app.hall.apidoc;
 import com.mrs.app.hall.dto.HallCreateRequest;
 import com.mrs.app.hall.dto.HallGetResponse;
 import com.mrs.app.hall.dto.HallResponse;
+import com.mrs.app.shared.exception.ConflictingResourceError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +32,8 @@ public interface HallControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "409",
-                            description = "A hall with the same name already exists."
+                            description = "A hall with the same name already exists.",
+                            content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
                     )
             }
     )

@@ -2,6 +2,7 @@ package com.mrs.app.movie.apidoc;
 
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.dto.MovieResponse;
+import com.mrs.app.shared.exception.EntityNotFoundError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +49,8 @@ public interface MovieControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "Movie with the specified ID was not found."
+                            description = "Movie with the specified ID was not found.",
+                            content = @Content(schema = @Schema(implementation = EntityNotFoundError.class))
                     )
             }
     )

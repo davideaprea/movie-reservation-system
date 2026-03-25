@@ -2,6 +2,7 @@ package com.mrs.app.hall.apidoc;
 
 import com.mrs.app.hall.dto.SeatTypeCreateRequest;
 import com.mrs.app.hall.dto.SeatTypeResponse;
+import com.mrs.app.shared.exception.ConflictingResourceError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +34,8 @@ public interface SeatTypeControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "409",
-                            description = "Seat type with the same name already exists."
+                            description = "Seat type with the same name already exists.",
+                            content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
                     )
             }
     )

@@ -1,5 +1,6 @@
 package com.mrs.app.schedule.controller;
 
+import com.mrs.app.schedule.apidoc.ScheduleControllerDoc;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/schedules")
-public class ScheduleController {
+public class ScheduleController implements ScheduleControllerDoc {
     private final ScheduleService scheduleService;
 
     @PostMapping
