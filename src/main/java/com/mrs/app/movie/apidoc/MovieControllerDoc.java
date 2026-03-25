@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
-@Tag(
-        name = "Movie endpoints",
-        description = "Endpoints for managing movies in the cinema."
-)
+@Tag(name = "Movie endpoints")
 public interface MovieControllerDoc {
     @Operation(
             summary = "Create a new movie",

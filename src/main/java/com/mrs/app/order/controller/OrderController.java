@@ -1,5 +1,6 @@
 package com.mrs.app.order.controller;
 
+import com.mrs.app.order.apidoc.OrderControllerDoc;
 import com.mrs.app.order.dto.*;
 import com.mrs.app.order.service.OrderService;
 import com.mrs.app.security.dto.AuthUserDetails;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/orders")
-public class OrderController {
+public class OrderController implements OrderControllerDoc {
     private final OrderService orderService;
 
     @PostMapping

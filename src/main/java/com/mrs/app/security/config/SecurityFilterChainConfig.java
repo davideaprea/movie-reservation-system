@@ -19,6 +19,7 @@ public class SecurityFilterChainConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger/**").permitAll()
                         .requestMatchers("/schedules").hasRole(Role.ADMIN.toString())
                         .requestMatchers("/halls").hasRole(Role.ADMIN.toString())
