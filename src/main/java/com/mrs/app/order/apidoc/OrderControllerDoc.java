@@ -6,6 +6,7 @@ import com.mrs.app.order.dto.OrderCompletionResponse;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.security.dto.AuthUserDetails;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,6 +38,11 @@ public interface OrderControllerDoc {
                             responseCode = "409",
                             description = "One or more selected seats are already booked.",
                             content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "The selected schedule is over.",
+                            content = @Content(schema = @Schema(implementation = DomainRequirementError.class))
                     )
             }
     )
@@ -99,6 +105,11 @@ public interface OrderControllerDoc {
                             responseCode = "409",
                             description = "The order has already been cancelled.",
                             content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "The selected schedule has already started.",
+                            content = @Content(schema = @Schema(implementation = DomainRequirementError.class))
                     )
             }
     )

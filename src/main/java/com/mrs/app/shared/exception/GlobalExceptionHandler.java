@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     @ExceptionHandler(DomainRequirementException.class)
     public ResponseEntity<DomainRequirementError> handle(DomainRequirementException exception) {
-        return new ResponseEntity<>(exception.getError(), HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(exception.getError(), HttpStatus.UNPROCESSABLE_CONTENT);
     }
 
     @ExceptionHandler(EntityNotFondException.class)
