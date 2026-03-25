@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record IntentCreateRequest(
-        @Positive
-        long userId,
-
         @NotNull
         @Positive
         BigDecimal totalPrice

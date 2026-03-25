@@ -13,12 +13,21 @@ import com.paypal.sdk.models.RefundCapturedPaymentInput;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Handles interactions with the external payment gateway,
+ * providing abstractions over the service payloads and exceptions.
+ */
 @AllArgsConstructor
 @Component
 public class PaymentGateway {
     private final PaypalServerSdkClient payPalClient;
     private final PayPalOrderMapper payPalOrderMapper;
 
+    /**
+     * Creates a new payment intent for the specified amount and details.
+     * <p>
+     * The returned {@link GatewayIntentCreateResponse#id()} should be stored to allow completing the payment later.
+     */
     public GatewayIntentCreateResponse createIntent(GatewayIntentCreateRequest request) {
         Order order;
 
@@ -34,6 +43,14 @@ public class PaymentGateway {
         return new GatewayIntentCreateResponse(order.getId());
     }
 
+    /**
+     * Completes the pending payment for a previously created intent.
+     * <p>
+     * The returned {@link GatewayOrderCompletionResponse#completionId()}
+     * should be stored to allow refunds for this payment.
+     *
+     * @throws IllegalStateException if the gateway hasn't return any completion ID
+     */
     public GatewayOrderCompletionResponse completePayment(String intentId) {
         Order order;
 

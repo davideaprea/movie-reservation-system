@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a pending payment request.
+ */
 @Builder
 @AllArgsConstructor
 @Getter
@@ -16,6 +19,10 @@ public class Intent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Retrieved from the payment gateway after creating the intent.
+     * Stored to allow completing the payment later through the gateway.
+     */
     @Column(unique = true, nullable = false, updatable = false)
     private String gatewayIntentId;
 

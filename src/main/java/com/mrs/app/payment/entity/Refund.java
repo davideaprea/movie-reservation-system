@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represent a payment {@link Completion} refund.
+ */
 @AllArgsConstructor
 @Getter
 @Entity

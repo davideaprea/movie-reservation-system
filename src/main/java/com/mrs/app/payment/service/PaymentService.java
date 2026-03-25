@@ -17,6 +17,7 @@ import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +46,12 @@ public class PaymentService {
         return paymentMapper.toResponse(savedIntent);
     }
 
+    /**
+     * Completes a previously created payment {@link Intent}.
+     *
+     * @throws ConflictingEntityException if the intent is already completed
+     * @throws EntityNotFondException     if the intent to be completed does not exist
+     */
     public CompletionResponse complete(long intentId) {
         if (completionDAO.existsByIntentId(intentId)) {
             throw new ConflictingEntityException(new ConflictingResourceError<>(
@@ -69,6 +76,12 @@ public class PaymentService {
         return new CompletionResponse(completion.getId(), intentId, gatewayPaymentCompletion.completionId());
     }
 
+    /**
+     * Issues a refund for a payment {@link Completion}.
+     *
+     * @throws EntityNotFondException     if the completion does not exist
+     * @throws ConflictingEntityException if the payment has already been refunded
+     */
     public RefundResponse refund(long completionId) {
         Completion completion = completionDAO
                 .findById(completionId)
@@ -76,7 +89,17 @@ public class PaymentService {
                         Completion.class.getSimpleName(),
                         Map.of("id", completionId)
                 )));
-        Refund refund = refundDAO.save(new Refund(null, completion));
+        Refund refund;
+
+        try {
+            refund = refundDAO.save(new Refund(null, completion));
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictingEntityException(new ConflictingResourceError<>(
+                    List.of(),
+                    List.of("completionId"),
+                    "The selected payment has already been refunded."
+            ));
+        }
 
         paymentGateway.refundPayment(completion.getGatewayCompletionId());
 

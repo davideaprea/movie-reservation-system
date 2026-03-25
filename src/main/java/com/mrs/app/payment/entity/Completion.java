@@ -3,6 +3,10 @@ package com.mrs.app.payment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Represent a payment completion,
+ * marking the related {@link Intent} as completed.
+ */
 @Builder
 @AllArgsConstructor
 @Getter
@@ -18,6 +22,10 @@ public class Completion {
     @JoinColumn(unique = true)
     private Intent intent;
 
+    /**
+     * Retrieved from the payment gateway after completing the intent.
+     * Stored to allow possible refunds through the gateway.
+     */
     @Setter
     @Column(unique = true)
     private String gatewayCompletionId;

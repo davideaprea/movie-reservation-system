@@ -32,7 +32,7 @@ public class OrderService {
                 .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
-        IntentResponse paymentIntent = paymentService.create(new IntentCreateRequest(createRequest.userId(), totalPrice));
+        IntentResponse paymentIntent = paymentService.create(new IntentCreateRequest(totalPrice));
         Order order = orderDAO.save(Order.builder()
                 .bookingId(booking.id())
                 .intentId(paymentIntent.id())
