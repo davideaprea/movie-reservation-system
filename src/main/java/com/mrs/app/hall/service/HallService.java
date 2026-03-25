@@ -24,6 +24,10 @@ public class HallService {
     private final HallDAO hallDAO;
     private final HallMapper hallMapper;
 
+    /**
+     * When creating a hall, seats are generated from the provided rows ({@link HallCreateRequest#seatRows()}),
+     * forming a grid where each seat is assigned a progressive (rowNumber, seatNumber) starting from 1.
+     */
     @Transactional
     public HallResponse create(HallCreateRequest createRequest) {
         Hall hallToSave = Hall.builder().name(createRequest.name()).build();

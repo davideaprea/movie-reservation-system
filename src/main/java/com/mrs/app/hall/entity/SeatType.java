@@ -3,6 +3,9 @@ package com.mrs.app.hall.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Represents a seat category (e.g., STANDARD, VIP).
+ */
 @AllArgsConstructor
 @Getter
 @Entity

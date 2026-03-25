@@ -9,6 +9,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "seats", uniqueConstraints = {
+        //Each seat's coordinates (rowNumber + seatNumber) must be unique within the same hall
         @UniqueConstraint(columnNames = {"hall_id", "row_number", "seat_number"})
 })
 public class Seat {
