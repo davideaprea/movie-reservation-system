@@ -1,5 +1,6 @@
 package com.mrs.app.hall.controller;
 
+import com.mrs.app.hall.apidoc.SeatTypeControllerDoc;
 import com.mrs.app.hall.dto.SeatTypeCreateRequest;
 import com.mrs.app.hall.dto.SeatTypeResponse;
 import com.mrs.app.hall.entity.SeatType;
@@ -16,7 +17,7 @@ import java.util.stream.StreamSupport;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/seat-types")
-public class SeatTypeController {
+public class SeatTypeController implements SeatTypeControllerDoc {
     private final SeatTypeDAO seatTypeDAO;
 
     @PostMapping

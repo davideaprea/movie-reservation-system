@@ -1,5 +1,6 @@
 package com.mrs.app.hall.controller;
 
+import com.mrs.app.hall.apidoc.HallControllerDoc;
 import com.mrs.app.hall.dto.HallCreateRequest;
 import com.mrs.app.hall.dto.HallGetResponse;
 import com.mrs.app.hall.dto.HallResponse;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/halls")
-public class HallController {
+public class HallController implements HallControllerDoc {
     private final HallService hallService;
 
     @PostMapping
