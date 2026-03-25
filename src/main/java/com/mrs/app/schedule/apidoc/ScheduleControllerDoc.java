@@ -5,6 +5,7 @@ import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
+import com.mrs.app.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -31,7 +32,8 @@ public interface ScheduleControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "The request payload didn't pass the formal validation."
+                            description = "The request payload didn't pass the formal validation.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
                     ),
                     @ApiResponse(
                             responseCode = "409",

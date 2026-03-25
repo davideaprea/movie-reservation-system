@@ -8,8 +8,10 @@ import com.mrs.app.security.dto.AuthUserDetails;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
+import com.mrs.app.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +34,8 @@ public interface OrderControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "The request payload didn't pass the formal validation."
+                            description = "The request payload didn't pass the formal validation.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
                     ),
                     @ApiResponse(
                             responseCode = "409",
@@ -59,7 +62,8 @@ public interface OrderControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "The request payload didn't pass the formal validation."
+                            description = "The request payload didn't pass the formal validation.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -94,7 +98,8 @@ public interface OrderControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "The request payload didn't pass the formal validation."
+                            description = "The request payload didn't pass the formal validation.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
                     ),
                     @ApiResponse(
                             responseCode = "404",

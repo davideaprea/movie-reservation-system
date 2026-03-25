@@ -3,6 +3,7 @@ package com.mrs.app.hall.apidoc;
 import com.mrs.app.hall.dto.SeatTypeCreateRequest;
 import com.mrs.app.hall.dto.SeatTypeResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import com.mrs.app.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +31,8 @@ public interface SeatTypeControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "The request payload didn't pass the formal validation."
+                            description = "The request payload didn't pass the formal validation.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
                     ),
                     @ApiResponse(
                             responseCode = "409",

@@ -20,7 +20,10 @@ public class SecurityFilterChainConfig {
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/swagger/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .requestMatchers("/schedules").hasRole(Role.ADMIN.toString())
                         .requestMatchers("/halls").hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()

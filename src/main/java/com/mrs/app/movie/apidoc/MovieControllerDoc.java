@@ -3,7 +3,9 @@ package com.mrs.app.movie.apidoc;
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.shared.exception.EntityNotFoundError;
+import com.mrs.app.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -23,7 +25,8 @@ public interface MovieControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "The request payload didn't pass the formal validation."
+                            description = "The request payload didn't pass the formal validation.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
                     )
             }
     )
