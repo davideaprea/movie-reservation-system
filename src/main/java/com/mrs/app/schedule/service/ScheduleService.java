@@ -32,6 +32,14 @@ public class ScheduleService {
     private final MovieService movieService;
     private final HallService hallService;
 
+    /**
+     * When creating a schedule, this method automatically calculates
+     * the end time from the movie's duration and
+     * generates a {@link ScheduleSeat} for each hall seat, setting its price
+     * according to {@link ScheduleCreateRequest#seatPriceOptions()}.
+     *
+     * @throws ConflictingEntityException if the hall is already occupied during the requested time
+     */
     @Transactional
     public ScheduleResponse create(ScheduleCreateRequest dto) {
         MovieResponse movieToSchedule = movieService.findById(dto.movieId());

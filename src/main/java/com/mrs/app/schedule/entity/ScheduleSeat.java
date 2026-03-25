@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a seat for a specific schedule, including its pricing at the time of the screening.
+ */
 @Builder
 @AllArgsConstructor
 @Getter
@@ -16,6 +19,9 @@ public class ScheduleSeat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * References the corresponding seat in the hall for this schedule.
+     */
     @Column(nullable = false)
     private Long seatId;
 

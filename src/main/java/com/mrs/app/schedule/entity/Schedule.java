@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a scheduled movie screening in a specific hall at a given time.
+ */
 @FieldNameConstants
 @AllArgsConstructor
 @Builder
