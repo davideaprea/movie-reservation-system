@@ -3,6 +3,9 @@ package com.mrs.app.movie.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Represents a movie category (e.g., Action, Sci-Fi, Horror).
+ */
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
