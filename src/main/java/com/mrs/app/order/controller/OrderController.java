@@ -32,7 +32,7 @@ public class OrderController implements OrderControllerDoc {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<OrderCompletionResponse> complete(
-            @PathVariable @Valid @Positive long orderId,
+            @PathVariable long orderId,
             @AuthenticationPrincipal AuthUserDetails loggedUser
     ) {
         return new ResponseEntity<>(orderService.complete(new OrderUpdateRequest(loggedUser.getId(), orderId)), HttpStatus.OK);
