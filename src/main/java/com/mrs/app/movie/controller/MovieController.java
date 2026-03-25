@@ -1,5 +1,6 @@
 package com.mrs.app.movie.controller;
 
+import com.mrs.app.movie.apidoc.MovieControllerDoc;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.service.MovieService;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/movies")
-public class MovieController {
+public class MovieController implements MovieControllerDoc {
     private final MovieService movieService;
 
     @PostMapping
