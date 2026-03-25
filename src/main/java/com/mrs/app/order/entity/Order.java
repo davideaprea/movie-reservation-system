@@ -3,6 +3,13 @@ package com.mrs.app.order.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Represents an order linking a booking to its payment,
+ * associating it with the customer who created the request.
+ * <p>
+ * This entity allows tracking the payment status of a booking
+ * and is essential for completing and refunding payments.
+ */
 @Builder
 @Getter
 @AllArgsConstructor

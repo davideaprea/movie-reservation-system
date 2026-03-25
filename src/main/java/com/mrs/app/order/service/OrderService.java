@@ -18,6 +18,12 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+/**
+ * Orchestrator for the complete order workflow.
+ * <p>
+ * It serves as the main entry point for order-related operations,
+ * coordinating the interaction between involved modules.
+ */
 @Service
 @AllArgsConstructor
 public class OrderService {
@@ -26,6 +32,9 @@ public class OrderService {
     private final PaymentService paymentService;
     private final ScheduleSeatService scheduleSeatService;
 
+    /**
+     * Creates a new {@link Order}, linking the submitted booking to its payment intent.
+     */
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
         BigDecimal totalPrice = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
                 .stream()
@@ -52,6 +61,9 @@ public class OrderService {
         return new OrderCompletionResponse(order.getId(), order.getUserId(), paymentCompletion);
     }
 
+    /**
+     * Cancels an order, issues a refund, and deletes the associated booking.
+     */
     public OrderCancellationResponse cancel(OrderUpdateRequest request) {
         Order order = orderDAO
                 .findById(request.orderId())
