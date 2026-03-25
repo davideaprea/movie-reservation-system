@@ -6,6 +6,13 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a group of {@link SeatReservation} for a specific schedule.
+ * <p>
+ * This entity facilitates retrieving reservations by {@link #scheduleId} and
+ * is also used to create bookings transactional-ly: either all seats in the group
+ * are reserved successfully, or none are saved if any seat is already booked.
+ */
 @Builder
 @AllArgsConstructor
 @Getter

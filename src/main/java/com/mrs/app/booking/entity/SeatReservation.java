@@ -14,6 +14,8 @@ public class SeatReservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*The unique constraint prevents conflicting
+    reservations for the same schedule seat*/
     @Column(nullable = false, unique = true)
     private Long scheduleSeatId;
 

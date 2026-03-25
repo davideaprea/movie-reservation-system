@@ -27,6 +27,13 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final ScheduleService scheduleService;
 
+    /**
+     * This method ensures an "all-or-nothing" reservation: either all requested seats are booked,
+     * or none are persisted if there is a conflict.
+     *
+     * @throws DomainRequirementException if the selected schedule has already started
+     * @throws ConflictingEntityException if any of the requested seats are already booked
+     */
     @Transactional
     public BookingResponse create(BookingCreateRequest createRequest) {
         ScheduleResponse selectedSchedule = scheduleService.findById(createRequest.scheduleId());
@@ -60,6 +67,11 @@ public class BookingService {
         return bookingMapper.toResponse(savedBooking);
     }
 
+    /**
+     * Deletes a specific booking and every related seat reservation.
+     *
+     * @throws DomainRequirementException if the selected schedule has already started
+     */
     @Transactional
     public void deleteById(long id) {
         Booking bookingToDelete = bookingDAO.findById(id).orElseThrow();
