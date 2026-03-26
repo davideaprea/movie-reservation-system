@@ -18,7 +18,7 @@ public class Completion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(unique = true)
     private Intent intent;
 

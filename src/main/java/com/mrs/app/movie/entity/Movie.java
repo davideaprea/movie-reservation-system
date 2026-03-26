@@ -29,6 +29,11 @@ public class Movie {
     @Column(nullable = false)
     private String coverImageLink;
 
+    @JoinTable(
+            name = "movies_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Genre> genres;
 }

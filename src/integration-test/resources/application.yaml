@@ -4,7 +4,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
 
 jwt:
   secret: Aymga2LNFrM+tnkr6MYLFY2Jou46h2/Omogeu0iMCRQ=
@@ -12,9 +12,5 @@ jwt:
 
 paypal:
   environment: SANDBOX
-  client-id: ${PAYPAL_CLIENT_ID}
-  client-secret: ${PAYPAL_CLIENT_SECRET}
-
-logging:
-  level:
-    org.springframework.boot.context.config: DEBUG
+  client-id: fake_client_id
+  client-secret: fake_client_secret
