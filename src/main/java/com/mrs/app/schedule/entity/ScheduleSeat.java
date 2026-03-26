@@ -25,7 +25,7 @@ public class ScheduleSeat {
     @Column(nullable = false)
     private Long seatId;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Schedule schedule;
 
     @Column(nullable = false)

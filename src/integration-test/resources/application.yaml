@@ -14,3 +14,8 @@ paypal:
   environment: SANDBOX
   client-id: fake_client_id
   client-secret: fake_client_secret
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
