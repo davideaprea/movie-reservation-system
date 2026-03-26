@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/movies")
@@ -28,6 +30,14 @@ public class MovieController implements MovieControllerDoc {
     public ResponseEntity<MovieResponse> findById(@PathVariable long id) {
         return new ResponseEntity<>(
                 movieService.findById(id),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MovieResponse>> findAll(@RequestParam(required = false) String title) {
+        return new ResponseEntity<>(
+                movieService.findAllByTitle(title),
                 HttpStatus.OK
         );
     }

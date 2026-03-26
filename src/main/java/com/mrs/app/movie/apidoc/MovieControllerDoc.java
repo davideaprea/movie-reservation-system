@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 @Tag(name = "Movie endpoints")
 public interface MovieControllerDoc {
     @Operation(
@@ -55,4 +57,18 @@ public interface MovieControllerDoc {
             }
     )
     ResponseEntity<MovieResponse> findById(long id);
+
+    @Operation(
+            summary = "Get all movies",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "List of movies returned successfully.",
+                            content = @Content(
+                                    array = @ArraySchema(schema = @Schema(implementation = MovieResponse.class))
+                            )
+                    )
+            }
+    )
+    ResponseEntity<List<MovieResponse>> findAll(String title);
 }

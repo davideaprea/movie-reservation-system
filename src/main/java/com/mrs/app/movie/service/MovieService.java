@@ -10,6 +10,7 @@ import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -33,5 +34,12 @@ public class MovieService {
                         Movie.class.getSimpleName(),
                         Map.of("id", id)
                 )));
+    }
+
+    public List<MovieResponse> findAllByTitle(String title) {
+        return movieDAO.findByTitleContainingIgnoreCase(title)
+                .stream()
+                .map(movieMapper::toResponse)
+                .toList();
     }
 }
