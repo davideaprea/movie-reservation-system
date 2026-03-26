@@ -1,25 +1,63 @@
 # Movie reservation system
 
-## Quick start
-### Prerequisites
+Modular monolithic backend application for managing all aspects of a movie theater, covering both administrative and customer functionalities.
+
+## Core features
+
+- **Movie schedules**: create, manage and view available movies showtimes
+- **Seat reservation**: book available seats for a specific schedule, handling concurrent reservations
+- **Payment integration**: secure payment and refunds via PayPal
+- **Hall management**: create halls with a seat map, allowing configuration of seat types (STANDARD, VIP, etc.)
+
+## Architecture
+
+### Modular design
+
+- Each module is self-contained: contains its own domain entities, services, and repositories
+- Minimal coupling between modules: modules communicate via service APIs rather than direct object references
+- This design allows easy scaling of individual modules in the future without breaking the entire application
+
+### Entity relationships
+
+- To avoid tight coupling between modules, entity relationships are not managed via standard JPA annotations (like
+  `@OneToMany` or `@ManyToOne`). Instead, each entity only keeps a reference to the IDs of related entities
+- Actual database constraints and relationships are managed using Flyway migrations, ensuring data integrity at the
+  database level without introducing dependencies between Java modules
+
+## Built with
+
+- Java 21
+- Spring Boot 4
+- PostgreSQL
+- Docker
+- Flyway migrations
+
+# Quick start
+
+## Prerequisites
+
 - [Java 21+](https://www.oracle.com/it/java/technologies/downloads/#java21)
 - [PayPal developer account](https://developer.paypal.com/home/) for setting up API credentials
 - [Maven 3.9.x](https://maven.apache.org/download.cgi) for building, running and testing the application
 - [PostgreSQL](https://www.postgresql.org/download/)
 - [Docker](https://www.docker.com/get-started/) for running integration tests
 
-### Running the application
+## Running the application
+
 1. Run `mvn install` to install project's dependencies
 2. Update the [application.yaml](src/main/resources/application.yaml) file by replacing the placeholder values:
     - DATABASE_CONN_URL: database connection URL, e.g.: `jdbc:postgresql://localhost:5432/db_name`
     - PAYPAL_CLIENT_ID: PayPal application client ID
     - PAYPAL_CLIENT_SECRET: PayPal application client secret
-    - JWT_SECRET_KEY: base64 key used to sign generated JWTs. The decoded value must have a minimum size of 32 bytes
+    - JWT_SECRET_KEY: base64-encoded key used to sign JWTs. The decoded key must be at least 32 bytes long (minimum for
+      HS256)
     - JWT_EXP_TIME: expiration time for JWTs in milliseconds
 3. Run `mvn spring-boot:run` to start the application
-4. Once the application is running, access the API documentation via [Swagger UI](http://localhost:8080/swagger-ui/index.html)
+4. Once the application is running, access the API documentation
+   via [Swagger UI](http://localhost:8080/swagger-ui/index.html)
 
-### Running integration tests
+## Running integration tests
+
 1. Make sure your local Docker environment is running
 2. Run `mvn clean verify`
 3. Check the test results in the terminal and monitor container execution via Docker Desktop
