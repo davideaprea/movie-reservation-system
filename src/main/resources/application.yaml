@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: ${DATABASE_CONN_URL}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  exp-time: ${JWT_EXP_TIME}
+
+paypal:
+  environment: SANDBOX
+  client-id: ${PAYPAL_CLIENT_ID}
+  client-secret: ${PAYPAL_CLIENT_SECRET}
