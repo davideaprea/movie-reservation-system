@@ -19,4 +19,13 @@ public class MovieFactory {
                 .duration(Duration.ofHours(2))
                 .build();
     }
+
+    public static Movie create(String title) {
+        return Movie.builder()
+                .coverImageLink("cover-link")
+                .description("Description")
+                .title(title)
+                .duration(Duration.ofHours(2))
+                .build();
+    }
 }

@@ -7,17 +7,17 @@ import java.time.Duration;
 import java.util.List;
 
 public record MovieCreateRequest(
-        @NotBlank @Max(100)
+        @NotBlank @Size(max = 100)
         String title,
 
         @NotNull
         Duration duration,
 
-        @NotBlank @Min(20) @Max(500)
+        @NotBlank @Size(min = 20, max = 500)
         String description,
 
         @NotBlank
-        String cover,
+        String coverImageLink,
 
         @NotEmpty
         List<@Valid @Positive Long> genreIds
