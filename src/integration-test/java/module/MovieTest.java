@@ -1,6 +1,6 @@
 package module;
 
-import annotation.ContainerizedContextTest;
+import annotation.ContainerizedTest;
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.entity.Genre;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ContainerizedContextTest
+@ContainerizedTest
 public class MovieTest {
     @Autowired
     @Qualifier("adminClient")

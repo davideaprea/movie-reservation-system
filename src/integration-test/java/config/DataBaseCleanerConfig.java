@@ -6,7 +6,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 import java.util.List;
 
-public class DataBaseCleaner extends AbstractTestExecutionListener {
+public class DataBaseCleanerConfig extends AbstractTestExecutionListener {
     @Override
     public void beforeTestMethod(TestContext testContext) {
         JdbcTemplate jdbcTemplate = testContext.getApplicationContext().getBean(JdbcTemplate.class);

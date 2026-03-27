@@ -1,9 +1,9 @@
 package annotation;
 
 import com.mrs.app.MRSApplication;
-import config.DataBaseCleaner;
-import config.RestTestClientConfig;
-import config.TestContainersConfiguration;
+import config.DataBaseCleanerConfig;
+import config.UserHTTPClientConfig;
+import config.PostgreSQLContainerConfig;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -15,14 +15,14 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @TestExecutionListeners(
-        value = DataBaseCleaner.class,
+        value = DataBaseCleanerConfig.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
 )
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = MRSApplication.class
 )
-@Import({TestContainersConfiguration.class, RestTestClientConfig.class})
+@Import({PostgreSQLContainerConfig.class, UserHTTPClientConfig.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public @interface ContainerizedContextTest {
+public @interface ContainerizedTest {
 }

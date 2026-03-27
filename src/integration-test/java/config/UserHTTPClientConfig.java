@@ -17,12 +17,12 @@ import java.util.List;
 
 @Lazy
 @TestConfiguration(proxyBeanMethods = false)
-public class RestTestClientConfig {
+public class UserHTTPClientConfig {
     private final UserDAO userDAO;
     private final JWTCreator jwtCreator;
     private final int port;
 
-    public RestTestClientConfig(UserDAO userDAO, JWTCreator jwtCreator, @LocalServerPort int port) {
+    public UserHTTPClientConfig(UserDAO userDAO, JWTCreator jwtCreator, @LocalServerPort int port) {
         this.userDAO = userDAO;
         this.jwtCreator = jwtCreator;
         this.port = port;

@@ -1,6 +1,6 @@
 package module;
 
-import annotation.ContainerizedContextTest;
+import annotation.ContainerizedTest;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.repository.BookingDAO;
@@ -43,7 +43,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ContainerizedContextTest
+@ContainerizedTest
 public class OrderTest {
     @Autowired
     @Qualifier("userClient")

@@ -1,6 +1,6 @@
 package module;
 
-import annotation.ContainerizedContextTest;
+import annotation.ContainerizedTest;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.repository.HallDAO;
@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ContainerizedContextTest
+@ContainerizedTest
 public class ScheduleTest {
     @Autowired
     @Qualifier("adminClient")

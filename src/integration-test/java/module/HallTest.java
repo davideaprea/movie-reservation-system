@@ -1,6 +1,6 @@
 package module;
 
-import annotation.ContainerizedContextTest;
+import annotation.ContainerizedTest;
 import com.mrs.app.hall.dto.HallCreateRequest;
 import com.mrs.app.hall.dto.HallResponse;
 import com.mrs.app.hall.entity.SeatType;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ContainerizedContextTest
+@ContainerizedTest
 public class HallTest {
     @Autowired
     @Qualifier("adminClient")
