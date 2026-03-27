@@ -26,21 +26,17 @@ import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.schedule.dao.ScheduleDAO;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.entity.ScheduleSeat;
-import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
-import com.mrs.app.security.dto.JWTClaims;
-import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import dto.UserHTTPClient;
 import factory.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,7 +45,9 @@ import static org.assertj.core.api.Assertions.*;
 
 @ContainerizedContextTest
 public class OrderTest {
-    private RestTestClient restTestClient;
+    @Autowired
+    @Qualifier("userClient")
+    private UserHTTPClient userClient;
     @Autowired
     private ScheduleDAO scheduleDAO;
     @Autowired
@@ -70,25 +68,11 @@ public class OrderTest {
     private SeatReservationDAO seatReservationDAO;
     @MockitoBean
     private PaymentGateway paymentGateway;
-    @Autowired
-    private UserDAO userDAO;
-    @Autowired
-    private JWTCreator jwtCreator;
-    @LocalServerPort
-    private int port;
 
     private Schedule schedule;
-    private User loggedUser;
 
     @BeforeEach
     void setup() {
-        loggedUser = userDAO.save(UserFactory.createUser());
-        String jwt = jwtCreator.withSubject(new JWTClaims(loggedUser.getEmail(), List.of(loggedUser.getRole().getValue())));
-        restTestClient = RestTestClient
-                .bindToServer()
-                .baseUrl("http://localhost:%d".formatted(port))
-                .defaultHeader("Authorization", "Bearer " + jwt)
-                .build();
         SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
         Movie movie = movieDAO.save(MovieFactory.create());
         Hall hall = hallDAO.save(HallFactory.create(seatType));
@@ -106,7 +90,7 @@ public class OrderTest {
                 schedule.getId(),
                 selectedSeats.stream().map(ScheduleSeat::getId).toList()
         );
-        OrderCreateResponse response = restTestClient.post().uri("/orders")
+        OrderCreateResponse response = userClient.client().post().uri("/orders")
                 .body(request).exchange()
                 .expectStatus().isCreated()
                 .expectBody(OrderCreateResponse.class)
@@ -143,7 +127,7 @@ public class OrderTest {
                 List.of(booking.getSeatReservations().getFirst().getId())
         );
 
-        restTestClient.post().uri("/orders")
+        userClient.client().post().uri("/orders")
                 .body(request).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(ConflictingResourceError.class);
@@ -163,8 +147,8 @@ public class OrderTest {
 
         Booking booking = bookingDAO.save(BookingFactory.create(schedule));
         Intent intent = paymentDAO.save(PaymentFactory.create());
-        Order order = orderDAO.save(new Order(null, intent.getId(), loggedUser.getId(), booking.getId()));
-        OrderCompletionResponse completionResponse = restTestClient.patch().uri("/orders/" + order.getId())
+        Order order = orderDAO.save(new Order(null, intent.getId(), userClient.user().getId(), booking.getId()));
+        OrderCompletionResponse completionResponse = userClient.client().patch().uri("/orders/" + order.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(OrderCompletionResponse.class)
@@ -184,10 +168,10 @@ public class OrderTest {
     void givenAlreadyCompletedPaymentId_whenCompletingPayment_thenStatusConflict() {
         Booking booking = bookingDAO.save(BookingFactory.create(schedule));
         Intent intent = paymentDAO.save(PaymentFactory.create());
-        Order order = orderDAO.save(new Order(null, intent.getId(), loggedUser.getId(), booking.getId()));
+        Order order = orderDAO.save(new Order(null, intent.getId(), userClient.user().getId(), booking.getId()));
 
         completionDAO.save(new Completion(null, intent, "completion-id"));
-        restTestClient.patch().uri("/orders/" + order.getId())
+        userClient.client().patch().uri("/orders/" + order.getId())
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(ConflictingResourceError.class);

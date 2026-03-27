@@ -19,3 +19,9 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

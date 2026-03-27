@@ -12,21 +12,16 @@ import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
-import com.mrs.app.security.dto.JWTClaims;
-import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
+import dto.UserHTTPClient;
 import factory.HallFactory;
-import factory.UserFactory;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.web.servlet.client.RestTestClient;
 import factory.MovieFactory;
 import factory.ScheduleFactory;
 
@@ -40,7 +35,9 @@ import static org.assertj.core.api.Assertions.*;
 
 @ContainerizedContextTest
 public class ScheduleTest {
-    private RestTestClient restTestClient;
+    @Autowired
+    @Qualifier("adminClient")
+    private UserHTTPClient userClient;
     @Autowired
     private ScheduleDAO scheduleDAO;
     @Autowired
@@ -49,25 +46,12 @@ public class ScheduleTest {
     private HallDAO hallDAO;
     @Autowired
     private SeatTypeDAO seatTypeDAO;
-    @Autowired
-    private UserDAO userDAO;
-    @Autowired
-    private JWTCreator jwtCreator;
-    @LocalServerPort
-    private int port;
 
     private Movie movie;
     private Hall hall;
 
     @BeforeEach
     void setup() {
-        User user = userDAO.save(UserFactory.createAdmin());
-        String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
-        restTestClient = RestTestClient
-                .bindToServer()
-                .baseUrl("http://localhost:%d".formatted(port))
-                .defaultHeader("Authorization", "Bearer " + jwt)
-                .build();
         SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
         movie = movieDAO.save(MovieFactory.create());
         hall = hallDAO.save(HallFactory.create(seatType));
@@ -83,7 +67,7 @@ public class ScheduleTest {
                 LocalDateTime.now().plusDays(1),
                 Map.of("STANDARD", seatPrice)
         );
-        ScheduleResponse actualResponse = restTestClient.post().uri("/schedules")
+        ScheduleResponse actualResponse = userClient.client().post().uri("/schedules")
                 .body(request).exchange()
                 .expectStatus().isCreated()
                 .expectBody(ScheduleResponse.class)
@@ -125,7 +109,7 @@ public class ScheduleTest {
                 preExistingSchedule.getStartTime(),
                 Map.of("STANDARD", BigDecimal.valueOf(5))
         );
-        ConflictingResourceError<ScheduleResponse> response = restTestClient.post().uri("/schedules")
+        ConflictingResourceError<ScheduleResponse> response = userClient.client().post().uri("/schedules")
                 .body(conflictingRequest).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(new ParameterizedTypeReference<ConflictingResourceError<ScheduleResponse>>() {
@@ -176,7 +160,7 @@ public class ScheduleTest {
 
         scheduleDAO.saveAll(List.of(yesterdaySchedule, tomorrowSchedule, dayAfterTomorrowSchedule, differentMovieSchedule));
 
-        List<ScheduleResponse> response = restTestClient.get().uri(uriBuilder -> uriBuilder
+        List<ScheduleResponse> response = userClient.client().get().uri(uriBuilder -> uriBuilder
                         .path("/schedules")
                         .queryParam("movieId", movie.getId())
                         .queryParam("startTimeFrom", tomorrow)

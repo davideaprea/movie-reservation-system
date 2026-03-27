@@ -12,7 +12,7 @@ public class DataBaseCleaner extends AbstractTestExecutionListener {
         JdbcTemplate jdbcTemplate = testContext.getApplicationContext().getBean(JdbcTemplate.class);
 
         List<String> tableNames = jdbcTemplate.queryForList(
-                "SELECT tablename FROM pg_tables WHERE schemaname = 'public'",
+                "SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename != 'users'",
                 String.class
         );
 
