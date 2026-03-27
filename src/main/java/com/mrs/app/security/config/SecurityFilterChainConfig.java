@@ -19,13 +19,21 @@ public class SecurityFilterChainConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(
+                                "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .requestMatchers("/schedules").hasRole(Role.ADMIN.toString())
-                        .requestMatchers("/halls").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.GET,
+                                "/movies/**",
+                                "/schedules/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/schedules/**",
+                                "/halls/**",
+                                "/seat-types/**",
+                                "/movies/**"
+                        ).hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
