@@ -3,8 +3,8 @@ package com.mrs.app.payment.service;
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateRequest;
+import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateResponse;
 import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.entity.Refund;
@@ -33,7 +33,7 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
 
     public IntentResponse create(IntentCreateRequest createRequest) {
-        GatewayIntentCreateResponse createdIntent = paymentGateway.createIntent(new GatewayIntentCreateRequest(
+        GatewayPaymentCreateResponse createdIntent = paymentGateway.createIntent(new GatewayPaymentCreateRequest(
                 createRequest.totalPrice(),
                 "EUR"
         ));

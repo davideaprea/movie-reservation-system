@@ -18,7 +18,7 @@ import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateResponse;
 import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.repository.CompletionDAO;
@@ -98,8 +98,8 @@ public class OrderTest {
     @SneakyThrows
     @Test
     void givenValidPayload_whenBookingScheduleSeats_thenStatusCreated() {
-        GatewayIntentCreateResponse gatewayIntentCreateResponse = new GatewayIntentCreateResponse("order-id");
-        Mockito.when(paymentGateway.createIntent(Mockito.any())).thenReturn(gatewayIntentCreateResponse);
+        GatewayPaymentCreateResponse gatewayPaymentCreateResponse = new GatewayPaymentCreateResponse("order-id");
+        Mockito.when(paymentGateway.createIntent(Mockito.any())).thenReturn(gatewayPaymentCreateResponse);
 
         List<ScheduleSeat> selectedSeats = schedule.getSeats().subList(0, 2);
         HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
@@ -119,7 +119,7 @@ public class OrderTest {
         Intent intent = paymentDAO.findById(response.payment().id()).get();
 
         assertThat(paymentDAO.count()).isEqualTo(1);
-        assertThat(intent.getGatewayIntentId()).isEqualTo(gatewayIntentCreateResponse.id());
+        assertThat(intent.getGatewayIntentId()).isEqualTo(gatewayPaymentCreateResponse.id());
         assertThat(intent.getPrice()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
