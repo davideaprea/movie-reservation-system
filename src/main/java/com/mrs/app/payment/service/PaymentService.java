@@ -30,27 +30,25 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
 
     public PaymentResponse pay(@Valid PaymentCreateRequest createRequest) {
-        Payment payment;
-
-        try {
-            payment = paymentDAO.save(Payment.builder()
-                    .gatewayIdempotencyKey(createRequest.idempotencyKey())
-                    .price(createRequest.totalPrice())
-                    .build());
-        } catch (DataIntegrityViolationException e) {
-            payment = paymentDAO
-                    .findByIdempotencyKey(createRequest.idempotencyKey())
-                    .orElseThrow();
-        }
-
         GatewayPaymentCreateResponse gatewayPayment = paymentGateway.pay(new GatewayPaymentCreateRequest(
                 createRequest.totalPrice(),
                 "EUR",
                 createRequest.idempotencyKey()
         ));
 
-        payment.setGatewayPaymentId(gatewayPayment.id());
-        paymentDAO.save(payment);
+        Payment payment;
+
+        try {
+            payment = paymentDAO.save(Payment.builder()
+                    .gatewayIdempotencyKey(createRequest.idempotencyKey())
+                    .gatewayPaymentId(gatewayPayment.id())
+                    .price(createRequest.totalPrice())
+                    .build());
+        } catch (DataIntegrityViolationException e) {
+            payment = paymentDAO
+                    .findByGatewayPaymentId(gatewayPayment.id())
+                    .orElseThrow();
+        }
 
         return paymentMapper.toResponse(payment);
     }

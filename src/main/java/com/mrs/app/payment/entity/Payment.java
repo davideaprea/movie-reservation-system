@@ -23,8 +23,7 @@ public class Payment {
      * Retrieved from the payment gateway after creating the intent.
      * Stored to allow completing the payment later through the gateway.
      */
-    @Setter
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String gatewayPaymentId;
 
     @Column(unique = true, nullable = false)
