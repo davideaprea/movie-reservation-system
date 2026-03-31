@@ -1,14 +1,12 @@
 package com.mrs.app.payment.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
- * Represent a payment {@link Completion} refund.
+ * Represent a {@link Payment} refund.
  */
+@Builder
 @AllArgsConstructor
 @Getter
 @Entity
@@ -19,7 +17,9 @@ public class Refund {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(unique = true)
-    private Completion completion;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Payment payment;
+
+    @Column(unique = true, nullable = false)
+    private String gatewayRefundId;
 }

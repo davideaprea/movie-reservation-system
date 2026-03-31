@@ -2,6 +2,7 @@ package com.mrs.app.payment.component;
 
 import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateRequest;
 import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayRefundResponse;
 import com.mrs.app.payment.exception.PaymentGatewayException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.Refund;
@@ -46,12 +47,14 @@ public class PaymentGateway {
         return new GatewayPaymentCreateResponse(intent.getId());
     }
 
-    public void refund(String paymentId) {
+    public GatewayRefundResponse refund(String paymentId) {
         try {
-            Refund.create(RefundCreateParams.builder()
+            Refund refund = Refund.create(RefundCreateParams.builder()
                             .setPaymentIntent(paymentId)
                             .build(),
                     baseRequestOptionsBuilder.build());
+
+            return new GatewayRefundResponse(refund.getId());
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());
         }
