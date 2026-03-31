@@ -7,8 +7,8 @@ import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.*;
 import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.dto.CompletionResponse;
-import com.mrs.app.payment.dto.IntentCreateRequest;
-import com.mrs.app.payment.dto.IntentResponse;
+import com.mrs.app.payment.dto.PaymentCreateRequest;
+import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.RefundResponse;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
@@ -41,7 +41,7 @@ public class OrderService {
                 .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
-        IntentResponse paymentIntent = paymentService.create(new IntentCreateRequest(totalPrice));
+        PaymentResponse paymentIntent = paymentService.create(new PaymentCreateRequest(totalPrice));
         Order order = orderDAO.save(Order.builder()
                 .bookingId(booking.id())
                 .intentId(paymentIntent.id())

@@ -2,20 +2,18 @@ package com.mrs.app.payment.service;
 
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.*;
-import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
 import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateRequest;
 import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateResponse;
-import com.mrs.app.payment.entity.Completion;
-import com.mrs.app.payment.entity.Intent;
+import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.entity.Refund;
 import com.mrs.app.payment.mapper.PaymentMapper;
-import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.payment.repository.RefundDAO;
 import com.mrs.app.shared.exception.ConflictingEntityException;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -28,52 +26,33 @@ import java.util.Map;
 public class PaymentService {
     private final PaymentGateway paymentGateway;
     private final PaymentDAO paymentDAO;
-    private final CompletionDAO completionDAO;
     private final RefundDAO refundDAO;
     private final PaymentMapper paymentMapper;
 
-    public IntentResponse create(IntentCreateRequest createRequest) {
-        GatewayPaymentCreateResponse createdIntent = paymentGateway.createIntent(new GatewayPaymentCreateRequest(
-                createRequest.totalPrice(),
-                "EUR"
-        ));
-        Intent intentToSave = Intent.builder()
-                .gatewayIntentId(createdIntent.id())
-                .price(createRequest.totalPrice())
-                .build();
-        Intent savedIntent = paymentDAO.save(intentToSave);
+    public PaymentResponse pay(@Valid PaymentCreateRequest createRequest) {
+        Payment payment;
 
-        return paymentMapper.toResponse(savedIntent);
-    }
-
-    /**
-     * Completes a previously created payment {@link Intent}.
-     *
-     * @throws ConflictingEntityException if the intent is already completed
-     * @throws EntityNotFondException     if the intent to be completed does not exist
-     */
-    public CompletionResponse complete(long intentId) {
-        if (completionDAO.existsByIntentId(intentId)) {
-            throw new ConflictingEntityException(new ConflictingResourceError<>(
-                    List.of(),
-                    List.of("intentId"),
-                    "The intent is already completed."
-            ));
+        try {
+            payment = paymentDAO.save(Payment.builder()
+                    .gatewayIdempotencyKey(createRequest.idempotencyKey())
+                    .price(createRequest.totalPrice())
+                    .build());
+        } catch (DataIntegrityViolationException e) {
+            payment = paymentDAO
+                    .findByIdempotencyKey(createRequest.idempotencyKey())
+                    .orElseThrow();
         }
 
-        Intent intent = paymentDAO
-                .findById(intentId)
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
-                        Intent.class.getSimpleName(),
-                        Map.of("id", intentId)
-                )));
-        GatewayOrderCompletionResponse gatewayPaymentCompletion = paymentGateway.completePayment(intent.getGatewayIntentId());
-        Completion completion = completionDAO.save(Completion.builder()
-                .gatewayCompletionId(gatewayPaymentCompletion.completionId())
-                .intent(intent)
-                .build());
+        GatewayPaymentCreateResponse gatewayPayment = paymentGateway.pay(new GatewayPaymentCreateRequest(
+                createRequest.totalPrice(),
+                "EUR",
+                createRequest.idempotencyKey()
+        ));
 
-        return new CompletionResponse(completion.getId(), intentId, gatewayPaymentCompletion.completionId());
+        payment.setGatewayPaymentId(gatewayPayment.id());
+        paymentDAO.save(payment);
+
+        return paymentMapper.toResponse(payment);
     }
 
     /**

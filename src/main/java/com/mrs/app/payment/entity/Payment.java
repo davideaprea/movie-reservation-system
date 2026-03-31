@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "intents")
-public class Intent {
+@Table(name = "payment")
+public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,8 +23,12 @@ public class Intent {
      * Retrieved from the payment gateway after creating the intent.
      * Stored to allow completing the payment later through the gateway.
      */
-    @Column(unique = true, nullable = false, updatable = false)
-    private String gatewayIntentId;
+    @Setter
+    @Column(unique = true)
+    private String gatewayPaymentId;
+
+    @Column(unique = true, nullable = false)
+    private String gatewayIdempotencyKey;
 
     @Column(nullable = false)
     private BigDecimal price;

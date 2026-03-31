@@ -20,7 +20,7 @@ import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
 import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateResponse;
 import com.mrs.app.payment.entity.Completion;
-import com.mrs.app.payment.entity.Intent;
+import com.mrs.app.payment.entity.Payment;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.PaymentDAO;
 import com.mrs.app.schedule.dao.ScheduleDAO;
@@ -116,11 +116,11 @@ public class OrderTest {
 
         assertThat(orderDAO.count()).isEqualTo(1);
 
-        Intent intent = paymentDAO.findById(response.payment().id()).get();
+        Payment payment = paymentDAO.findById(response.payment().id()).get();
 
         assertThat(paymentDAO.count()).isEqualTo(1);
-        assertThat(intent.getGatewayIntentId()).isEqualTo(gatewayPaymentCreateResponse.id());
-        assertThat(intent.getPrice()).isEqualByComparingTo(selectedSeats.stream()
+        assertThat(payment.getGatewayPaymentId()).isEqualTo(gatewayPaymentCreateResponse.id());
+        assertThat(payment.getPrice()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
@@ -162,8 +162,8 @@ public class OrderTest {
         Mockito.when(paymentGateway.completePayment(Mockito.any())).thenReturn(gatewayOrderCompletionResponse);
 
         Booking booking = bookingDAO.save(BookingFactory.create(schedule));
-        Intent intent = paymentDAO.save(PaymentFactory.create());
-        Order order = orderDAO.save(new Order(null, intent.getId(), loggedUser.getId(), booking.getId()));
+        Payment payment = paymentDAO.save(PaymentFactory.create());
+        Order order = orderDAO.save(new Order(null, payment.getId(), loggedUser.getId(), booking.getId()));
         OrderCompletionResponse completionResponse = restTestClient.patch().uri("/orders/" + order.getId())
                 .exchange()
                 .expectStatus().isOk()
@@ -176,17 +176,17 @@ public class OrderTest {
 
         assertThat(completionDAO.count()).isEqualTo(1);
         assertThat(completion.getGatewayCompletionId()).isEqualTo(gatewayOrderCompletionResponse.completionId());
-        assertThat(completion.getIntent().getId()).isEqualTo(intent.getId());
+        assertThat(completion.getIntent().getId()).isEqualTo(payment.getId());
     }
 
     @SneakyThrows
     @Test
     void givenAlreadyCompletedPaymentId_whenCompletingPayment_thenStatusConflict() {
         Booking booking = bookingDAO.save(BookingFactory.create(schedule));
-        Intent intent = paymentDAO.save(PaymentFactory.create());
-        Order order = orderDAO.save(new Order(null, intent.getId(), loggedUser.getId(), booking.getId()));
+        Payment payment = paymentDAO.save(PaymentFactory.create());
+        Order order = orderDAO.save(new Order(null, payment.getId(), loggedUser.getId(), booking.getId()));
 
-        completionDAO.save(new Completion(null, intent, "completion-id"));
+        completionDAO.save(new Completion(null, payment, "completion-id"));
         restTestClient.patch().uri("/orders/" + order.getId())
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)

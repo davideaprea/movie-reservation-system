@@ -1,6 +1,6 @@
 package factory;
 
-import com.mrs.app.payment.entity.Intent;
+import com.mrs.app.payment.entity.Payment;
 
 import java.math.BigDecimal;
 
@@ -8,7 +8,7 @@ public class PaymentFactory {
     private PaymentFactory() {
     }
 
-    public static Intent create() {
-        return new Intent(null, "order-id", BigDecimal.valueOf(5));
+    public static Payment create() {
+        return new Payment(null, "order-id", BigDecimal.valueOf(5));
     }
 }
