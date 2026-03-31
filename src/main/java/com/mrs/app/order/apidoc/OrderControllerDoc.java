@@ -2,7 +2,6 @@ package com.mrs.app.order.apidoc;
 
 import com.mrs.app.order.dto.HTTPOrderCreateRequest;
 import com.mrs.app.order.dto.OrderCancellationResponse;
-import com.mrs.app.order.dto.OrderCompletionResponse;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.security.dto.AuthUserDetails;
 import com.mrs.app.shared.exception.ConflictingResourceError;
@@ -50,42 +49,6 @@ public interface OrderControllerDoc {
             }
     )
     ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) AuthUserDetails loggedUser);
-
-    @Operation(
-            summary = "Complete an order",
-            description = "Completes payment for an existing order and finalizes the booking.",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Order completed successfully.",
-                            content = @Content(schema = @Schema(implementation = OrderCompletionResponse.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "The request payload didn't pass the formal validation.",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FieldValidationError.class)))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Order not found for the given ID.",
-                            content = @Content(schema = @Schema(implementation = EntityNotFoundError.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "409",
-                            description = "The order has already been completed.",
-                            content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
-                    )
-            }
-    )
-    ResponseEntity<OrderCompletionResponse> complete(
-            @Parameter(
-                    description = "ID of the order to complete",
-                    required = true
-            )
-            long orderId,
-            @Parameter(hidden = true)
-            AuthUserDetails loggedUser
-    );
 
     @Operation(
             summary = "Cancel an order",

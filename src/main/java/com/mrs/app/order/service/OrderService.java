@@ -6,7 +6,6 @@ import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.*;
 import com.mrs.app.order.entity.Order;
-import com.mrs.app.payment.dto.CompletionResponse;
 import com.mrs.app.payment.dto.PaymentCreateRequest;
 import com.mrs.app.payment.dto.PaymentResponse;
 import com.mrs.app.payment.dto.RefundResponse;
@@ -41,7 +40,7 @@ public class OrderService {
                 .map(ScheduleSeatResponse::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
-        PaymentResponse paymentIntent = paymentService.create(new PaymentCreateRequest(totalPrice));
+        PaymentResponse paymentIntent = paymentService.pay(new PaymentCreateRequest(totalPrice));
         Order order = orderDAO.save(Order.builder()
                 .bookingId(booking.id())
                 .intentId(paymentIntent.id())
@@ -51,20 +50,10 @@ public class OrderService {
         return new OrderCreateResponse(order.getId(), booking, paymentIntent);
     }
 
-    public OrderCompletionResponse complete(OrderUpdateRequest request) {
-        Order order = orderDAO
-                .findById(request.orderId())
-                .filter(o -> o.getUserId() == request.userId())
-                .orElseThrow();
-        CompletionResponse paymentCompletion = paymentService.complete(order.getIntentId());
-
-        return new OrderCompletionResponse(order.getId(), order.getUserId(), paymentCompletion);
-    }
-
     /**
      * Cancels an order, issues a refund, and deletes the associated booking.
      */
-    public OrderCancellationResponse cancel(OrderUpdateRequest request) {
+    public OrderCancellationResponse cancel(OrderCancellationRequest request) {
         Order order = orderDAO
                 .findById(request.orderId())
                 .filter(o -> o.getUserId() == request.userId())

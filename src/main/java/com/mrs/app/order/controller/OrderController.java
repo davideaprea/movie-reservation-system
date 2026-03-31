@@ -30,19 +30,11 @@ public class OrderController implements OrderControllerDoc {
         )), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{orderId}")
-    public ResponseEntity<OrderCompletionResponse> complete(
-            @PathVariable long orderId,
-            @AuthenticationPrincipal AuthUserDetails loggedUser
-    ) {
-        return new ResponseEntity<>(orderService.complete(new OrderUpdateRequest(loggedUser.getId(), orderId)), HttpStatus.OK);
-    }
-
     @DeleteMapping("/{orderId}")
     public ResponseEntity<OrderCancellationResponse> cancel(
             @PathVariable @Valid @Positive long orderId,
             @AuthenticationPrincipal AuthUserDetails loggedUser
     ) {
-        return new ResponseEntity<>(orderService.cancel(new OrderUpdateRequest(loggedUser.getId(), orderId)), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.cancel(new OrderCancellationRequest(loggedUser.getId(), orderId)), HttpStatus.OK);
     }
 }
