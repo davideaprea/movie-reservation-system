@@ -14,8 +14,10 @@ import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Orchestrator for the complete order workflow.
@@ -30,24 +32,38 @@ public class OrderService {
     private final BookingService bookingService;
     private final PaymentService paymentService;
     private final ScheduleSeatService scheduleSeatService;
+    private final TransactionTemplate transactionTemplate;
 
     /**
      * Creates a new {@link Order}, linking the submitted booking to its payment intent.
      */
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
-        BigDecimal totalPrice = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
-                .stream()
-                .map(ScheduleSeatResponse::price)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BookingResponse booking = bookingService.create(new BookingCreateRequest(createRequest.scheduleId(), createRequest.seatIds()));
-        PaymentResponse paymentIntent = paymentService.pay(new PaymentCreateRequest(totalPrice));
-        Order order = orderDAO.save(Order.builder()
-                .bookingId(booking.id())
-                .intentId(paymentIntent.id())
-                .userId(createRequest.userId())
-                .build());
+        BookingTransactionResult result = transactionTemplate.execute(status -> {
+            BookingResponse booking = bookingService.create(new BookingCreateRequest(
+                    createRequest.scheduleId(),
+                    createRequest.seatIds()
+            ));
+            BigDecimal amount = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
+                    .stream()
+                    .map(ScheduleSeatResponse::price)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            Order order = orderDAO.save(Order.builder()
+                    .createdAt(LocalDateTime.now())
+                    .userId(createRequest.userId())
+                    .bookingId(booking.id())
+                    .amount(amount)
+                    .build());
 
-        return new OrderCreateResponse(order.getId(), booking, paymentIntent);
+            return new BookingTransactionResult(order, booking);
+        });
+        Order order = result.order();
+        PaymentCreateRequest paymentCreateRequest = new PaymentCreateRequest(order.getAmount(), order.getId());
+        PaymentResponse paymentIntent = paymentService.pay(paymentCreateRequest);
+
+        order.setPaymentId(paymentIntent.id());
+        orderDAO.save(order);
+
+        return new OrderCreateResponse(order.getId(), result.booking(), paymentIntent);
     }
 
     /**

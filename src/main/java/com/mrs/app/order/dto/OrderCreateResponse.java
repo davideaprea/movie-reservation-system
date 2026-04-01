@@ -4,7 +4,7 @@ import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.payment.dto.PaymentResponse;
 
 public record OrderCreateResponse(
-        long id,
+        String id,
         BookingResponse booking,
         PaymentResponse payment
 ) {
