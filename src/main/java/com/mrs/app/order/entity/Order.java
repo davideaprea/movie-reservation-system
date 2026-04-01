@@ -3,7 +3,6 @@ package com.mrs.app.order.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -24,10 +23,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Setter
-    @Column(unique = true)
-    private Long paymentId;
-
     @Column(nullable = false)
     private Long userId;
 
@@ -36,7 +31,4 @@ public class Order {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private BigDecimal amount;
 }
