@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Represents an order linking a booking to its payment,
+ * Represents an order linking a booking to its intent,
  * associating it with the customer who created the request.
  * <p>
- * This entity allows tracking the payment status of a booking
+ * This entity allows tracking the intent status of a booking
  * and is essential for completing and refunding payments.
  */
 @Builder

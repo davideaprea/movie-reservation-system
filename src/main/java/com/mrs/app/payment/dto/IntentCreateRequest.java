@@ -6,12 +6,12 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
-public record PaymentCreateRequest(
+public record IntentCreateRequest(
         @NotNull
         @Positive
-        BigDecimal totalPrice,
+        BigDecimal amount,
 
         @NotBlank
-        String idempotencyKey
+        String orderId
 ) {
 }

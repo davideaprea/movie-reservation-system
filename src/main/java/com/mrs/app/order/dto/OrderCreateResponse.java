@@ -1,11 +1,11 @@
 package com.mrs.app.order.dto;
 
 import com.mrs.app.booking.dto.BookingResponse;
-import com.mrs.app.payment.dto.PaymentResponse;
+import com.mrs.app.payment.dto.IntentResponse;
 
 public record OrderCreateResponse(
         String id,
         BookingResponse booking,
-        PaymentResponse payment
+        IntentResponse payment
 ) {
 }

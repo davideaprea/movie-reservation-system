@@ -6,8 +6,8 @@ import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.*;
 import com.mrs.app.order.entity.Order;
-import com.mrs.app.payment.dto.PaymentCreateRequest;
-import com.mrs.app.payment.dto.PaymentResponse;
+import com.mrs.app.payment.dto.IntentCreateRequest;
+import com.mrs.app.payment.dto.IntentResponse;
 import com.mrs.app.payment.dto.RefundResponse;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
@@ -35,7 +35,7 @@ public class OrderService {
     private final TransactionTemplate transactionTemplate;
 
     /**
-     * Creates a new {@link Order}, linking the submitted booking to its payment intent.
+     * Creates a new {@link Order}, linking the submitted booking to its intent intent.
      */
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
         BookingTransactionResult result = transactionTemplate.execute(status -> {
@@ -57,8 +57,8 @@ public class OrderService {
             return new BookingTransactionResult(order, booking);
         });
         Order order = result.order();
-        PaymentCreateRequest paymentCreateRequest = new PaymentCreateRequest(order.getAmount(), order.getId());
-        PaymentResponse paymentIntent = paymentService.pay(paymentCreateRequest);
+        IntentCreateRequest intentCreateRequest = new IntentCreateRequest(order.getAmount(), order.getId());
+        IntentResponse paymentIntent = paymentService.createConfirmedIntent(intentCreateRequest);
 
         order.setPaymentId(paymentIntent.id());
         orderDAO.save(order);

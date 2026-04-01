@@ -24,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 public interface OrderControllerDoc {
     @Operation(
             summary = "Create a new order",
-            description = "Creates a new order for a specific schedule and seats. The order includes booking the seats and generating a payment intent.",
+            description = "Creates a new order for a specific schedule and seats. The order includes booking the seats and generating a intent intent.",
             responses = {
                     @ApiResponse(
                             responseCode = "201",

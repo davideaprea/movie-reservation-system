@@ -1,8 +1,9 @@
 package com.mrs.app.payment.component;
 
-import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateRequest;
-import com.mrs.app.payment.dto.gateway.GatewayPaymentCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
+import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
 import com.mrs.app.payment.dto.gateway.GatewayRefundResponse;
+import com.mrs.app.payment.enumeration.PaymentGatewayMetadataKey;
 import com.mrs.app.payment.exception.PaymentGatewayException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.Refund;
@@ -13,7 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Handles interactions with the external payment gateway,
+ * Handles interactions with the external intent gateway,
  * providing abstractions over the service payloads and exceptions.
  */
 @AllArgsConstructor
@@ -22,11 +23,11 @@ public class PaymentGateway {
     private final RequestOptionsBuilder baseRequestOptionsBuilder;
 
     /**
-     * Creates a new payment for the specified amount and details.
+     * Creates a new intent for the specified amount and details.
      * <p>
-     * The returned {@link GatewayPaymentCreateResponse#id()} should be stored to allow possible refunds.
+     * The returned {@link GatewayIntentCreateResponse#id()} should be stored to allow possible refunds.
      */
-    public GatewayPaymentCreateResponse pay(GatewayPaymentCreateRequest request) {
+    public GatewayIntentCreateResponse createIntent(GatewayIntentCreateRequest request) {
         PaymentIntent intent;
 
         try {
@@ -35,6 +36,7 @@ public class PaymentGateway {
                             .setAmount(request.price().longValue())
                             .setCurrency("EUR")
                             .setConfirm(true)
+                            .putMetadata(PaymentGatewayMetadataKey.ORDER_ID.name(), request.key())
                             .build(),
                     baseRequestOptionsBuilder
                             .setIdempotencyKey(request.key())
@@ -44,7 +46,7 @@ public class PaymentGateway {
             throw new PaymentGatewayException(e.getMessage());
         }
 
-        return new GatewayPaymentCreateResponse(
+        return new GatewayIntentCreateResponse(
                 intent.getId(),
                 intent.getClientSecret(),
                 intent.getStatus()

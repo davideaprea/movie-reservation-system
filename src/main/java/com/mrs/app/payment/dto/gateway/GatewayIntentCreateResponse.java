@@ -1,6 +1,6 @@
 package com.mrs.app.payment.dto.gateway;
 
-public record GatewayPaymentCreateResponse(
+public record GatewayIntentCreateResponse(
         String id,
         String clientSecret,
         String nextRequiredStep
