@@ -44,7 +44,11 @@ public class PaymentGateway {
             throw new PaymentGatewayException(e.getMessage());
         }
 
-        return new GatewayPaymentCreateResponse(intent.getId());
+        return new GatewayPaymentCreateResponse(
+                intent.getId(),
+                intent.getClientSecret(),
+                intent.getStatus()
+        );
     }
 
     public GatewayRefundResponse refund(String paymentId) {
