@@ -66,7 +66,7 @@ public class OrderService {
 
     @Scheduled(fixedDelayString = "${app.payment.cleaner.delay}")
     @Transactional
-    private void deleteUncompletedOrders() {
+    protected void deleteUncompletedOrders() {
         List<Order> expiredOrders = paymentService
                 .findAllExpired()
                 .stream()

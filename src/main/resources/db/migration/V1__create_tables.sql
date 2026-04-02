@@ -178,57 +178,15 @@ CREATE INDEX idx_bookings_schedule_id ON bookings(schedule_id);
 CREATE INDEX idx_seat_reservations_booking_id ON seat_reservations(booking_id);
 
 -- =========================
--- PAYMENT MODULE TABLES
--- =========================
-
-CREATE TABLE intents (
-    id BIGSERIAL PRIMARY KEY,
-
-    gateway_intent_id VARCHAR(255) NOT NULL UNIQUE,
-    price NUMERIC(10, 2) NOT NULL
-);
-
-CREATE TABLE completions (
-    id BIGSERIAL PRIMARY KEY,
-
-    intent_id BIGINT NOT NULL UNIQUE,
-    gateway_completion_id VARCHAR(255) UNIQUE,
-
-    CONSTRAINT fk_completions_intent
-        FOREIGN KEY (intent_id)
-        REFERENCES intents (id)
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE refunds (
-    id BIGSERIAL PRIMARY KEY,
-
-    completion_id BIGINT NOT NULL UNIQUE,
-
-    CONSTRAINT fk_refunds_completion
-        FOREIGN KEY (completion_id)
-        REFERENCES completions (id)
-        ON DELETE RESTRICT
-);
-
-CREATE INDEX idx_completions_intent_id ON completions(intent_id);
-CREATE INDEX idx_refunds_completion_id ON refunds(completion_id);
-
--- =========================
 -- ORDER MODULE TABLES
 -- =========================
 
 CREATE TABLE orders (
-    id BIGSERIAL PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,
 
-    intent_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     booking_id BIGINT NOT NULL,
-
-    CONSTRAINT fk_orders_intent
-        FOREIGN KEY (intent_id)
-        REFERENCES intents (id)
-        ON DELETE RESTRICT,
+    created_at TIMESTAMP NOT NULL,
 
     CONSTRAINT fk_orders_user
         FOREIGN KEY (user_id)
@@ -241,6 +199,52 @@ CREATE TABLE orders (
         ON DELETE RESTRICT
 );
 
-CREATE INDEX idx_orders_intent_id ON orders(intent_id);
 CREATE INDEX idx_orders_booking_id ON orders(booking_id);
 CREATE INDEX idx_orders_user_id ON orders(user_id);
+
+-- =========================
+-- PAYMENT MODULE TABLES
+-- =========================
+
+CREATE TABLE intents (
+    id BIGSERIAL PRIMARY KEY,
+
+    order_id VARCHAR(255) NOT NULL UNIQUE,
+    amount NUMERIC(10, 2) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+
+    CONSTRAINT fk_intents_orders
+            FOREIGN KEY (order_id)
+            REFERENCES orders (id)
+            ON DELETE CASCADE
+);
+
+CREATE TABLE completions (
+    id BIGSERIAL PRIMARY KEY,
+
+    intent_id BIGINT NOT NULL UNIQUE,
+    gateway_intent_id VARCHAR(255) UNIQUE,
+    created_at TIMESTAMP NOT NULL,
+
+    CONSTRAINT fk_completions_intent
+        FOREIGN KEY (intent_id)
+        REFERENCES intents (id)
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE refunds (
+    id BIGSERIAL PRIMARY KEY,
+
+    completion_id BIGINT NOT NULL UNIQUE,
+    gateway_refund_id VARCHAR(255) NOT NULL UNIQUE,
+
+    CONSTRAINT fk_refunds_completion
+        FOREIGN KEY (completion_id)
+        REFERENCES completions (id)
+        ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_intents_order_id ON intents(order_id);
+CREATE INDEX idx_completions_intent_id ON completions(intent_id);
+CREATE INDEX idx_refunds_completion_id ON refunds(completion_id);

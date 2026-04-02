@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Represent a {@link Intent} refund.
+ * Represent a {@link Completion} refund.
  */
 @Builder
 @AllArgsConstructor
@@ -18,7 +18,7 @@ public class Refund {
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Intent intent;
+    private Completion completion;
 
     @Column(unique = true, nullable = false)
     private String gatewayRefundId;

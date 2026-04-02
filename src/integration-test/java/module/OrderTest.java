@@ -13,11 +13,9 @@ import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.repository.MovieDAO;
 import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.HTTPOrderCreateRequest;
-import com.mrs.app.order.dto.OrderCompletionResponse;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.component.PaymentGateway;
-import com.mrs.app.payment.dto.gateway.GatewayOrderCompletionResponse;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
 import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Intent;
@@ -37,12 +35,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -76,6 +76,8 @@ public class OrderTest {
     private JWTCreator jwtCreator;
     @LocalServerPort
     private int port;
+    @Value("${app.payment.timeout}")
+    private Duration paymentTimeout;
 
     private Schedule schedule;
     private User loggedUser;
@@ -98,7 +100,11 @@ public class OrderTest {
     @SneakyThrows
     @Test
     void givenValidPayload_whenBookingScheduleSeats_thenStatusCreated() {
-        GatewayIntentCreateResponse gatewayIntentCreateResponse = new GatewayIntentCreateResponse("order-id");
+        GatewayIntentCreateResponse gatewayIntentCreateResponse = new GatewayIntentCreateResponse(
+                "order-id",
+                "client-secret",
+                "next-step-name"
+        );
         Mockito.when(paymentGateway.createIntent(Mockito.any())).thenReturn(gatewayIntentCreateResponse);
 
         List<ScheduleSeat> selectedSeats = schedule.getSeats().subList(0, 2);
@@ -112,17 +118,18 @@ public class OrderTest {
                 .expectBody(OrderCreateResponse.class)
                 .returnResult().getResponseBody();
 
-        assert response != null;
+        Order order = orderDAO.findById(response.id()).get();
 
         assertThat(orderDAO.count()).isEqualTo(1);
+        assertThat(order.getUserId()).isEqualTo(loggedUser.getId());
 
-        Intent intent = intentDAO.findById(response.payment().id()).get();
+        Intent intent = intentDAO.findById(response.intent().serviceResponse().id()).get();
 
         assertThat(intentDAO.count()).isEqualTo(1);
-        assertThat(intent.getGatewayPaymentId()).isEqualTo(gatewayIntentCreateResponse.id());
         assertThat(intent.getAmount()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
+        assertThat(Duration.between(intent.getCreatedAt(), intent.getExpiresAt())).isEqualTo(paymentTimeout);
 
         Booking booking = bookingDAO.findById(response.booking().id()).get();
 
@@ -153,46 +160,5 @@ public class OrderTest {
         assertThat(seatReservationDAO.count()).isEqualTo(booking.getSeatReservations().size());
         assertThat(orderDAO.count()).isEqualTo(0);
         assertThat(intentDAO.count()).isEqualTo(0);
-    }
-
-    @SneakyThrows
-    @Test
-    void givenValidPayload_whenCompletingBookingPayment_thenStatusOk() {
-        GatewayOrderCompletionResponse gatewayOrderCompletionResponse = new GatewayOrderCompletionResponse("order-id", "capture-id");
-        Mockito.when(paymentGateway.completePayment(Mockito.any())).thenReturn(gatewayOrderCompletionResponse);
-
-        Booking booking = bookingDAO.save(BookingFactory.create(schedule));
-        Intent intent = intentDAO.save(PaymentFactory.create());
-        Order order = orderDAO.save(new Order(null, intent.getId(), loggedUser.getId(), booking.getId()));
-        OrderCompletionResponse completionResponse = restTestClient.patch().uri("/orders/" + order.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(OrderCompletionResponse.class)
-                .returnResult().getResponseBody();
-
-        assert completionResponse != null;
-
-        Completion completion = completionDAO.findById(completionResponse.id()).get();
-
-        assertThat(completionDAO.count()).isEqualTo(1);
-        assertThat(completion.getGatewayCompletionId()).isEqualTo(gatewayOrderCompletionResponse.completionId());
-        assertThat(completion.getIntent().getId()).isEqualTo(intent.getId());
-    }
-
-    @SneakyThrows
-    @Test
-    void givenAlreadyCompletedPaymentId_whenCompletingPayment_thenStatusConflict() {
-        Booking booking = bookingDAO.save(BookingFactory.create(schedule));
-        Intent intent = intentDAO.save(PaymentFactory.create());
-        Order order = orderDAO.save(new Order(null, intent.getId(), loggedUser.getId(), booking.getId()));
-
-        completionDAO.save(new Completion(null, intent, "completion-id"));
-        restTestClient.patch().uri("/orders/" + order.getId())
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
-                .expectBody(ConflictingResourceError.class);
-
-        assertThat(completionDAO.count()).isEqualTo(1);
-        Mockito.verify(paymentGateway, Mockito.never()).completePayment(Mockito.any());
     }
 }

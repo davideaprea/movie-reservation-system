@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "intent")
+@Table(name = "intents")
 public class Intent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
