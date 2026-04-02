@@ -140,6 +140,8 @@ public class OrderTest {
         assertThat(booking.getSeatReservations())
                 .extracting(SeatReservation::getScheduleSeatId)
                 .containsExactlyInAnyOrderElementsOf(request.seatIds());
+
+        assertThat(completionDAO.count()).isEqualTo(0);
     }
 
     @Test

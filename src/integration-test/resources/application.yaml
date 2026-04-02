@@ -10,10 +10,9 @@ jwt:
   secret: Aymga2LNFrM+tnkr6MYLFY2Jou46h2/Omogeu0iMCRQ=
   exp-time: 999999
 
-paypal:
-  environment: SANDBOX
-  client-id: fake_client_id
-  client-secret: fake_client_secret
+stripe:
+  api-key: stripe_fake_api_key
+  webhook-invoked-api-secret: stripe_fake_webhook_secret
 
 app:
   payment:

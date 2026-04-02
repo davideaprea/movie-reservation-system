@@ -12,6 +12,7 @@ jwt:
 
 stripe:
   api-key: ${STRIPE_API_KEY}
+  webhook-invoked-api-secret: ${STRIPE_WEBHOOK_INVOKED_API_SECRET}
 
 app:
   payment:
