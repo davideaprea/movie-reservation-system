@@ -59,20 +59,19 @@ public class PaymentService {
     }
 
     public CompletionCreateResponse completeIntent(CompletionCreateRequest createRequest) {
-        Intent intent = intentDAO
-                .findById(createRequest.internalIntentId())
-                .orElseThrow();
         Completion completion;
 
         try {
             completion = completionDAO.save(Completion.builder()
-                    .intent(intent)
+                    .intent(Intent.builder()
+                            .id(createRequest.internalIntentId())
+                            .build())
                     .gatewayIntentId(createRequest.gatewayIntentId())
                     .createdAt(LocalDateTime.now())
                     .build());
         } catch (DataIntegrityViolationException e) {
             completion = completionDAO
-                    .findByIntentId(intent.getId())
+                    .findByIntentId(createRequest.internalIntentId())
                     .orElseThrow();
         }
 
