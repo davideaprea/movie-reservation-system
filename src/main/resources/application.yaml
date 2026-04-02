@@ -12,3 +12,9 @@ jwt:
 
 stripe:
   api-key: ${STRIPE_API_KEY}
+
+app:
+  payment:
+    timeout: ${PAYMENT_TIMEOUT}
+    cleaner:
+      delay: ${EXPIRED_PAYMENT_CLEANER_DELAY}

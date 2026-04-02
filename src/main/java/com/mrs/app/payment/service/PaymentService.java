@@ -10,20 +10,29 @@ import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.IntentDAO;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@AllArgsConstructor
 @Service
 public class PaymentService {
     private final PaymentGateway paymentGateway;
     private final IntentDAO intentDAO;
     private final CompletionDAO completionDAO;
     private final PaymentMapper paymentMapper;
+    private final Duration paymentTimeout;
+
+    public PaymentService(PaymentGateway paymentGateway, IntentDAO intentDAO, CompletionDAO completionDAO, PaymentMapper paymentMapper, @Value("${app.payment.timeout}") Duration paymentTimeout) {
+        this.paymentGateway = paymentGateway;
+        this.intentDAO = intentDAO;
+        this.completionDAO = completionDAO;
+        this.paymentMapper = paymentMapper;
+        this.paymentTimeout = paymentTimeout;
+    }
 
     public IntentCreateResponse createIntent(@Valid IntentCreateRequest createRequest) {
         Intent intent;
@@ -34,7 +43,7 @@ public class PaymentService {
                     .orderId(createRequest.orderId())
                     .amount(createRequest.amount())
                     .createdAt(createdAt)
-                    .expiresAt(createdAt.plusMinutes(15))
+                    .expiresAt(createdAt.plus(paymentTimeout))
                     .build());
         } catch (DataIntegrityViolationException e) {
             intent = intentDAO

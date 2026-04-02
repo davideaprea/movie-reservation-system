@@ -64,7 +64,7 @@ public class OrderService {
         return new OrderCreateResponse(order.getId(), result.booking(), paymentIntent);
     }
 
-    @Scheduled
+    @Scheduled(fixedDelayString = "${app.payment.cleaner.delay}")
     @Transactional
     private void deleteUncompletedOrders() {
         List<Order> expiredOrders = paymentService
