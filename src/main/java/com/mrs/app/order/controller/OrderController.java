@@ -5,7 +5,6 @@ import com.mrs.app.order.dto.*;
 import com.mrs.app.order.service.OrderService;
 import com.mrs.app.security.dto.AuthUserDetails;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +27,5 @@ public class OrderController implements OrderControllerDoc {
                 request.scheduleId(),
                 request.seatIds()
         )), HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<OrderCancellationResponse> cancel(
-            @PathVariable @Valid @Positive long orderId,
-            @AuthenticationPrincipal AuthUserDetails loggedUser
-    ) {
-        return new ResponseEntity<>(orderService.cancel(new OrderCancellationRequest(loggedUser.getId(), orderId)), HttpStatus.OK);
     }
 }

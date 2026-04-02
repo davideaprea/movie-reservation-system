@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -28,10 +29,12 @@ public class PaymentService {
         Intent intent;
 
         try {
+            LocalDateTime createdAt = LocalDateTime.now();
             intent = intentDAO.save(Intent.builder()
                     .orderId(createRequest.orderId())
                     .amount(createRequest.amount())
-                    .createdAt(LocalDateTime.now())
+                    .createdAt(createdAt)
+                    .expiresAt(createdAt.plusMinutes(15))
                     .build());
         } catch (DataIntegrityViolationException e) {
             intent = intentDAO
@@ -70,5 +73,11 @@ public class PaymentService {
         }
 
         return paymentMapper.toCompletionCreateResponse(completion);
+    }
+
+    public List<IntentResponse> findAllExpired() {
+        return intentDAO
+                .findAllExpired().stream()
+                .map(paymentMapper::toResponse).toList();
     }
 }

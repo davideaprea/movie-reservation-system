@@ -50,7 +50,7 @@ public interface OrderControllerDoc {
     )
     ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) AuthUserDetails loggedUser);
 
-    @Operation(
+    /*@Operation(
             summary = "Cancel an order",
             description = "Cancels an existing order, issues a refund, and deletes the associated booking.",
             responses = {
@@ -89,5 +89,5 @@ public interface OrderControllerDoc {
             long orderId,
             @Parameter(hidden = true)
             AuthUserDetails loggedUser
-    );
+    );*/
 }

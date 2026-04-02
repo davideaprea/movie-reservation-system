@@ -12,11 +12,14 @@ import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Orchestrator for the complete order workflow.
@@ -61,7 +64,17 @@ public class OrderService {
         return new OrderCreateResponse(order.getId(), result.booking(), paymentIntent);
     }
 
+    @Scheduled
+    @Transactional
     private void deleteUncompletedOrders() {
+        List<Order> expiredOrders = paymentService
+                .findAllExpired()
+                .stream()
+                .map(expiredIntent -> Order.builder()
+                        .id(expiredIntent.orderId())
+                        .build())
+                .toList();
 
+        orderDAO.deleteAll(expiredOrders);
     }
 }
