@@ -20,14 +20,17 @@ import java.time.LocalDateTime;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private Long userId;
 
     @Column(nullable = false, unique = true)
     private Long bookingId;
+
+    @Column(nullable = false, unique = true)
+    private String intentId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

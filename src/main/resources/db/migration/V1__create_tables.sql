@@ -178,52 +178,21 @@ CREATE INDEX idx_bookings_schedule_id ON bookings(schedule_id);
 CREATE INDEX idx_seat_reservations_booking_id ON seat_reservations(booking_id);
 
 -- =========================
--- ORDER MODULE TABLES
--- =========================
-
-CREATE TABLE orders (
-    id VARCHAR(255) PRIMARY KEY,
-
-    user_id BIGINT NOT NULL,
-    booking_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-
-    CONSTRAINT fk_orders_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_orders_booking
-        FOREIGN KEY (booking_id)
-        REFERENCES bookings (id)
-        ON DELETE RESTRICT
-);
-
-CREATE INDEX idx_orders_booking_id ON orders(booking_id);
-CREATE INDEX idx_orders_user_id ON orders(user_id);
-
--- =========================
 -- PAYMENT MODULE TABLES
 -- =========================
 
 CREATE TABLE intents (
-    id BIGSERIAL PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,
 
-    order_id VARCHAR(255) NOT NULL UNIQUE,
     amount NUMERIC(10, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-
-    CONSTRAINT fk_intents_orders
-            FOREIGN KEY (order_id)
-            REFERENCES orders (id)
-            ON DELETE CASCADE
+    expires_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE completions (
     id BIGSERIAL PRIMARY KEY,
 
-    intent_id BIGINT NOT NULL UNIQUE,
+    intent_id VARCHAR(255) NOT NULL UNIQUE,
     gateway_intent_id VARCHAR(255) UNIQUE,
     created_at TIMESTAMP NOT NULL,
 
@@ -245,6 +214,37 @@ CREATE TABLE refunds (
         ON DELETE RESTRICT
 );
 
-CREATE INDEX idx_intents_order_id ON intents(order_id);
 CREATE INDEX idx_completions_intent_id ON completions(intent_id);
 CREATE INDEX idx_refunds_completion_id ON refunds(completion_id);
+
+-- =========================
+-- ORDER MODULE TABLES
+-- =========================
+
+CREATE TABLE orders (
+    id BIGSERIAL PRIMARY KEY,
+
+    user_id BIGINT NOT NULL,
+    booking_id BIGINT NOT NULL,
+    intent_id VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+
+    CONSTRAINT fk_orders_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_orders_booking
+        FOREIGN KEY (booking_id)
+        REFERENCES bookings (id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_orders_intent
+            FOREIGN KEY (intent_id)
+            REFERENCES intents (id)
+            ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_orders_intent_id ON orders(intent_id);
+CREATE INDEX idx_orders_booking_id ON orders(booking_id);
+CREATE INDEX idx_orders_user_id ON orders(user_id);

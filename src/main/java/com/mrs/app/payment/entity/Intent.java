@@ -17,11 +17,8 @@ import java.time.LocalDateTime;
 @Table(name = "intents")
 public class Intent {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(unique = true, nullable = false)
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false)
     private BigDecimal amount;

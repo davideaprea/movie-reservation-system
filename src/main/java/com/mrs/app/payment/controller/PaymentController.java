@@ -38,9 +38,9 @@ public class PaymentController {
         }
 
         PaymentIntent intent = (PaymentIntent) event.getDataObjectDeserializer().getObject().get();
-        String orderId = intent.getMetadata().get(PaymentGatewayMetadataKey.ORDER_ID.name());
+        String intentId = intent.getMetadata().get(PaymentGatewayMetadataKey.INTENT_ID.name());
 
-        paymentService.completeIntent(new CompletionCreateRequest(intent.getId(), orderId));
+        paymentService.completeIntent(new CompletionCreateRequest(intent.getId(), intentId));
 
         return ResponseEntity.noContent().build();
     }

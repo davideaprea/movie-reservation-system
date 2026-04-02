@@ -7,7 +7,9 @@ import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.*;
 import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.dto.IntentCreateRequest;
-import com.mrs.app.payment.dto.IntentCreateResponse;
+import com.mrs.app.payment.dto.IntentResponse;
+import com.mrs.app.payment.dto.IntentSubmissionRequest;
+import com.mrs.app.payment.dto.IntentSubmissionResponse;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
@@ -45,36 +47,42 @@ public class OrderService {
                     createRequest.scheduleId(),
                     createRequest.seatIds()
             ));
+
+            BigDecimal amount = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
+                    .stream()
+                    .map(ScheduleSeatResponse::price)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            IntentResponse intent = paymentService.createIntent(new IntentCreateRequest(amount));
+
             Order order = orderDAO.save(Order.builder()
                     .createdAt(LocalDateTime.now())
                     .userId(createRequest.userId())
                     .bookingId(booking.id())
+                    .intentId(intent.id())
                     .build());
 
-            return new BookingTransactionResult(order, booking);
+            return new BookingTransactionResult(order, booking, intent);
         });
-        Order order = result.order();
-        BigDecimal amount = scheduleSeatService.findAllByIdIn(createRequest.seatIds())
-                .stream()
-                .map(ScheduleSeatResponse::price)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        IntentCreateRequest intentCreateRequest = new IntentCreateRequest(amount, order.getId());
-        IntentCreateResponse paymentIntent = paymentService.createIntent(intentCreateRequest);
+        IntentSubmissionRequest request = new IntentSubmissionRequest(result.intent().id());
+        IntentSubmissionResponse submittedIntent = paymentService.submitIntent(request);
 
-        return new OrderCreateResponse(order.getId(), result.booking(), paymentIntent);
+        return new OrderCreateResponse(
+                result.order().getId(),
+                result.booking(),
+                result.intent(),
+                submittedIntent
+        );
     }
 
     @Scheduled(fixedDelayString = "${app.payment.cleaner.delay}")
     @Transactional
     protected void deleteUncompletedOrders() {
-        List<Order> expiredOrders = paymentService
+        List<String> expiredPaymentsIds = paymentService
                 .findAllExpired()
                 .stream()
-                .map(expiredIntent -> Order.builder()
-                        .id(expiredIntent.orderId())
-                        .build())
+                .map(IntentResponse::id)
                 .toList();
 
-        orderDAO.deleteAll(expiredOrders);
+        orderDAO.deleteAllByIntentIdIn(expiredPaymentsIds);
     }
 }

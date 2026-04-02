@@ -36,7 +36,7 @@ public class PaymentGateway {
                             .setAmount(request.price().longValue())
                             .setCurrency("EUR")
                             .setConfirm(true)
-                            .putMetadata(PaymentGatewayMetadataKey.ORDER_ID.name(), request.key())
+                            .putMetadata(PaymentGatewayMetadataKey.INTENT_ID.name(), request.key())
                             .build(),
                     baseRequestOptionsBuilder
                             .setIdempotencyKey(request.key())

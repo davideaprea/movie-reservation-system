@@ -5,11 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface IntentDAO extends CrudRepository<Intent, Long> {
-    Optional<Intent> findByOrderId(String orderId);
-
+public interface IntentDAO extends CrudRepository<Intent, String> {
     @Query("""
             SELECT i
             FROM Intent i

@@ -1,6 +1,5 @@
 package com.mrs.app.payment.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -9,9 +8,6 @@ import java.math.BigDecimal;
 public record IntentCreateRequest(
         @NotNull
         @Positive
-        BigDecimal amount,
-
-        @NotBlank
-        String orderId
+        BigDecimal amount
 ) {
 }

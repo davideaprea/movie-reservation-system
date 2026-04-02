@@ -34,45 +34,40 @@ public class PaymentService {
         this.paymentTimeout = paymentTimeout;
     }
 
-    public IntentCreateResponse createIntent(@Valid IntentCreateRequest createRequest) {
-        Intent intent;
+    public IntentResponse createIntent(@Valid IntentCreateRequest createRequest) {
+        LocalDateTime createdAt = LocalDateTime.now();
+        Intent intent = intentDAO.save(Intent.builder()
+                .amount(createRequest.amount())
+                .createdAt(createdAt)
+                .expiresAt(createdAt.plus(paymentTimeout))
+                .build());
 
-        try {
-            LocalDateTime createdAt = LocalDateTime.now();
-            intent = intentDAO.save(Intent.builder()
-                    .orderId(createRequest.orderId())
-                    .amount(createRequest.amount())
-                    .createdAt(createdAt)
-                    .expiresAt(createdAt.plus(paymentTimeout))
-                    .build());
-        } catch (DataIntegrityViolationException e) {
-            intent = intentDAO
-                    .findByOrderId(createRequest.orderId())
-                    .orElseThrow();
-        }
+        return paymentMapper.toResponse(intent);
+    }
 
-        GatewayIntentCreateResponse gatewayIntent = paymentGateway.createIntent(new GatewayIntentCreateRequest(
+    public IntentSubmissionResponse submitIntent(IntentSubmissionRequest request) {
+        Intent intent = intentDAO
+                .findById(request.intentId())
+                .orElseThrow();
+        GatewayIntentCreateResponse response = paymentGateway.createIntent(new GatewayIntentCreateRequest(
                 intent.getAmount(),
                 "EUR",
-                intent.getOrderId()
+                request.intentId()
         ));
 
-        return new IntentCreateResponse(
-                gatewayIntent,
-                paymentMapper.toResponse(intent)
-        );
+        return new IntentSubmissionResponse(response.id(), response.nextRequiredStep(), response.clientSecret());
     }
 
     public CompletionCreateResponse completeIntent(CompletionCreateRequest createRequest) {
         Intent intent = intentDAO
-                .findByOrderId(createRequest.orderId())
+                .findById(createRequest.internalIntentId())
                 .orElseThrow();
         Completion completion;
 
         try {
             completion = completionDAO.save(Completion.builder()
                     .intent(intent)
-                    .gatewayIntentId(createRequest.intentId())
+                    .gatewayIntentId(createRequest.gatewayIntentId())
                     .createdAt(LocalDateTime.now())
                     .build());
         } catch (DataIntegrityViolationException e) {

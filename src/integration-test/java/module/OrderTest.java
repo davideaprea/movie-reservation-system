@@ -123,7 +123,7 @@ public class OrderTest {
         assertThat(orderDAO.count()).isEqualTo(1);
         assertThat(order.getUserId()).isEqualTo(loggedUser.getId());
 
-        Intent intent = intentDAO.findById(response.intent().serviceResponse().id()).get();
+        Intent intent = intentDAO.findById(response.intent().id()).get();
 
         assertThat(intentDAO.count()).isEqualTo(1);
         assertThat(intent.getAmount()).isEqualByComparingTo(selectedSeats.stream()

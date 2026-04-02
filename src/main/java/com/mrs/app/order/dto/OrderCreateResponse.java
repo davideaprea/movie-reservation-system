@@ -1,11 +1,13 @@
 package com.mrs.app.order.dto;
 
 import com.mrs.app.booking.dto.BookingResponse;
-import com.mrs.app.payment.dto.IntentCreateResponse;
+import com.mrs.app.payment.dto.IntentResponse;
+import com.mrs.app.payment.dto.IntentSubmissionResponse;
 
 public record OrderCreateResponse(
-        String id,
+        long id,
         BookingResponse booking,
-        IntentCreateResponse intent
+        IntentResponse intent,
+        IntentSubmissionResponse gatewayIntent
 ) {
 }
