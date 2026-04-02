@@ -6,6 +6,10 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represent a payment completion,
+ * marking the related {@link Intent} as completed.
+ */
 @Builder
 @AllArgsConstructor
 @Entity

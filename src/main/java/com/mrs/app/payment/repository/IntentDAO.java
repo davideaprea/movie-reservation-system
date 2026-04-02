@@ -13,5 +13,5 @@ public interface IntentDAO extends CrudRepository<Intent, String> {
             LEFT JOIN Completion c ON c.intent = i
             WHERE i.expiresAt < CURRENT_TIMESTAMP AND c.id IS NULL
             """)
-    List<Intent> findAllExpired();
+    List<Intent> findExpiredIntents();
 }

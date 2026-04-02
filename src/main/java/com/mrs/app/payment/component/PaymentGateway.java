@@ -25,7 +25,7 @@ public class PaymentGateway {
     /**
      * Creates a new intent for the specified amount and details.
      * <p>
-     * The returned {@link GatewayIntentCreateResponse#id()} should be stored to allow possible refunds.
+     * The returned {@link GatewayIntentCreateResponse#id()} should be stored to allow payment completion.
      */
     public GatewayIntentCreateResponse createIntent(GatewayIntentCreateRequest request) {
         PaymentIntent intent;

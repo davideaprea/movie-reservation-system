@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Orchestrator for the complete order workflow.
+ * Orchestrator for the complete booking workflow.
  * <p>
  * It serves as the main entry point for order-related operations,
  * coordinating the interaction between involved modules.
@@ -78,7 +78,7 @@ public class OrderService {
     @Transactional
     protected void deleteUncompletedOrders() {
         List<String> expiredPaymentsIds = paymentService
-                .findAllExpired()
+                .findExpiredIntents()
                 .stream()
                 .map(IntentResponse::id)
                 .toList();
