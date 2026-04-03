@@ -1,6 +1,5 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mrs
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
