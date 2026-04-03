@@ -74,7 +74,7 @@ public class OrderService {
         );
     }
 
-    @Scheduled(fixedDelayString = "${app.payment.cleaner.delay}")
+    @Scheduled(fixedDelayString = "${app.order.cleanup-delay}")
     @Transactional
     protected void deleteUncompletedOrders() {
         List<String> expiredPaymentsIds = paymentService

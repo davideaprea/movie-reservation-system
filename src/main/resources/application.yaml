@@ -17,5 +17,5 @@ stripe:
 app:
   payment:
     timeout: ${PAYMENT_TIMEOUT}
-    cleaner:
-      delay: ${EXPIRED_PAYMENT_CLEANER_DELAY}
+  order:
+    cleanup-delay: ${EXPIRED_ORDER_CLEANUP_DELAY}

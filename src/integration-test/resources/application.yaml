@@ -17,5 +17,5 @@ stripe:
 app:
   payment:
     timeout: 5m
-    cleaner:
-      delay: 120000
+  order:
+    cleanup-delay: 1m

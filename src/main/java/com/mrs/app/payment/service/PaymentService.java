@@ -10,29 +10,21 @@ import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.IntentDAO;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class PaymentService {
     private final PaymentGateway paymentGateway;
     private final IntentDAO intentDAO;
     private final CompletionDAO completionDAO;
     private final PaymentMapper paymentMapper;
-    private final Duration paymentTimeout;
-
-    public PaymentService(PaymentGateway paymentGateway, IntentDAO intentDAO, CompletionDAO completionDAO, PaymentMapper paymentMapper, @Value("${app.payment.timeout}") Duration paymentTimeout) {
-        this.paymentGateway = paymentGateway;
-        this.intentDAO = intentDAO;
-        this.completionDAO = completionDAO;
-        this.paymentMapper = paymentMapper;
-        this.paymentTimeout = paymentTimeout;
-    }
+    private final ModuleConfigProps configProps;
 
     /**
      * Creates an internal timed payment intent to be later sent to the
@@ -46,7 +38,7 @@ public class PaymentService {
         Intent intent = intentDAO.save(Intent.builder()
                 .amount(createRequest.amount())
                 .createdAt(createdAt)
-                .expiresAt(createdAt.plus(paymentTimeout))
+                .expiresAt(createdAt.plus(configProps.timeout()))
                 .build());
 
         return paymentMapper.toResponse(intent);
