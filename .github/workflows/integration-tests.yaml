@@ -17,6 +17,4 @@ jobs:
       - name: Check Docker version
         run: docker
       - name: Run tests
-        run: mvn clean verify -DskipUnitTests
-      - name: List compiled integration tests
-        run: ls -R target/test-classes
+        run: mvn clean verify -DskipUnitTests -Dfailsafe.includes=**/*.java
