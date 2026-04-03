@@ -9,9 +9,10 @@ import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.IntentDAO;
+import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundError;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,7 +55,11 @@ public class PaymentService {
     public IntentSubmissionResponse submitIntent(IntentSubmissionRequest request) {
         Intent intent = intentDAO
                 .findById(request.intentId())
-                .orElseThrow();
+                .filter(i -> i.getExpiresAt().isAfter(LocalDateTime.now()))
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Intent.class.getSimpleName(),
+                        request
+                )));
         GatewayIntentCreateResponse response = paymentGateway.createIntent(new GatewayIntentCreateRequest(
                 intent.getAmount(),
                 "EUR",
@@ -74,21 +79,15 @@ public class PaymentService {
      * Otherwise, a new completion is created and persisted.</p>
      */
     public CompletionCreateResponse completeIntent(CompletionCreateRequest createRequest) {
-        Completion completion;
-
-        try {
-            completion = completionDAO.save(Completion.builder()
-                    .intent(Intent.builder()
-                            .id(createRequest.internalIntentId())
-                            .build())
-                    .gatewayIntentId(createRequest.gatewayIntentId())
-                    .createdAt(LocalDateTime.now())
-                    .build());
-        } catch (DataIntegrityViolationException e) {
-            completion = completionDAO
-                    .findByIntentId(createRequest.internalIntentId())
-                    .orElseThrow();
-        }
+        Completion completion = completionDAO
+                .findByIntentId(createRequest.internalIntentId())
+                .orElse(completionDAO.save(Completion.builder()
+                        .intent(Intent.builder()
+                                .id(createRequest.internalIntentId())
+                                .build())
+                        .gatewayIntentId(createRequest.gatewayIntentId())
+                        .createdAt(LocalDateTime.now())
+                        .build()));
 
         return paymentMapper.toCompletionCreateResponse(completion);
     }
