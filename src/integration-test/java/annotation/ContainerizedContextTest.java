@@ -2,6 +2,7 @@ package annotation;
 
 import com.mrs.app.MRSApplication;
 import config.DataBaseCleaner;
+import config.MockPaymentGateway;
 import config.TestContainersConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -20,6 +21,6 @@ import java.lang.annotation.*;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = MRSApplication.class
 )
-@Import({TestContainersConfiguration.class})
+@Import({TestContainersConfiguration.class, MockPaymentGateway.class})
 public @interface ContainerizedContextTest {
 }

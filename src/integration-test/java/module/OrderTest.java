@@ -17,7 +17,6 @@ import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
-import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.IntentDAO;
@@ -38,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.math.BigDecimal;
@@ -68,7 +66,7 @@ public class OrderTest {
     private CompletionDAO completionDAO;
     @Autowired
     private SeatReservationDAO seatReservationDAO;
-    @MockitoBean
+    @Autowired
     private PaymentGateway paymentGateway;
     @Autowired
     private UserDAO userDAO;
