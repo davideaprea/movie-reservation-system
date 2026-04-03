@@ -15,6 +15,8 @@ jobs:
           java-version: '21'
           cache: 'maven'
       - name: Check Docker version
-        run: docker version
-      - name: Execute tests
+        run: docker
+      - name: List compiled integration tests
+        run: ls -R target/test-classes
+      - name: Run tests
         run: mvn clean verify -DskipUnitTests
