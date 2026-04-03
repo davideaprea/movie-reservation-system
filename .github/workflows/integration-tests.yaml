@@ -16,7 +16,7 @@ jobs:
           cache: 'maven'
       - name: Check Docker version
         run: docker
-      - name: List compiled integration tests
-        run: ls -R target/test-classes
       - name: Run tests
         run: mvn clean verify -DskipUnitTests
+      - name: List compiled integration tests
+        run: ls -R target/test-classes
