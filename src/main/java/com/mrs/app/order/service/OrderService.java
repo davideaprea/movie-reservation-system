@@ -39,7 +39,36 @@ public class OrderService {
     private final TransactionTemplate transactionTemplate;
 
     /**
-     * Creates a new {@link Order}, linking the submitted booking to its intent.
+     * <h3>Transactional guarantees</h3>
+     * <ul>
+     *     <li>The booking creation, payment intent creation, and order persistence are executed
+     *     within a single transactional boundary.</li>
+     *     <li>If any step fails, the transaction is rolled back to prevent partial state persistence.</li>
+     * </ul>
+     *
+     * <h3>Workflow steps</h3>
+     * <ol>
+     *     <li>Create a booking for the requested schedule and seats</li>
+     *     <li>Calculate the total amount based on seat pricing</li>
+     *     <li>Create a payment intent for the calculated amount</li>
+     *     <li>Persist the order with references to booking and payment intent</li>
+     *     <li>Submit the payment intent (executed outside the transaction)</li>
+     * </ol>
+     *
+     * <h3>Resilience & eventual consistency (SAGA)</h3>
+     * <ul>
+     *     <li>If booking or intent creation fails, the transaction is rolled back and no order is created.</li>
+     *     <li>The payment submission is executed after transaction commit to avoid holding DB locks
+     *     during external API calls.</li>
+     *     <li>If the payment submission fails, the system relies on asynchronous recovery mechanisms
+     *     (e.g. retries, webhook callbacks, or scheduled reconciliation).</li>
+     * </ul>
+     *
+     * <h3>Idempotency considerations</h3>
+     * <ul>
+     *     <li>This operation is expected to be invoked in an idempotent context (e.g. protected by client or API layer).</li>
+     *     <li>Duplicate requests should be handled upstream or via idempotency keys when interacting with the payment provider.</li>
+     * </ul>
      */
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
         BookingTransactionResult result = transactionTemplate.execute(status -> {
@@ -74,6 +103,12 @@ public class OrderService {
         );
     }
 
+    /**
+     * Periodically removes orders associated with expired or uncompleted payment intents.
+     * <p>
+     * This task is part of the system's SAGA-based recovery and resource management:
+     * it ensures that stale orders do not block business operations and frees up reserved seats.
+     */
     @Scheduled(fixedDelayString = "${app.order.cleanup-delay}")
     @Transactional
     protected void deleteUncompletedOrders() {

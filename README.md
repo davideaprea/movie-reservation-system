@@ -47,11 +47,13 @@ Modular monolithic backend application for managing all aspects of a movie theat
 1. Run `mvn install` to install project's dependencies
 2. Update the [application.yaml](src/main/resources/application.yaml) file by replacing the placeholder values:
     - DATABASE_CONN_URL: database connection URL, e.g.: `jdbc:postgresql://localhost:5432/db_name`
-    - PAYPAL_CLIENT_ID: PayPal application client ID
-    - PAYPAL_CLIENT_SECRET: PayPal application client secret
+    - STRIPE_API_KEY: API key (client ID) for your Stripe application
+    - STRIPE_WEBHOOK_INVOKED_API_SECRET: secret key used to validate incoming Stripe webhooks when they invoke your application APIs
     - JWT_SECRET_KEY: base64-encoded key used to sign JWTs. The decoded key must be at least 32 bytes long (minimum for
       HS256)
     - JWT_EXP_TIME: expiration time for JWTs in milliseconds
+    - PAYMENT_TIMEOUT: time allowed for completing a payment before it expires, e.g.: 5m, 30s, 2h
+    - EXPIRED_ORDER_CLEANUP_DELAY: delay interval for scheduling the cleanup of uncompleted or expired orders, e.g.: 5m, 30s, 2h
 3. Run `mvn spring-boot:run` to start the application
 4. Once the application is running, access the API documentation
    via [Swagger UI](http://localhost:8080/swagger-ui/index.html)
