@@ -1,11 +1,11 @@
 package io.github.davideaprea.order.apidoc;
 
-import com.mrs.app.order.dto.HTTPOrderCreateRequest;
-import com.mrs.app.order.dto.OrderCreateResponse;
-import com.mrs.app.security.dto.AuthUserDetails;
-import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.DomainRequirementError;
-import com.mrs.app.shared.exception.FieldValidationError;
+import io.github.davideaprea.order.dto.HTTPOrderCreateRequest;
+import io.github.davideaprea.order.dto.OrderCreateResponse;
+import io.github.davideaprea.security.dto.AuthUserDetails;
+import io.github.davideaprea.shared.exception.ConflictingResourceError;
+import io.github.davideaprea.shared.exception.DomainRequirementError;
+import io.github.davideaprea.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

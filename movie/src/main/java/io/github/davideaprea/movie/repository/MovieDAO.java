@@ -1,6 +1,6 @@
 package io.github.davideaprea.movie.repository;
 
-import com.mrs.app.movie.entity.Movie;
+import io.github.davideaprea.movie.entity.Movie;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

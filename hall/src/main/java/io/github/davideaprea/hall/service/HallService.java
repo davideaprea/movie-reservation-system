@@ -1,15 +1,15 @@
 package io.github.davideaprea.hall.service;
 
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.dto.HallGetResponse;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.Seat;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.mapper.HallMapper;
-import com.mrs.app.hall.repository.HallDAO;
-import com.mrs.app.shared.exception.EntityNotFondException;
-import com.mrs.app.shared.exception.EntityNotFoundError;
+import io.github.davideaprea.hall.dto.HallCreateRequest;
+import io.github.davideaprea.hall.dto.HallGetResponse;
+import io.github.davideaprea.hall.dto.HallResponse;
+import io.github.davideaprea.hall.entity.Hall;
+import io.github.davideaprea.hall.entity.Seat;
+import io.github.davideaprea.hall.entity.SeatType;
+import io.github.davideaprea.hall.mapper.HallMapper;
+import io.github.davideaprea.hall.repository.HallDAO;
+import io.github.davideaprea.shared.exception.EntityNotFondException;
+import io.github.davideaprea.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,7 +1,7 @@
 package factory;
 
 import com.github.javafaker.Faker;
-import com.mrs.app.movie.entity.Movie;
+import io.github.davideaprea.movie.entity.Movie;
 
 import java.time.Duration;
 

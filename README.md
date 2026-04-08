@@ -45,7 +45,7 @@ Modular monolithic backend application for managing all aspects of a movie theat
 ## Running the application
 
 1. Run `mvn install` to install project's dependencies
-2. Update the [application.yaml](src/main/resources/application.yaml) file by replacing the placeholder values:
+2. Update the [application.yaml](app/src/main/resources/application.yaml) file by replacing the placeholder values:
     - DATABASE_CONN_URL: database connection URL, e.g.: `jdbc:postgresql://localhost:5432/db_name`
     - STRIPE_API_KEY: API key (client ID) for your Stripe application
     - STRIPE_WEBHOOK_INVOKED_API_SECRET: secret key used to validate incoming Stripe webhooks when they invoke your application APIs

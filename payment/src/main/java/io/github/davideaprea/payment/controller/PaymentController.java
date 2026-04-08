@@ -1,8 +1,8 @@
 package io.github.davideaprea.payment.controller;
 
-import com.mrs.app.payment.dto.CompletionCreateRequest;
-import com.mrs.app.payment.enumeration.PaymentGatewayMetadataKey;
-import com.mrs.app.payment.service.PaymentService;
+import io.github.davideaprea.payment.dto.CompletionCreateRequest;
+import io.github.davideaprea.payment.enumeration.PaymentGatewayMetadataKey;
+import io.github.davideaprea.payment.service.PaymentService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;

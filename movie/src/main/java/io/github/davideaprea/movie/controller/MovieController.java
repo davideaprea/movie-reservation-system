@@ -1,9 +1,9 @@
 package io.github.davideaprea.movie.controller;
 
-import com.mrs.app.movie.apidoc.MovieControllerDoc;
-import com.mrs.app.movie.dto.MovieResponse;
-import com.mrs.app.movie.dto.MovieCreateRequest;
-import com.mrs.app.movie.service.MovieService;
+import io.github.davideaprea.movie.apidoc.MovieControllerDoc;
+import io.github.davideaprea.movie.dto.MovieResponse;
+import io.github.davideaprea.movie.dto.MovieCreateRequest;
+import io.github.davideaprea.movie.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

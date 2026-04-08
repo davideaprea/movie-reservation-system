@@ -1,8 +1,8 @@
 package io.github.davideaprea.security.service;
 
-import com.mrs.app.security.entity.User;
-import com.mrs.app.security.dto.AuthUserDetails;
-import com.mrs.app.security.dao.UserDAO;
+import io.github.davideaprea.security.entity.User;
+import io.github.davideaprea.security.dto.AuthUserDetails;
+import io.github.davideaprea.security.dao.UserDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

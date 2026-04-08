@@ -1,8 +1,8 @@
 package io.github.davideaprea.security.doc;
 
-import com.mrs.app.security.dto.LoginCreateRequest;
-import com.mrs.app.security.dto.UserCreateRequest;
-import com.mrs.app.security.dto.UserCreateResponse;
+import io.github.davideaprea.security.dto.LoginCreateRequest;
+import io.github.davideaprea.security.dto.UserCreateRequest;
+import io.github.davideaprea.security.dto.UserCreateResponse;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,9 +1,9 @@
 package io.github.davideaprea.movie.apidoc;
 
-import com.mrs.app.movie.dto.MovieCreateRequest;
-import com.mrs.app.movie.dto.MovieResponse;
-import com.mrs.app.shared.exception.EntityNotFoundError;
-import com.mrs.app.shared.exception.FieldValidationError;
+import io.github.davideaprea.movie.dto.MovieCreateRequest;
+import io.github.davideaprea.movie.dto.MovieResponse;
+import io.github.davideaprea.shared.exception.EntityNotFoundError;
+import io.github.davideaprea.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

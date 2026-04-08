@@ -1,9 +1,9 @@
 package factory;
 
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.movie.entity.Movie;
-import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.schedule.entity.ScheduleSeat;
+import io.github.davideaprea.hall.entity.Hall;
+import io.github.davideaprea.movie.entity.Movie;
+import io.github.davideaprea.schedule.entity.Schedule;
+import io.github.davideaprea.schedule.entity.ScheduleSeat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

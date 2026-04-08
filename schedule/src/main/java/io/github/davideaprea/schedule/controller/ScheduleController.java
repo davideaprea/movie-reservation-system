@@ -1,10 +1,10 @@
 package io.github.davideaprea.schedule.controller;
 
-import com.mrs.app.schedule.apidoc.ScheduleControllerDoc;
-import com.mrs.app.schedule.dto.ScheduleResponse;
-import com.mrs.app.schedule.dto.ScheduleCreateRequest;
-import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
-import com.mrs.app.schedule.service.ScheduleService;
+import io.github.davideaprea.schedule.apidoc.ScheduleControllerDoc;
+import io.github.davideaprea.schedule.dto.ScheduleResponse;
+import io.github.davideaprea.schedule.dto.ScheduleCreateRequest;
+import io.github.davideaprea.schedule.dto.ScheduleGetRequestFilters;
+import io.github.davideaprea.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

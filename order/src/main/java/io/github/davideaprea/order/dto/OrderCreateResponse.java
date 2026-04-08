@@ -1,8 +1,8 @@
 package io.github.davideaprea.order.dto;
 
-import com.mrs.app.booking.dto.BookingResponse;
-import com.mrs.app.payment.dto.IntentResponse;
-import com.mrs.app.payment.dto.IntentSubmissionResponse;
+import io.github.davideaprea.booking.dto.BookingResponse;
+import io.github.davideaprea.payment.dto.IntentResponse;
+import io.github.davideaprea.payment.dto.IntentSubmissionResponse;
 
 public record OrderCreateResponse(
         long id,

@@ -1,10 +1,10 @@
 package io.github.davideaprea.hall.controller;
 
-import com.mrs.app.hall.apidoc.SeatTypeControllerDoc;
-import com.mrs.app.hall.dto.SeatTypeCreateRequest;
-import com.mrs.app.hall.dto.SeatTypeResponse;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.SeatTypeDAO;
+import io.github.davideaprea.hall.apidoc.SeatTypeControllerDoc;
+import io.github.davideaprea.hall.dto.SeatTypeCreateRequest;
+import io.github.davideaprea.hall.dto.SeatTypeResponse;
+import io.github.davideaprea.hall.entity.SeatType;
+import io.github.davideaprea.hall.repository.SeatTypeDAO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

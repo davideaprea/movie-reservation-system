@@ -1,9 +1,9 @@
 package factory;
 
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.Seat;
-import com.mrs.app.hall.entity.SeatType;
+import io.github.davideaprea.hall.dto.HallCreateRequest;
+import io.github.davideaprea.hall.entity.Hall;
+import io.github.davideaprea.hall.entity.Seat;
+import io.github.davideaprea.hall.entity.SeatType;
 
 import java.util.ArrayList;
 import java.util.List;

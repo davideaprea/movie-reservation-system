@@ -1,7 +1,7 @@
 package io.github.davideaprea.security.filter;
 
-import com.mrs.app.security.component.JWTValidator;
-import com.mrs.app.security.service.AuthUserDetailsService;
+import io.github.davideaprea.security.component.JWTValidator;
+import io.github.davideaprea.security.service.AuthUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

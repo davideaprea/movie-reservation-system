@@ -1,11 +1,11 @@
 package io.github.davideaprea.schedule.apidoc;
 
-import com.mrs.app.schedule.dto.ScheduleCreateRequest;
-import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
-import com.mrs.app.schedule.dto.ScheduleResponse;
-import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.EntityNotFoundError;
-import com.mrs.app.shared.exception.FieldValidationError;
+import io.github.davideaprea.schedule.dto.ScheduleCreateRequest;
+import io.github.davideaprea.schedule.dto.ScheduleGetRequestFilters;
+import io.github.davideaprea.schedule.dto.ScheduleResponse;
+import io.github.davideaprea.shared.exception.ConflictingResourceError;
+import io.github.davideaprea.shared.exception.EntityNotFoundError;
+import io.github.davideaprea.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

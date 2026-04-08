@@ -1,6 +1,6 @@
 package io.github.davideaprea.security.config;
 
-import com.mrs.app.security.dto.JWTConfigProps;
+import io.github.davideaprea.security.dto.JWTConfigProps;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import org.springframework.context.annotation.Bean;

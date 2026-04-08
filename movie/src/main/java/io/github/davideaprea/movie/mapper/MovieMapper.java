@@ -1,8 +1,8 @@
 package io.github.davideaprea.movie.mapper;
 
-import com.mrs.app.movie.dto.MovieCreateRequest;
-import com.mrs.app.movie.dto.MovieResponse;
-import com.mrs.app.movie.entity.Movie;
+import io.github.davideaprea.movie.dto.MovieCreateRequest;
+import io.github.davideaprea.movie.dto.MovieResponse;
+import io.github.davideaprea.movie.entity.Movie;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

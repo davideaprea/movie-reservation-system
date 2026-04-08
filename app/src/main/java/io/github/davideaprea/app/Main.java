@@ -1,4 +1,4 @@
-package com.mrs.app;
+package io.github.davideaprea.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConfigurationPropertiesScan
 @EnableScheduling
 @SpringBootApplication
-public class MRSApplication {
+public class Main {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MRSApplication.class, args);
+		SpringApplication.run(Main.class, args);
 	}
 
 }

@@ -1,13 +1,13 @@
 package io.github.davideaprea.security.service;
 
-import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dto.AuthUserDetails;
-import com.mrs.app.security.dto.JWTClaims;
-import com.mrs.app.security.entity.User;
-import com.mrs.app.security.dto.LoginCreateRequest;
-import com.mrs.app.security.dto.UserCreateRequest;
-import com.mrs.app.security.dao.UserDAO;
-import com.mrs.app.security.enumeration.Role;
+import io.github.davideaprea.security.component.JWTCreator;
+import io.github.davideaprea.security.dto.AuthUserDetails;
+import io.github.davideaprea.security.dto.JWTClaims;
+import io.github.davideaprea.security.entity.User;
+import io.github.davideaprea.security.dto.LoginCreateRequest;
+import io.github.davideaprea.security.dto.UserCreateRequest;
+import io.github.davideaprea.security.dao.UserDAO;
+import io.github.davideaprea.security.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;

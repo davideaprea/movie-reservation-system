@@ -1,10 +1,10 @@
 package io.github.davideaprea.payment.component;
 
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
-import com.mrs.app.payment.dto.gateway.GatewayRefundResponse;
-import com.mrs.app.payment.enumeration.PaymentGatewayMetadataKey;
-import com.mrs.app.payment.exception.PaymentGatewayException;
+import io.github.davideaprea.payment.dto.gateway.GatewayIntentCreateRequest;
+import io.github.davideaprea.payment.dto.gateway.GatewayIntentCreateResponse;
+import io.github.davideaprea.payment.dto.gateway.GatewayRefundResponse;
+import io.github.davideaprea.payment.enumeration.PaymentGatewayMetadataKey;
+import io.github.davideaprea.payment.exception.PaymentGatewayException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.Refund;
 import com.stripe.net.RequestOptions.RequestOptionsBuilder;

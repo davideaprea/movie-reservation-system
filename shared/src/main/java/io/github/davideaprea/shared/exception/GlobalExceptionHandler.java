@@ -1,6 +1,6 @@
 package io.github.davideaprea.shared.exception;
 
-import com.mrs.app.payment.exception.PaymentGatewayException;
+import io.github.davideaprea.payment.exception.PaymentGatewayException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

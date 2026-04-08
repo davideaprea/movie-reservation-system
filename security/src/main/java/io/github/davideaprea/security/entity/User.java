@@ -1,6 +1,6 @@
 package io.github.davideaprea.security.entity;
 
-import com.mrs.app.security.enumeration.Role;
+import io.github.davideaprea.security.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

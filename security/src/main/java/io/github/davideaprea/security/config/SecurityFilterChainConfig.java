@@ -1,7 +1,7 @@
 package io.github.davideaprea.security.config;
 
-import com.mrs.app.security.enumeration.Role;
-import com.mrs.app.security.filter.UserAuthenticationFilter;
+import io.github.davideaprea.security.enumeration.Role;
+import io.github.davideaprea.security.filter.UserAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

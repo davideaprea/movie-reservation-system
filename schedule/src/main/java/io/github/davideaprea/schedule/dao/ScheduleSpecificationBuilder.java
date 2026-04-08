@@ -1,7 +1,7 @@
 package io.github.davideaprea.schedule.dao;
 
-import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
-import com.mrs.app.schedule.entity.Schedule;
+import io.github.davideaprea.schedule.dto.ScheduleGetRequestFilters;
+import io.github.davideaprea.schedule.entity.Schedule;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ScheduleSpecificationBuilder {

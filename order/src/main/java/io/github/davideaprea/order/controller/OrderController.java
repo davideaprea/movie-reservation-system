@@ -1,9 +1,9 @@
 package io.github.davideaprea.order.controller;
 
-import com.mrs.app.order.apidoc.OrderControllerDoc;
-import com.mrs.app.order.dto.*;
-import com.mrs.app.order.service.OrderService;
-import com.mrs.app.security.dto.AuthUserDetails;
+import io.github.davideaprea.order.apidoc.OrderControllerDoc;
+import io.github.davideaprea.order.dto.*;
+import io.github.davideaprea.order.service.OrderService;
+import io.github.davideaprea.security.dto.AuthUserDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

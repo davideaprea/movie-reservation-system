@@ -1,9 +1,9 @@
 package io.github.davideaprea.payment.mapper;
 
-import com.mrs.app.payment.dto.CompletionCreateResponse;
-import com.mrs.app.payment.dto.IntentResponse;
-import com.mrs.app.payment.entity.Completion;
-import com.mrs.app.payment.entity.Intent;
+import io.github.davideaprea.payment.dto.CompletionCreateResponse;
+import io.github.davideaprea.payment.dto.IntentResponse;
+import io.github.davideaprea.payment.entity.Completion;
+import io.github.davideaprea.payment.entity.Intent;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

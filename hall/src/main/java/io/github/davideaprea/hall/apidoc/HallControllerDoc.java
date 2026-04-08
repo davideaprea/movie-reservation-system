@@ -1,10 +1,10 @@
 package io.github.davideaprea.hall.apidoc;
 
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.dto.HallGetResponse;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.FieldValidationError;
+import io.github.davideaprea.hall.dto.HallCreateRequest;
+import io.github.davideaprea.hall.dto.HallGetResponse;
+import io.github.davideaprea.hall.dto.HallResponse;
+import io.github.davideaprea.shared.exception.ConflictingResourceError;
+import io.github.davideaprea.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,16 +1,16 @@
 package io.github.davideaprea.payment.service;
 
-import com.mrs.app.payment.component.PaymentGateway;
-import com.mrs.app.payment.dto.*;
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
-import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
-import com.mrs.app.payment.entity.Completion;
-import com.mrs.app.payment.entity.Intent;
-import com.mrs.app.payment.mapper.PaymentMapper;
-import com.mrs.app.payment.repository.CompletionDAO;
-import com.mrs.app.payment.repository.IntentDAO;
-import com.mrs.app.shared.exception.EntityNotFondException;
-import com.mrs.app.shared.exception.EntityNotFoundError;
+import io.github.davideaprea.payment.component.PaymentGateway;
+import io.github.davideaprea.payment.dto.*;
+import io.github.davideaprea.payment.dto.gateway.GatewayIntentCreateRequest;
+import io.github.davideaprea.payment.dto.gateway.GatewayIntentCreateResponse;
+import io.github.davideaprea.payment.entity.Completion;
+import io.github.davideaprea.payment.entity.Intent;
+import io.github.davideaprea.payment.mapper.PaymentMapper;
+import io.github.davideaprea.payment.repository.CompletionDAO;
+import io.github.davideaprea.payment.repository.IntentDAO;
+import io.github.davideaprea.shared.exception.EntityNotFondException;
+import io.github.davideaprea.shared.exception.EntityNotFoundError;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

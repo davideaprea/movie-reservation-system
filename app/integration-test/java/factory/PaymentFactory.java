@@ -1,6 +1,6 @@
 package factory;
 
-import com.mrs.app.payment.entity.Intent;
+import io.github.davideaprea.payment.entity.Intent;
 
 import java.math.BigDecimal;
 import java.time.Duration;

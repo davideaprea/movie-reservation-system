@@ -1,6 +1,6 @@
 package io.github.davideaprea.order.dto;
 
-import com.mrs.app.payment.dto.RefundResponse;
+import io.github.davideaprea.payment.dto.RefundResponse;
 
 public record OrderCancellationResponse(
         long id,

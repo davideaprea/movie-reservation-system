@@ -1,7 +1,7 @@
 package io.github.davideaprea.security.component;
 
-import com.mrs.app.security.dto.JWTClaims;
-import com.mrs.app.security.dto.JWTConfigProps;
+import io.github.davideaprea.security.dto.JWTClaims;
+import io.github.davideaprea.security.dto.JWTConfigProps;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

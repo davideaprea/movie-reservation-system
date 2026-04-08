@@ -30,6 +30,7 @@
         <module>schedule</module>
         <module>security</module>
         <module>shared</module>
+        <module>app</module>
     </modules>
     <properties>
         <java.version>21</java.version>

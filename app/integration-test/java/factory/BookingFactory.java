@@ -1,8 +1,8 @@
 package factory;
 
-import com.mrs.app.booking.entity.Booking;
-import com.mrs.app.booking.entity.SeatReservation;
-import com.mrs.app.schedule.entity.Schedule;
+import io.github.davideaprea.booking.entity.Booking;
+import io.github.davideaprea.booking.entity.SeatReservation;
+import io.github.davideaprea.schedule.entity.Schedule;
 
 import java.util.ArrayList;
 

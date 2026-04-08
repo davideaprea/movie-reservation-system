@@ -1,8 +1,8 @@
 package io.github.davideaprea.schedule.service;
 
-import com.mrs.app.schedule.dao.ScheduleSeatDAO;
-import com.mrs.app.schedule.dto.ScheduleSeatResponse;
-import com.mrs.app.schedule.mapper.ScheduleSeatMapper;
+import io.github.davideaprea.schedule.dao.ScheduleSeatDAO;
+import io.github.davideaprea.schedule.dto.ScheduleSeatResponse;
+import io.github.davideaprea.schedule.mapper.ScheduleSeatMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

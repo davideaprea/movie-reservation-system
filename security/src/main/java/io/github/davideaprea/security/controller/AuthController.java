@@ -1,11 +1,11 @@
 package io.github.davideaprea.security.controller;
 
-import com.mrs.app.security.doc.AuthControllerDocs;
-import com.mrs.app.security.dto.UserCreateResponse;
-import com.mrs.app.security.entity.User;
-import com.mrs.app.security.dto.LoginCreateRequest;
-import com.mrs.app.security.dto.UserCreateRequest;
-import com.mrs.app.security.service.AuthService;
+import io.github.davideaprea.security.doc.AuthControllerDocs;
+import io.github.davideaprea.security.dto.UserCreateResponse;
+import io.github.davideaprea.security.entity.User;
+import io.github.davideaprea.security.dto.LoginCreateRequest;
+import io.github.davideaprea.security.dto.UserCreateRequest;
+import io.github.davideaprea.security.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;

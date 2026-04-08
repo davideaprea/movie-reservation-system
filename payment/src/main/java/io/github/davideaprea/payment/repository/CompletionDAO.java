@@ -1,6 +1,6 @@
 package io.github.davideaprea.payment.repository;
 
-import com.mrs.app.payment.entity.Completion;
+import io.github.davideaprea.payment.entity.Completion;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

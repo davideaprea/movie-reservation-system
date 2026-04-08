@@ -1,16 +1,16 @@
 package module;
 
 import annotation.ContainerizedContextTest;
-import com.mrs.app.movie.dto.MovieCreateRequest;
-import com.mrs.app.movie.dto.MovieResponse;
-import com.mrs.app.movie.entity.Genre;
-import com.mrs.app.movie.entity.Movie;
-import com.mrs.app.movie.repository.GenreDAO;
-import com.mrs.app.movie.repository.MovieDAO;
-import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
-import com.mrs.app.security.dto.JWTClaims;
-import com.mrs.app.security.entity.User;
+import io.github.davideaprea.movie.dto.MovieCreateRequest;
+import io.github.davideaprea.movie.dto.MovieResponse;
+import io.github.davideaprea.movie.entity.Genre;
+import io.github.davideaprea.movie.entity.Movie;
+import io.github.davideaprea.movie.repository.GenreDAO;
+import io.github.davideaprea.movie.repository.MovieDAO;
+import io.github.davideaprea.security.component.JWTCreator;
+import io.github.davideaprea.security.dao.UserDAO;
+import io.github.davideaprea.security.dto.JWTClaims;
+import io.github.davideaprea.security.entity.User;
 import factory.MovieFactory;
 import factory.UserFactory;
 import lombok.SneakyThrows;

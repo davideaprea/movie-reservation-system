@@ -1,6 +1,6 @@
 package io.github.davideaprea.security.dto;
 
-import com.mrs.app.security.entity.User;
+import io.github.davideaprea.security.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

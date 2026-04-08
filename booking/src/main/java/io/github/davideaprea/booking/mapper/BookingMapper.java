@@ -1,7 +1,7 @@
 package io.github.davideaprea.booking.mapper;
 
-import com.mrs.app.booking.dto.BookingResponse;
-import com.mrs.app.booking.entity.Booking;
+import io.github.davideaprea.booking.dto.BookingResponse;
+import io.github.davideaprea.booking.entity.Booking;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

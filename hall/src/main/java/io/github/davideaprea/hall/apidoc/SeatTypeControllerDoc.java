@@ -1,9 +1,9 @@
 package io.github.davideaprea.hall.apidoc;
 
-import com.mrs.app.hall.dto.SeatTypeCreateRequest;
-import com.mrs.app.hall.dto.SeatTypeResponse;
-import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.FieldValidationError;
+import io.github.davideaprea.hall.dto.SeatTypeCreateRequest;
+import io.github.davideaprea.hall.dto.SeatTypeResponse;
+import io.github.davideaprea.shared.exception.ConflictingResourceError;
+import io.github.davideaprea.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,6 +1,6 @@
 package io.github.davideaprea.security.dao;
 
-import com.mrs.app.security.entity.User;
+import io.github.davideaprea.security.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

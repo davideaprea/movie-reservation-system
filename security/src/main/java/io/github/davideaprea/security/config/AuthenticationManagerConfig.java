@@ -1,6 +1,6 @@
 package io.github.davideaprea.security.config;
 
-import com.mrs.app.security.service.AuthUserDetailsService;
+import io.github.davideaprea.security.service.AuthUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

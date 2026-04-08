@@ -1,8 +1,8 @@
 package io.github.davideaprea.hall.mapper;
 
-import com.mrs.app.hall.dto.HallGetResponse;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.entity.Hall;
+import io.github.davideaprea.hall.dto.HallGetResponse;
+import io.github.davideaprea.hall.dto.HallResponse;
+import io.github.davideaprea.hall.entity.Hall;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {SeatMapper.class})

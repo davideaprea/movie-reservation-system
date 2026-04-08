@@ -1,16 +1,16 @@
 package module;
 
 import annotation.ContainerizedContextTest;
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.HallDAO;
-import com.mrs.app.hall.repository.SeatDAO;
-import com.mrs.app.hall.repository.SeatTypeDAO;
-import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
-import com.mrs.app.security.dto.JWTClaims;
-import com.mrs.app.security.entity.User;
+import io.github.davideaprea.hall.dto.HallCreateRequest;
+import io.github.davideaprea.hall.dto.HallResponse;
+import io.github.davideaprea.hall.entity.SeatType;
+import io.github.davideaprea.hall.repository.HallDAO;
+import io.github.davideaprea.hall.repository.SeatDAO;
+import io.github.davideaprea.hall.repository.SeatTypeDAO;
+import io.github.davideaprea.security.component.JWTCreator;
+import io.github.davideaprea.security.dao.UserDAO;
+import io.github.davideaprea.security.dto.JWTClaims;
+import io.github.davideaprea.security.entity.User;
 import factory.HallFactory;
 import factory.UserFactory;
 import lombok.SneakyThrows;

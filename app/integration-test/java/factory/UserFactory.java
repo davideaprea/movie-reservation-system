@@ -1,7 +1,7 @@
 package factory;
 
-import com.mrs.app.security.entity.User;
-import com.mrs.app.security.enumeration.Role;
+import io.github.davideaprea.security.entity.User;
+import io.github.davideaprea.security.enumeration.Role;
 
 public class UserFactory {
     private UserFactory() {
