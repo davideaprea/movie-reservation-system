@@ -17,4 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>${parent.groupId}</groupId>
+            <artifactId>schedule</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 </project>
