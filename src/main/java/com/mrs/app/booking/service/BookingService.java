@@ -1,10 +1,11 @@
 package com.mrs.app.booking.service;
 
-import com.mrs.app.booking.dto.BookingResponse;
-import com.mrs.app.booking.entity.Booking;
-import com.mrs.app.booking.mapper.BookingMapper;
 import com.mrs.app.booking.dto.BookingCreateRequest;
+import com.mrs.app.booking.dto.BookingResponse;
+import com.mrs.app.booking.dto.SeatReservationResponse;
+import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
+import com.mrs.app.booking.mapper.BookingMapper;
 import com.mrs.app.booking.repository.BookingDAO;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
@@ -85,5 +86,12 @@ public class BookingService {
         }
 
         bookingDAO.deleteById(id);
+    }
+
+    public List<SeatReservationResponse> findSeatReservationsByScheduleId(long scheduleId) {
+        return bookingDAO
+                .findAllByScheduleId(scheduleId)
+                .stream().map(bookingMapper::toResponse)
+                .toList();
     }
 }

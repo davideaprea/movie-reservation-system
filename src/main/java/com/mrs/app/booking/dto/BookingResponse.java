@@ -7,9 +7,4 @@ public record BookingResponse(
         long scheduleId,
         List<SeatReservationResponse> seatReservations
 ) {
-    public record SeatReservationResponse(
-            long id,
-            long scheduleSeatId
-    ) {
-    }
 }
