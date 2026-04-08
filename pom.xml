@@ -11,6 +11,7 @@
     <groupId>io.github.davideaprea</groupId>
     <artifactId>movie-reservation-system</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
     <name>Movie reservation system</name>
     <description>A modular monolith application for managing a movie business</description>
     <url/>
@@ -20,6 +21,16 @@
             <email>apredav.developer@gmail.com</email>
         </developer>
     </developers>
+    <modules>
+        <module>booking</module>
+        <module>hall</module>
+        <module>movie</module>
+        <module>order</module>
+        <module>payment</module>
+        <module>schedule</module>
+        <module>security</module>
+        <module>shared</module>
+    </modules>
     <properties>
         <java.version>21</java.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>

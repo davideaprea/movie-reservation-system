@@ -1,0 +1,93 @@
+package io.github.davideaprea.service;
+
+import com.mrs.app.movie.dto.MovieResponse;
+import com.mrs.app.hall.service.HallService;
+import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
+import com.mrs.app.schedule.dto.ScheduleCreateRequest;
+import com.mrs.app.movie.service.MovieService;
+import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
+import com.mrs.app.schedule.entity.Schedule;
+import com.mrs.app.schedule.dao.ScheduleDAO;
+import com.mrs.app.schedule.entity.ScheduleSeat;
+import com.mrs.app.schedule.mapper.ScheduleMapper;
+import com.mrs.app.shared.exception.ConflictingEntityException;
+import com.mrs.app.shared.exception.ConflictingResourceError;
+import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundError;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+@AllArgsConstructor
+@Service
+public class ScheduleService {
+    private final ScheduleDAO scheduleDAO;
+    private final ScheduleMapper scheduleMapper;
+    private final MovieService movieService;
+    private final HallService hallService;
+
+    /**
+     * When creating a schedule, this method automatically calculates
+     * the end time from the movie's duration and
+     * generates a {@link ScheduleSeat} for each hall seat, setting its price
+     * according to {@link ScheduleCreateRequest#seatPriceOptions()}.
+     *
+     * @throws ConflictingEntityException if the hall is already occupied during the requested time
+     */
+    @Transactional
+    public ScheduleResponse create(ScheduleCreateRequest dto) {
+        MovieResponse movieToSchedule = movieService.findById(dto.movieId());
+        LocalDateTime scheduleEndTime = dto.startTime().plus(movieToSchedule.duration());
+        Schedule scheduleToSave = scheduleMapper.toEntity(dto, scheduleEndTime);
+        List<ScheduleResponse> conflictingSchedules = findAllByFilters(new ScheduleGetRequestFilters(null, dto.startTime(), scheduleEndTime, dto.hallId()));
+
+        if (!conflictingSchedules.isEmpty()) {
+            ConflictingResourceError<ScheduleResponse> error = new ConflictingResourceError<>(
+                    conflictingSchedules,
+                    List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId),
+                    "This hall is already taken."
+            );
+
+            throw new ConflictingEntityException(error);
+        }
+
+        hallService
+                .findById(dto.hallId())
+                .seats()
+                .forEach(seat -> {
+                    BigDecimal seatPrice = dto.seatPriceOptions().get(seat.type().name());
+
+                    scheduleToSave.addSeat(ScheduleSeat.builder()
+                            .price(seatPrice)
+                            .seatId(seat.id())
+                            .schedule(scheduleToSave)
+                            .build());
+                });
+
+        return scheduleMapper.toResponse(scheduleDAO.save(scheduleToSave));
+    }
+
+    public ScheduleResponse findById(long id) {
+        return scheduleDAO
+                .findById(id)
+                .map(scheduleMapper::toResponse)
+                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                        Schedule.class.getSimpleName(),
+                        Map.of("id", id)
+                )));
+    }
+
+    public List<ScheduleResponse> findAllByFilters(ScheduleGetRequestFilters filters) {
+        return scheduleDAO
+                .findAll(ScheduleSpecificationBuilder.fromFilters(filters))
+                .stream()
+                .map(scheduleMapper::toResponse)
+                .toList();
+    }
+}

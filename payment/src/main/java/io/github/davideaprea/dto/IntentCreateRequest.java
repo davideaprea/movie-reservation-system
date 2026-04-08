@@ -1,0 +1,13 @@
+package io.github.davideaprea.dto;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import java.math.BigDecimal;
+
+public record IntentCreateRequest(
+        @NotNull
+        @Positive
+        BigDecimal amount
+) {
+}
