@@ -22,16 +22,16 @@
         </developer>
     </developers>
     <modules>
-        <module>booking</module>
-        <module>hall</module>
-        <module>movie</module>
-        <module>order</module>
-        <module>payment</module>
-        <module>schedule</module>
-        <module>security</module>
-        <module>shared</module>
-        <module>app</module>
-        <module>shared-test</module>
+        <module>modules/booking</module>
+        <module>modules/hall</module>
+        <module>modules/movie</module>
+        <module>modules/order</module>
+        <module>modules/payment</module>
+        <module>modules/schedule</module>
+        <module>modules/security</module>
+        <module>modules/shared</module>
+        <module>modules/app</module>
+        <module>modules/shared-test</module>
     </modules>
     <properties>
         <java.version>21</java.version>

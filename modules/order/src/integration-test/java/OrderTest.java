@@ -1,5 +1,3 @@
-package module;
-
 import annotation.ContainerizedContextTest;
 import io.github.davideaprea.booking.entity.Booking;
 import io.github.davideaprea.booking.entity.SeatReservation;

@@ -1,5 +1,3 @@
-package module;
-
 import annotation.ContainerizedContextTest;
 import io.github.davideaprea.hall.dto.HallCreateRequest;
 import io.github.davideaprea.hall.dto.HallResponse;

@@ -1,5 +1,3 @@
-package module;
-
 import annotation.ContainerizedContextTest;
 import io.github.davideaprea.movie.dto.MovieCreateRequest;
 import io.github.davideaprea.movie.dto.MovieResponse;

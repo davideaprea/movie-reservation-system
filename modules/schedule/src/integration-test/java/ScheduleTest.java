@@ -1,5 +1,3 @@
-package module;
-
 import annotation.ContainerizedContextTest;
 import io.github.davideaprea.hall.entity.Hall;
 import io.github.davideaprea.hall.entity.SeatType;
