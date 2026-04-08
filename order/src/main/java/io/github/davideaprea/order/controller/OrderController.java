@@ -3,7 +3,6 @@ package io.github.davideaprea.order.controller;
 import io.github.davideaprea.order.apidoc.OrderControllerDoc;
 import io.github.davideaprea.order.dto.*;
 import io.github.davideaprea.order.service.OrderService;
-import io.github.davideaprea.security.dto.AuthUserDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,10 +19,10 @@ public class OrderController implements OrderControllerDoc {
     @PostMapping
     public ResponseEntity<OrderCreateResponse> create(
             @RequestBody @Valid HTTPOrderCreateRequest request,
-            @AuthenticationPrincipal AuthUserDetails loggedUser
+            @AuthenticationPrincipal(expression = "id") long loggedUserId
     ) {
         return new ResponseEntity<>(orderService.create(new OrderCreateRequest(
-                loggedUser.getId(),
+                loggedUserId,
                 request.scheduleId(),
                 request.seatIds()
         )), HttpStatus.CREATED);

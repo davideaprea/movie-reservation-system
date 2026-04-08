@@ -2,7 +2,6 @@ package io.github.davideaprea.order.apidoc;
 
 import io.github.davideaprea.order.dto.HTTPOrderCreateRequest;
 import io.github.davideaprea.order.dto.OrderCreateResponse;
-import io.github.davideaprea.security.dto.AuthUserDetails;
 import io.github.davideaprea.shared.exception.ConflictingResourceError;
 import io.github.davideaprea.shared.exception.DomainRequirementError;
 import io.github.davideaprea.shared.exception.FieldValidationError;
@@ -46,5 +45,5 @@ public interface OrderControllerDoc {
                     )
             }
     )
-    ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) AuthUserDetails loggedUser);
+    ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) long loggedUserId);
 }

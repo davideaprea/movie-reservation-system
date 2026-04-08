@@ -1,6 +1,5 @@
 package io.github.davideaprea.shared.exception;
 
-import io.github.davideaprea.payment.exception.PaymentGatewayException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -46,11 +45,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictingEntityException.class)
     public ResponseEntity<ConflictingResourceError<?>> handle(ConflictingEntityException exception) {
         return new ResponseEntity<>(exception.getError(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(PaymentGatewayException.class)
-    public ResponseEntity<Void> handle(PaymentGatewayException exception) {
-        return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
     }
 
     @ExceptionHandler(Exception.class)
