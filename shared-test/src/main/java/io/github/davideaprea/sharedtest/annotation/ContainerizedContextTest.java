@@ -1,9 +1,8 @@
-package annotation;
+package io.github.davideaprea.sharedtest.annotation;
 
-import io.github.davideaprea.MRSApplication;
-import config.DataBaseCleaner;
-import config.MockPaymentGateway;
-import config.TestContainersConfiguration;
+import io.github.davideaprea.sharedtest.config.BasePackagesScanner;
+import io.github.davideaprea.sharedtest.config.DataBaseCleaner;
+import io.github.davideaprea.sharedtest.config.TestContainersConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
@@ -19,8 +18,8 @@ import java.lang.annotation.*;
 )
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = MRSApplication.class
+        classes = BasePackagesScanner.class
 )
-@Import({TestContainersConfiguration.class, MockPaymentGateway.class})
+@Import({TestContainersConfiguration.class})
 public @interface ContainerizedContextTest {
 }

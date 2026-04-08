@@ -35,5 +35,12 @@
             <artifactId>booking</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>${parent.groupId}</groupId>
+            <artifactId>shared-test</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

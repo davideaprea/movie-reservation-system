@@ -1,4 +1,4 @@
-package config;
+package io.github.davideaprea.sharedtest.config;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestContext;

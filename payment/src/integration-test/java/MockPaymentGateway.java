@@ -1,5 +1,3 @@
-package config;
-
 import io.github.davideaprea.payment.component.PaymentGateway;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
