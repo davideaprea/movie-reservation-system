@@ -28,4 +28,8 @@ public class Intent {
 
     @Column(nullable = false)
     private LocalDateTime expiresAt;
+
+    @JoinColumn(unique = true)
+    @OneToOne(mappedBy = "intent")
+    private Completion completion;
 }

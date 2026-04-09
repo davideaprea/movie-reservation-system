@@ -4,12 +4,12 @@ import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.booking.service.BookingService;
 import com.mrs.app.order.dao.OrderDAO;
-import com.mrs.app.order.dto.*;
+import com.mrs.app.order.dto.BookingTransactionResult;
+import com.mrs.app.order.dto.OrderCreateRequest;
+import com.mrs.app.order.dto.OrderCreateResponse;
+import com.mrs.app.order.dto.OrderGetResponse;
 import com.mrs.app.order.entity.Order;
-import com.mrs.app.payment.dto.IntentCreateRequest;
-import com.mrs.app.payment.dto.IntentResponse;
-import com.mrs.app.payment.dto.IntentSubmissionRequest;
-import com.mrs.app.payment.dto.IntentSubmissionResponse;
+import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
@@ -22,6 +22,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Orchestrator for the complete booking workflow.
@@ -81,7 +84,7 @@ public class OrderService {
                     .stream()
                     .map(ScheduleSeatResponse::price)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-            IntentResponse intent = paymentService.createIntent(new IntentCreateRequest(amount));
+            IntentCreateResponse intent = paymentService.createIntent(new IntentCreateRequest(amount));
 
             Order order = orderDAO.save(Order.builder()
                     .createdAt(LocalDateTime.now())
@@ -103,6 +106,29 @@ public class OrderService {
         );
     }
 
+    public List<OrderGetResponse> findAllByUserId(long userId) {
+        List<Order> orders = orderDAO.findAllByUserId(userId);
+        Map<Long, BookingResponse> bookingsIndexedById = bookingService
+                .findAllById(orders.stream().map(Order::getBookingId).toList())
+                .stream().collect(Collectors.toMap(
+                        BookingResponse::id,
+                        Function.identity()
+                ));
+        Map<String, IntentGetResponse> intentsIndexedById = paymentService
+                .findAllById(orders.stream().map(Order::getIntentId).toList())
+                .stream().collect(Collectors.toMap(
+                        IntentGetResponse::id,
+                        Function.identity()
+                ));
+
+        return orders.stream().map(order -> new OrderGetResponse(
+                order.getId(),
+                order.getCreatedAt(),
+                bookingsIndexedById.get(order.getBookingId()),
+                intentsIndexedById.get(order.getIntentId())
+        )).toList();
+    }
+
     /**
      * Periodically removes orders associated with expired or uncompleted payment intents.
      * <p>
@@ -115,7 +141,7 @@ public class OrderService {
         List<String> expiredPaymentsIds = paymentService
                 .findExpiredIntents()
                 .stream()
-                .map(IntentResponse::id)
+                .map(IntentCreateResponse::id)
                 .toList();
 
         orderDAO.deleteAllByIntentIdIn(expiredPaymentsIds);

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
@@ -93,5 +94,12 @@ public class BookingService {
                 .findAllByScheduleId(scheduleId)
                 .stream().map(bookingMapper::toResponse)
                 .toList();
+    }
+
+    public List<BookingResponse> findAllById(List<Long> bookingIds) {
+        return StreamSupport.stream(
+                bookingDAO.findAllById(bookingIds).spliterator(),
+                false
+        ).map(bookingMapper::toResponse).toList();
     }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface OrderDAO extends JpaRepository<Order, Long> {
     void deleteAllByIntentIdIn(List<String> paymentsIds);
+
+    List<Order> findAllByUserId(long userId);
 }

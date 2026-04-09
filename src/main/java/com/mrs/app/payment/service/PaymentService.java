@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
@@ -34,7 +35,7 @@ public class PaymentService {
      * <p>The intent is persisted with the provided amount and initialized with
      * a creation timestamp and an expiration timestamp based on the configured timeout.</p>
      */
-    public IntentResponse createIntent(@Valid IntentCreateRequest createRequest) {
+    public IntentCreateResponse createIntent(@Valid IntentCreateRequest createRequest) {
         LocalDateTime createdAt = LocalDateTime.now();
         Intent intent = intentDAO.save(Intent.builder()
                 .amount(createRequest.amount())
@@ -42,7 +43,7 @@ public class PaymentService {
                 .expiresAt(createdAt.plus(configProps.timeout()))
                 .build());
 
-        return paymentMapper.toResponse(intent);
+        return paymentMapper.toCreateResponse(intent);
     }
 
     /**
@@ -101,9 +102,16 @@ public class PaymentService {
      * <p>This method is typically used by scheduled jobs to clean up stale intents
      * or trigger compensating actions.</p>
      */
-    public List<IntentResponse> findExpiredIntents() {
+    public List<IntentCreateResponse> findExpiredIntents() {
         return intentDAO
                 .findExpiredIntents().stream()
-                .map(paymentMapper::toResponse).toList();
+                .map(paymentMapper::toCreateResponse).toList();
+    }
+
+    public List<IntentGetResponse> findAllById(List<String> ids) {
+        return StreamSupport.stream(
+                intentDAO.findAllById(ids).spliterator(),
+                false
+        ).map(paymentMapper::toGetResponse).toList();
     }
 }
