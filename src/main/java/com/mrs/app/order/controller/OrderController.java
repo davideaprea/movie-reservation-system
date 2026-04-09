@@ -6,7 +6,6 @@ import com.mrs.app.order.dto.OrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.dto.OrderGetResponse;
 import com.mrs.app.order.service.OrderService;
-import com.mrs.app.security.dto.AuthUserDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,10 +24,10 @@ public class OrderController implements OrderControllerDoc {
     @PostMapping
     public ResponseEntity<OrderCreateResponse> create(
             @RequestBody @Valid HTTPOrderCreateRequest request,
-            @AuthenticationPrincipal AuthUserDetails loggedUser
+            @AuthenticationPrincipal(expression = "id") long loggedUserId
     ) {
         return new ResponseEntity<>(orderService.create(new OrderCreateRequest(
-                loggedUser.getId(),
+                loggedUserId,
                 request.scheduleId(),
                 request.seatIds()
         )), HttpStatus.CREATED);
@@ -36,8 +35,8 @@ public class OrderController implements OrderControllerDoc {
 
     @GetMapping
     public ResponseEntity<List<OrderGetResponse>> findAllByUserId(
-            @AuthenticationPrincipal AuthUserDetails loggedUser
+            @AuthenticationPrincipal(expression = "id") long loggedUserId
     ) {
-        return ResponseEntity.ok(orderService.findAllByUserId(loggedUser.getId()));
+        return ResponseEntity.ok(orderService.findAllByUserId(loggedUserId));
     }
 }

@@ -106,6 +106,10 @@ public class OrderService {
         );
     }
 
+    /**
+     * Retrieves every order associated by the given user id,
+     * including booking and payment information.
+     */
     public List<OrderGetResponse> findAllByUserId(long userId) {
         List<Order> orders = orderDAO.findAllByUserId(userId);
         Map<Long, BookingResponse> bookingsIndexedById = bookingService

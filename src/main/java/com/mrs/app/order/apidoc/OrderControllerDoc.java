@@ -2,7 +2,7 @@ package com.mrs.app.order.apidoc;
 
 import com.mrs.app.order.dto.HTTPOrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
-import com.mrs.app.security.dto.AuthUserDetails;
+import com.mrs.app.order.dto.OrderGetResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.FieldValidationError;
@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 @Tag(
         name = "Order endpoints",
@@ -46,5 +48,17 @@ public interface OrderControllerDoc {
                     )
             }
     )
-    ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) AuthUserDetails loggedUser);
+    ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) long loggedUserId);
+
+    @Operation(
+            summary = "Find all by logged user id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Orders retrieved successfully.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderGetResponse.class)))
+                    )
+            }
+    )
+    ResponseEntity<List<OrderGetResponse>> findAllByUserId(@Parameter(hidden = true) long loggedUserId);
 }
