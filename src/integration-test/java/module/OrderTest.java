@@ -14,6 +14,7 @@ import com.mrs.app.movie.repository.MovieDAO;
 import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.HTTPOrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
+import com.mrs.app.order.dto.OrderGetResponse;
 import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
@@ -36,14 +37,16 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ContainerizedContextTest
 public class OrderTest {
@@ -144,7 +147,7 @@ public class OrderTest {
 
     @Test
     void givenAlreadyBookedSeats_whenBookingScheduleSeats_thenStatusConflict() {
-        Booking booking = bookingDAO.save(BookingFactory.create(schedule));
+        Booking booking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getFirst().getId())));
         HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
                 schedule.getId(),
                 List.of(booking.getSeatReservations().getFirst().getId())
@@ -160,5 +163,37 @@ public class OrderTest {
         assertThat(seatReservationDAO.count()).isEqualTo(booking.getSeatReservations().size());
         assertThat(orderDAO.count()).isEqualTo(0);
         assertThat(intentDAO.count()).isEqualTo(0);
+    }
+
+    @Test
+    void givenAuthenticatedUser_whenRetrievingOrders_thenStatusOk() {
+        Booking loggedUserBooking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getFirst().getId())));
+        Intent loggedUserIntent = intentDAO.save(PaymentFactory.create(paymentTimeout));
+        Order loggedUserOrder = orderDAO.save(Order.builder()
+                .userId(loggedUser.getId())
+                .createdAt(LocalDateTime.now())
+                .bookingId(loggedUserBooking.getId())
+                .intentId(loggedUserIntent.getId())
+                .build());
+
+        User differentUser = userDAO.save(UserFactory.createUser());
+        Booking differentUserBooking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getLast().getId())));
+        Intent differentUserIntent = intentDAO.save(PaymentFactory.create(paymentTimeout));
+
+        orderDAO.save(Order.builder()
+                .userId(differentUser.getId())
+                .createdAt(LocalDateTime.now())
+                .bookingId(differentUserBooking.getId())
+                .intentId(differentUserIntent.getId())
+                .build());
+
+        List<OrderGetResponse> response = restTestClient.get().uri("/orders").exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<List<OrderGetResponse>>() {
+                })
+                .returnResult().getResponseBody();
+
+        assertThat(response).hasSize(1);
+        assertThat(response.getFirst().id()).isEqualTo(loggedUserOrder.getId());
     }
 }
