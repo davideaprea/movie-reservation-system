@@ -1,15 +1,15 @@
 package factory;
 
 import com.mrs.app.payment.entity.Intent;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PaymentFactory {
-    private PaymentFactory() {
-    }
-
     public static Intent create(Duration paymentTimeout) {
         LocalDateTime now = LocalDateTime.now();
 

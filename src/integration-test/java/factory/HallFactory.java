@@ -4,14 +4,14 @@ import com.mrs.app.hall.dto.HallCreateRequest;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.Seat;
 import com.mrs.app.hall.entity.SeatType;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HallFactory {
-    private HallFactory() {
-    }
-
     public static Hall create(SeatType seatType) {
         Hall hall = new Hall(null, "Name", new ArrayList<>());
 

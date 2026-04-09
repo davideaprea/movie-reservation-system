@@ -4,14 +4,14 @@ import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.entity.ScheduleSeat;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScheduleFactory {
-    private ScheduleFactory() {
-    }
-
     public static Schedule create(Hall hall, Movie movie) {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
         Schedule schedule = Schedule.builder()

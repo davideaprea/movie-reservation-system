@@ -1,15 +1,14 @@
 package factory;
 
 import com.mrs.app.movie.entity.Movie;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.Duration;
 import java.util.UUID;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MovieFactory {
-
-    private MovieFactory() {
-    }
-
     public static Movie create() {
         return Movie.builder()
                 .coverImageLink("cover-link")
