@@ -1,12 +1,11 @@
 package factory;
 
-import com.github.javafaker.Faker;
 import com.mrs.app.movie.entity.Movie;
 
 import java.time.Duration;
+import java.util.UUID;
 
 public class MovieFactory {
-    private static final Faker faker = new Faker();
 
     private MovieFactory() {
     }
@@ -15,7 +14,7 @@ public class MovieFactory {
         return Movie.builder()
                 .coverImageLink("cover-link")
                 .description("Description")
-                .title(faker.book().title())
+                .title("Random string as title " + UUID.randomUUID())
                 .duration(Duration.ofHours(2))
                 .build();
     }
