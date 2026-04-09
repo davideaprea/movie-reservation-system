@@ -1,5 +1,6 @@
 package com.mrs.app.booking.controller;
 
+import com.mrs.app.booking.apidoc.BookingControllerDoc;
 import com.mrs.app.booking.dto.SeatReservationResponse;
 import com.mrs.app.booking.service.BookingService;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bookings")
 @AllArgsConstructor
-public class BookingController {
+public class BookingController implements BookingControllerDoc {
     private final BookingService bookingService;
 
     @GetMapping
