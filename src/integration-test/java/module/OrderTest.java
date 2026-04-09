@@ -192,8 +192,11 @@ public class OrderTest {
                 .expectBody(new ParameterizedTypeReference<List<OrderGetResponse>>() {
                 })
                 .returnResult().getResponseBody();
+        OrderGetResponse firstOrder = response.getFirst();
 
         assertThat(response).hasSize(1);
-        assertThat(response.getFirst().id()).isEqualTo(loggedUserOrder.getId());
+        assertThat(firstOrder.id()).isEqualTo(loggedUserOrder.getId());
+        assertThat(firstOrder.booking().id()).isEqualTo(loggedUserBooking.getId());
+        assertThat(firstOrder.intent().id()).isEqualTo(loggedUserIntent.getId());
     }
 }
