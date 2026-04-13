@@ -1,21 +1,21 @@
 # Movie reservation system
 
-Modular monolithic backend application for managing all aspects of a movie theater, covering both administrative and customer functionalities.
+Backend application focused on handling concurrent seat reservations and modular architecture design, built to explore scalability and decoupling in a monolithic system.
 
 ## Core features
 
 - **Movie schedules**: create, manage and view available movies showtimes
-- **Seat reservation**: book available seats for a specific schedule, handling concurrent reservations
-- **Payment integration**: secure payment and refunds via PayPal
+- **Seat reservation**: book available seats for a specific schedule, with concurrency handling to prevent double bookings
+- **Payment integration**: secure payment and refunds via Stripe
 - **Hall management**: create halls with a seat map, allowing configuration of seat types (STANDARD, VIP, etc.)
 
 ## Architecture
 
 ### Modular design
 
-- Each module is self-contained: contains its own domain entities, services, and repositories
-- Minimal coupling between modules: modules communicate via service APIs rather than direct object references
-- This design allows easy scaling of individual modules in the future without breaking the entire application
+- Each module is self-contained, with its own domain entities, services, and repositories
+- Modules communicate via service APIs rather than direct object references, reducing coupling
+- Clear module boundaries enable independent evolution and scalability, while preserving the simplicity of a monolithic deployment
 
 ### Entity relationships
 
@@ -37,7 +37,7 @@ Modular monolithic backend application for managing all aspects of a movie theat
 ## Prerequisites
 
 - [Java 21+](https://www.oracle.com/it/java/technologies/downloads/#java21)
-- [PayPal developer account](https://developer.paypal.com/home/) for setting up API credentials
+- [Stripe account](https://dashboard.stripe.com/register) for setting up API credentials
 - [Maven 3.9.x](https://maven.apache.org/download.cgi) for building, running and testing the application
 - [PostgreSQL](https://www.postgresql.org/download/)
 - [Docker](https://www.docker.com/get-started/) for running integration tests
