@@ -2,6 +2,7 @@ package com.mrs.app.payment.component;
 
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayRefundCreateRequest;
 import com.mrs.app.payment.dto.gateway.GatewayRefundResponse;
 import com.mrs.app.payment.enumeration.PaymentGatewayMetadataKey;
 import com.mrs.app.payment.exception.PaymentGatewayException;
@@ -53,12 +54,15 @@ public class PaymentGateway {
         );
     }
 
-    public GatewayRefundResponse refund(String paymentId) {
+    public GatewayRefundResponse refund(GatewayRefundCreateRequest request) {
         try {
             Refund refund = Refund.create(RefundCreateParams.builder()
-                            .setPaymentIntent(paymentId)
+                            .setPaymentIntent(request.gatewayCompletionId())
+                            .putMetadata(PaymentGatewayMetadataKey.COMPLETION_ID.name(), request.internalCompletionId())
                             .build(),
-                    baseRequestOptionsBuilder.build());
+                    baseRequestOptionsBuilder
+                            .setIdempotencyKey(request.internalCompletionId())
+                            .build());
 
             return new GatewayRefundResponse(refund.getId());
         } catch (Exception e) {

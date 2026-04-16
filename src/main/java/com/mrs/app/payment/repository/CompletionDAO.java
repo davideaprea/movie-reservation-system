@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface CompletionDAO extends CrudRepository<Completion, Long> {
+public interface CompletionDAO extends CrudRepository<Completion, String> {
     Optional<Completion> findByIntentId(String intentId);
 }

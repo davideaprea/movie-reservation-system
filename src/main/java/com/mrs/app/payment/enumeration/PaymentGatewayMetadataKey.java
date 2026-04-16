@@ -17,5 +17,7 @@ public enum PaymentGatewayMetadataKey {
     /**
      * Associates a Stripe intent with its corresponding internal entity {@link Intent#getId()}
      */
-    INTENT_ID
+    INTENT_ID,
+
+    COMPLETION_ID
 }

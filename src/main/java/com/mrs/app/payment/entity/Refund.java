@@ -3,6 +3,8 @@ package com.mrs.app.payment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * Represent a {@link Completion} refund.
  */
@@ -17,9 +19,13 @@ public class Refund {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Completion completion;
 
     @Column(unique = true, nullable = false)
     private String gatewayRefundId;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }

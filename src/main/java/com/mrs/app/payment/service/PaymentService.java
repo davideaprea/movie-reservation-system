@@ -4,11 +4,14 @@ import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateRequest;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
+import com.mrs.app.payment.dto.gateway.GatewayRefundCreateRequest;
 import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Intent;
+import com.mrs.app.payment.entity.Refund;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.IntentDAO;
+import com.mrs.app.payment.repository.RefundDAO;
 import com.mrs.app.shared.exception.EntityNotFondException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import jakarta.validation.Valid;
@@ -23,10 +26,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class PaymentService {
     private final PaymentGateway paymentGateway;
+    private final ModuleConfigProps configProps;
+    private final PaymentMapper paymentMapper;
     private final IntentDAO intentDAO;
     private final CompletionDAO completionDAO;
-    private final PaymentMapper paymentMapper;
-    private final ModuleConfigProps configProps;
+    private final RefundDAO refundDAO;
 
     /**
      * Creates an internal timed payment intent to be later sent to the
@@ -113,5 +117,29 @@ public class PaymentService {
                 intentDAO.findAllById(ids).spliterator(),
                 false
         ).map(paymentMapper::toGetResponse).toList();
+    }
+
+    public void submitRefund(String intentId) {
+        Completion completion = completionDAO
+                .findByIntentId(intentId)
+                .orElseThrow();
+        GatewayRefundCreateRequest gatewayRefundCreateRequest = new GatewayRefundCreateRequest(
+                completion.getGatewayIntentId(),
+                completion.getId()
+        );
+
+        paymentGateway.refund(gatewayRefundCreateRequest);
+    }
+
+    public RefundCreateResponse completeRefund(RefundCreateRequest request) {
+        Refund refund = refundDAO
+                .findByCompletionId(request.completionId())
+                .orElse(refundDAO.save(Refund.builder()
+                        .gatewayRefundId(request.gatewayRefundId())
+                        .completion(Completion.builder().id(request.completionId()).build())
+                        .createdAt(LocalDateTime.now())
+                        .build()));
+
+        return paymentMapper.toCreateResponse(refund);
     }
 }

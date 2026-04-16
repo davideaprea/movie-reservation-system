@@ -1,10 +1,10 @@
 package com.mrs.app.order.dto;
 
-import com.mrs.app.payment.dto.RefundResponse;
+import com.mrs.app.payment.dto.RefundCreateResponse;
 
 public record OrderCancellationResponse(
         long id,
         long userId,
-        RefundResponse refund
+        RefundCreateResponse refund
 ) {
 }
