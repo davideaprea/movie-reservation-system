@@ -41,7 +41,7 @@ public class MovieService {
     }
 
     public List<MovieResponse> findAllByTitle(String title) {
-        return movieDAO.findByTitleContainingIgnoreCase(title)
+        return movieDAO.findByTitle(title)
                 .stream()
                 .map(movieMapper::toResponse)
                 .toList();
