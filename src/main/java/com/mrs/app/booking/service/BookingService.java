@@ -14,6 +14,7 @@ import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class BookingService {
@@ -38,9 +40,17 @@ public class BookingService {
      */
     @Transactional
     public BookingResponse create(BookingCreateRequest createRequest) {
-        ScheduleResponse selectedSchedule = scheduleService.findById(createRequest.scheduleId());
+        log.info("Creating booking with params: {}", createRequest);
 
-        if (LocalDateTime.now().isAfter(selectedSchedule.startTime())) {
+        ScheduleResponse selectedSchedule = scheduleService.findById(createRequest.scheduleId());
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isAfter(selectedSchedule.startTime())) {
+            log.warn("""
+                    Couldn't create any booking because the selected schedule is already over.
+                    Selected schedule start time: {}. Submission time: {}.
+                    """, selectedSchedule.startTime(), now);
+
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected schedule is already over.",
                     BookingCreateRequest.Fields.scheduleId
@@ -59,12 +69,16 @@ public class BookingService {
         try {
             savedBooking = bookingRepository.save(bookingToSave);
         } catch (DataIntegrityViolationException e) {
+            log.warn("The selected seats {} are already booked.", createRequest.scheduleSeatIds());
+
             throw new ConflictingEntityException(new ConflictingResourceError<>(
                     List.of(),
                     List.of(BookingCreateRequest.Fields.scheduleSeatIds),
                     "These seats are already booked."
             ));
         }
+
+        log.info("Created booking with id {}.", savedBooking.getId());
 
         return bookingMapper.toResponse(savedBooking);
     }
