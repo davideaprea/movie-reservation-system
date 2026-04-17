@@ -137,8 +137,11 @@ public class OrderTest {
         assertThat(bookingDAO.count()).isEqualTo(1);
         assertThat(seatReservationDAO.count()).isEqualTo(selectedSeats.size());
         assertThat(booking.getScheduleId()).isEqualTo(schedule.getId());
-        assertThat(booking.getSeatReservations().size()).isEqualTo(selectedSeats.size());
-        assertThat(booking.getSeatReservations())
+
+        List<SeatReservation> seatReservations = seatReservationDAO.findAllByBookingId(booking.getId());
+
+        assertThat(seatReservations.size()).isEqualTo(selectedSeats.size());
+        assertThat(seatReservations)
                 .extracting(SeatReservation::getScheduleSeatId)
                 .containsExactlyInAnyOrderElementsOf(request.seatIds());
 
@@ -147,10 +150,11 @@ public class OrderTest {
 
     @Test
     void givenAlreadyBookedSeats_whenBookingScheduleSeats_thenStatusConflict() {
-        Booking booking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getFirst().getId())));
+        long selectedSeatId = schedule.getSeats().getFirst().getId();
+        Booking booking = bookingDAO.save(BookingFactory.create(schedule, List.of(selectedSeatId)));
         HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
                 schedule.getId(),
-                List.of(booking.getSeatReservations().getFirst().getId())
+                List.of(schedule.getSeats().getFirst().getId())
         );
 
         restTestClient.post().uri("/orders")
@@ -160,7 +164,7 @@ public class OrderTest {
 
         assertThat(bookingDAO.count()).isEqualTo(1);
         assertThat(bookingDAO.existsById(booking.getId()));
-        assertThat(seatReservationDAO.count()).isEqualTo(booking.getSeatReservations().size());
+        assertThat(seatReservationDAO.count()).isEqualTo(1);
         assertThat(orderDAO.count()).isEqualTo(0);
         assertThat(intentDAO.count()).isEqualTo(0);
     }
