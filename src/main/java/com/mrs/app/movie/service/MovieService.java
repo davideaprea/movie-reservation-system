@@ -5,7 +5,7 @@ import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.entity.Genre;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.mapper.MovieMapper;
-import com.mrs.app.movie.repository.MovieDAO;
+import com.mrs.app.movie.repository.MovieRepository;
 import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Service
 public class MovieService {
-    private final MovieDAO movieDAO;
+    private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
     public MovieResponse create(MovieCreateRequest createRequest) {
@@ -25,13 +25,13 @@ public class MovieService {
 
         createRequest.genreIds().forEach(id -> movieToSave.addGenre(new Genre(id, null)));
 
-        Movie savedMovie = movieDAO.save(movieToSave);
+        Movie savedMovie = movieRepository.save(movieToSave);
 
         return movieMapper.toResponse(savedMovie);
     }
 
     public MovieResponse findById(long id) {
-        return movieDAO
+        return movieRepository
                 .findById(id)
                 .map(movieMapper::toResponse)
                 .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
@@ -41,7 +41,7 @@ public class MovieService {
     }
 
     public List<MovieResponse> findAllByTitle(String title) {
-        return movieDAO.findByTitle(title)
+        return movieRepository.findByTitle(title)
                 .stream()
                 .map(movieMapper::toResponse)
                 .toList();

@@ -3,7 +3,7 @@ package com.mrs.app.order.service;
 import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.booking.service.BookingService;
-import com.mrs.app.order.dao.OrderDAO;
+import com.mrs.app.order.repository.OrderRepository;
 import com.mrs.app.order.dto.BookingTransactionResult;
 import com.mrs.app.order.dto.OrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class OrderService {
-    private final OrderDAO orderDAO;
+    private final OrderRepository orderRepository;
     private final BookingService bookingService;
     private final PaymentService paymentService;
     private final ScheduleSeatService scheduleSeatService;
@@ -86,7 +86,7 @@ public class OrderService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             IntentCreateResponse intent = paymentService.createIntent(new IntentCreateRequest(amount));
 
-            Order order = orderDAO.save(Order.builder()
+            Order order = orderRepository.save(Order.builder()
                     .createdAt(LocalDateTime.now())
                     .userId(createRequest.userId())
                     .bookingId(booking.id())
@@ -111,7 +111,7 @@ public class OrderService {
      * including booking and payment information.
      */
     public List<OrderGetResponse> findAllByUserId(long userId) {
-        List<Order> orders = orderDAO.findAllByUserId(userId);
+        List<Order> orders = orderRepository.findAllByUserId(userId);
         Map<Long, BookingResponse> bookingsIndexedById = bookingService
                 .findAllById(orders.stream().map(Order::getBookingId).toList())
                 .stream().collect(Collectors.toMap(
@@ -148,6 +148,6 @@ public class OrderService {
                 .map(IntentCreateResponse::id)
                 .toList();
 
-        orderDAO.deleteAllByIntentIdIn(expiredPaymentsIds);
+        orderRepository.deleteAllByIntentIdIn(expiredPaymentsIds);
     }
 }

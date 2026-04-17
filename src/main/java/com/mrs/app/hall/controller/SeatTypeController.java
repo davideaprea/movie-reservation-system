@@ -4,7 +4,7 @@ import com.mrs.app.hall.apidoc.SeatTypeControllerDoc;
 import com.mrs.app.hall.dto.SeatTypeCreateRequest;
 import com.mrs.app.hall.dto.SeatTypeResponse;
 import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.SeatTypeDAO;
+import com.mrs.app.hall.repository.SeatTypeRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,11 +18,11 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @RequestMapping("/seat-types")
 public class SeatTypeController implements SeatTypeControllerDoc {
-    private final SeatTypeDAO seatTypeDAO;
+    private final SeatTypeRepository seatTypeRepository;
 
     @PostMapping
     public ResponseEntity<SeatTypeResponse> create(@RequestBody @Valid SeatTypeCreateRequest request) {
-        SeatType seatType = seatTypeDAO.save(new SeatType(null, request.name()));
+        SeatType seatType = seatTypeRepository.save(new SeatType(null, request.name()));
 
         return new ResponseEntity<>(
                 new SeatTypeResponse(seatType.getId(), seatType.getName()),
@@ -32,7 +32,7 @@ public class SeatTypeController implements SeatTypeControllerDoc {
 
     @GetMapping
     public ResponseEntity<List<SeatTypeResponse>> findAll() {
-        return ResponseEntity.ok(StreamSupport.stream(seatTypeDAO.findAll().spliterator(), false)
+        return ResponseEntity.ok(StreamSupport.stream(seatTypeRepository.findAll().spliterator(), false)
                 .map(seatType -> new SeatTypeResponse(seatType.getId(), seatType.getName()))
                 .toList());
     }

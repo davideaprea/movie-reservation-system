@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface SeatReservationDAO extends CrudRepository<SeatReservation, Long> {
+public interface SeatReservationRepository extends CrudRepository<SeatReservation, Long> {
     List<SeatReservation> findAllByBookingId(long bookingId);
 }

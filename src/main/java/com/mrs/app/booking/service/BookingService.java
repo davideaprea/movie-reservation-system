@@ -6,7 +6,7 @@ import com.mrs.app.booking.dto.SeatReservationResponse;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.mapper.BookingMapper;
-import com.mrs.app.booking.repository.BookingDAO;
+import com.mrs.app.booking.repository.BookingRepository;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
 import com.mrs.app.shared.exception.ConflictingEntityException;
@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @Service
 public class BookingService {
-    private final BookingDAO bookingDAO;
+    private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ScheduleService scheduleService;
 
@@ -57,7 +57,7 @@ public class BookingService {
         Booking savedBooking;
 
         try {
-            savedBooking = bookingDAO.save(bookingToSave);
+            savedBooking = bookingRepository.save(bookingToSave);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictingEntityException(new ConflictingResourceError<>(
                     List.of(),
@@ -76,7 +76,7 @@ public class BookingService {
      */
     @Transactional
     public void deleteById(long id) {
-        Booking bookingToDelete = bookingDAO.findById(id).orElseThrow();
+        Booking bookingToDelete = bookingRepository.findById(id).orElseThrow();
         ScheduleResponse bookingSchedule = scheduleService.findById(bookingToDelete.getScheduleId());
 
         if (LocalDateTime.now().isAfter(bookingSchedule.startTime())) {
@@ -86,11 +86,11 @@ public class BookingService {
             ));
         }
 
-        bookingDAO.deleteById(id);
+        bookingRepository.deleteById(id);
     }
 
     public List<SeatReservationResponse> findSeatReservationsByScheduleId(long scheduleId) {
-        return bookingDAO
+        return bookingRepository
                 .findAllByScheduleId(scheduleId)
                 .stream().map(bookingMapper::toResponse)
                 .toList();
@@ -98,7 +98,7 @@ public class BookingService {
 
     public List<BookingResponse> findAllById(List<Long> bookingIds) {
         return StreamSupport.stream(
-                bookingDAO.findAllById(bookingIds).spliterator(),
+                bookingRepository.findAllById(bookingIds).spliterator(),
                 false
         ).map(bookingMapper::toResponse).toList();
     }

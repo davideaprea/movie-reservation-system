@@ -2,13 +2,13 @@ package com.mrs.app.schedule.service;
 
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.hall.service.HallService;
-import com.mrs.app.schedule.dao.ScheduleSpecificationBuilder;
+import com.mrs.app.schedule.repository.ScheduleSpecificationBuilder;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.movie.service.MovieService;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.entity.Schedule;
-import com.mrs.app.schedule.dao.ScheduleDAO;
+import com.mrs.app.schedule.repository.ScheduleRepository;
 import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.shared.exception.ConflictingEntityException;
@@ -27,7 +27,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Service
 public class ScheduleService {
-    private final ScheduleDAO scheduleDAO;
+    private final ScheduleRepository scheduleRepository;
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
     private final HallService hallService;
@@ -70,11 +70,11 @@ public class ScheduleService {
                             .build());
                 });
 
-        return scheduleMapper.toResponse(scheduleDAO.save(scheduleToSave));
+        return scheduleMapper.toResponse(scheduleRepository.save(scheduleToSave));
     }
 
     public ScheduleResponse findById(long id) {
-        return scheduleDAO
+        return scheduleRepository
                 .findById(id)
                 .map(scheduleMapper::toResponse)
                 .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
@@ -84,7 +84,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponse> findAllByFilters(ScheduleGetRequestFilters filters) {
-        return scheduleDAO
+        return scheduleRepository
                 .findAll(ScheduleSpecificationBuilder.fromFilters(filters))
                 .stream()
                 .map(scheduleMapper::toResponse)

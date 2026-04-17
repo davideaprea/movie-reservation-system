@@ -1,4 +1,4 @@
-package com.mrs.app.schedule.dao;
+package com.mrs.app.schedule.repository;
 
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.entity.Schedule;

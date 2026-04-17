@@ -7,7 +7,7 @@ import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.Seat;
 import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.mapper.HallMapper;
-import com.mrs.app.hall.repository.HallDAO;
+import com.mrs.app.hall.repository.HallRepository;
 import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @Service
 public class HallService {
-    private final HallDAO hallDAO;
+    private final HallRepository hallRepository;
     private final HallMapper hallMapper;
 
     /**
@@ -47,11 +47,11 @@ public class HallService {
             }
         }
 
-        return hallMapper.toResponse(hallDAO.save(hallToSave));
+        return hallMapper.toResponse(hallRepository.save(hallToSave));
     }
 
     public HallResponse findById(long id) {
-        return hallDAO
+        return hallRepository
                 .findById(id)
                 .map(hallMapper::toResponse)
                 .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
@@ -61,7 +61,7 @@ public class HallService {
     }
 
     public List<HallGetResponse> findAll() {
-        return StreamSupport.stream(hallDAO.findAll().spliterator(), false)
+        return StreamSupport.stream(hallRepository.findAll().spliterator(), false)
                 .map(hallMapper::toGetResponse)
                 .toList();
     }

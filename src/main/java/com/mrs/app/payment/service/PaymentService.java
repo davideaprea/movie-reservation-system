@@ -7,8 +7,8 @@ import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
 import com.mrs.app.payment.entity.Completion;
 import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.mapper.PaymentMapper;
-import com.mrs.app.payment.repository.CompletionDAO;
-import com.mrs.app.payment.repository.IntentDAO;
+import com.mrs.app.payment.repository.CompletionRepository;
+import com.mrs.app.payment.repository.IntentRepository;
 import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import jakarta.validation.Valid;
@@ -23,8 +23,8 @@ import java.util.stream.StreamSupport;
 @Service
 public class PaymentService {
     private final PaymentGateway paymentGateway;
-    private final IntentDAO intentDAO;
-    private final CompletionDAO completionDAO;
+    private final IntentRepository intentRepository;
+    private final CompletionRepository completionRepository;
     private final PaymentMapper paymentMapper;
     private final ModuleConfigProps configProps;
 
@@ -37,7 +37,7 @@ public class PaymentService {
      */
     public IntentCreateResponse createIntent(@Valid IntentCreateRequest createRequest) {
         LocalDateTime createdAt = LocalDateTime.now();
-        Intent intent = intentDAO.save(Intent.builder()
+        Intent intent = intentRepository.save(Intent.builder()
                 .amount(createRequest.amount())
                 .createdAt(createdAt)
                 .expiresAt(createdAt.plus(configProps.timeout()))
@@ -54,7 +54,7 @@ public class PaymentService {
      * to proceed with the payment.</p>
      */
     public IntentSubmissionResponse submitIntent(IntentSubmissionRequest request) {
-        Intent intent = intentDAO
+        Intent intent = intentRepository
                 .findById(request.intentId())
                 .filter(i -> i.getExpiresAt().isAfter(LocalDateTime.now()))
                 .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
@@ -80,9 +80,9 @@ public class PaymentService {
      * Otherwise, a new completion is created and persisted.</p>
      */
     public CompletionCreateResponse completeIntent(CompletionCreateRequest createRequest) {
-        Completion completion = completionDAO
+        Completion completion = completionRepository
                 .findByIntentId(createRequest.internalIntentId())
-                .orElse(completionDAO.save(Completion.builder()
+                .orElse(completionRepository.save(Completion.builder()
                         .intent(Intent.builder()
                                 .id(createRequest.internalIntentId())
                                 .build())
@@ -103,14 +103,14 @@ public class PaymentService {
      * or trigger compensating actions.</p>
      */
     public List<IntentCreateResponse> findExpiredIntents() {
-        return intentDAO
+        return intentRepository
                 .findExpiredIntents().stream()
                 .map(paymentMapper::toCreateResponse).toList();
     }
 
     public List<IntentGetResponse> findAllById(List<String> ids) {
         return StreamSupport.stream(
-                intentDAO.findAllById(ids).spliterator(),
+                intentRepository.findAllById(ids).spliterator(),
                 false
         ).map(paymentMapper::toGetResponse).toList();
     }

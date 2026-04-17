@@ -3,17 +3,17 @@ package module;
 import annotation.ContainerizedContextTest;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.HallDAO;
-import com.mrs.app.hall.repository.SeatTypeDAO;
+import com.mrs.app.hall.repository.HallRepository;
+import com.mrs.app.hall.repository.SeatTypeRepository;
 import com.mrs.app.movie.entity.Movie;
-import com.mrs.app.movie.repository.MovieDAO;
-import com.mrs.app.schedule.dao.ScheduleDAO;
+import com.mrs.app.movie.repository.MovieRepository;
+import com.mrs.app.schedule.repository.ScheduleRepository;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
@@ -42,15 +42,15 @@ import static org.assertj.core.api.Assertions.*;
 public class ScheduleTest {
     private RestTestClient restTestClient;
     @Autowired
-    private ScheduleDAO scheduleDAO;
+    private ScheduleRepository scheduleRepository;
     @Autowired
-    private MovieDAO movieDAO;
+    private MovieRepository movieRepository;
     @Autowired
-    private HallDAO hallDAO;
+    private HallRepository hallRepository;
     @Autowired
-    private SeatTypeDAO seatTypeDAO;
+    private SeatTypeRepository seatTypeRepository;
     @Autowired
-    private UserDAO userDAO;
+    private UserRepository userRepository;
     @Autowired
     private JWTCreator jwtCreator;
     @LocalServerPort
@@ -61,16 +61,16 @@ public class ScheduleTest {
 
     @BeforeEach
     void setup() {
-        User user = userDAO.save(UserFactory.createAdmin());
+        User user = userRepository.save(UserFactory.createAdmin());
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d".formatted(port))
                 .defaultHeader("Authorization", "Bearer " + jwt)
                 .build();
-        SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
-        movie = movieDAO.save(MovieFactory.create());
-        hall = hallDAO.save(HallFactory.create(seatType));
+        SeatType seatType = seatTypeRepository.save(new SeatType(null, "STANDARD"));
+        movie = movieRepository.save(MovieFactory.create());
+        hall = hallRepository.save(HallFactory.create(seatType));
     }
 
     @SneakyThrows
@@ -112,13 +112,13 @@ public class ScheduleTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .containsExactlyInAnyOrderElementsOf(expectedResponse.seats());
 
-        assertThat(scheduleDAO.count()).isEqualTo(1);
+        assertThat(scheduleRepository.count()).isEqualTo(1);
     }
 
     @SneakyThrows
     @Test
     void givenConflictingTimeRange_whenCreatingSchedule_thenStatusConflict() {
-        Schedule preExistingSchedule = scheduleDAO.save(ScheduleFactory.create(hall, movie));
+        Schedule preExistingSchedule = scheduleRepository.save(ScheduleFactory.create(hall, movie));
         ScheduleCreateRequest conflictingRequest = new ScheduleCreateRequest(
                 preExistingSchedule.getMovieId(),
                 preExistingSchedule.getHallId(),
@@ -134,8 +134,8 @@ public class ScheduleTest {
 
         assert response != null;
 
-        assertThat(scheduleDAO.count()).isEqualTo(1);
-        assertThat(scheduleDAO.existsById(preExistingSchedule.getId())).isTrue();
+        assertThat(scheduleRepository.count()).isEqualTo(1);
+        assertThat(scheduleRepository.existsById(preExistingSchedule.getId())).isTrue();
         assertThat(response.conflictingResources().size()).isEqualTo(1);
         assertThat(response.conflictingResources().getFirst().id()).isEqualTo(preExistingSchedule.getId());
         assertThat(response.violatingFields()).isEqualTo(List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId));
@@ -144,7 +144,7 @@ public class ScheduleTest {
     @SneakyThrows
     @Test
     void givenSearchFilters_whenGettingSchedules_thenStatusOk() {
-        Movie differentMovie = movieDAO.save(MovieFactory.create());
+        Movie differentMovie = movieRepository.save(MovieFactory.create());
         LocalDate today = LocalDate.now();
         LocalDateTime tomorrow = today.atStartOfDay().plusDays(1);
         LocalDateTime yesterday = today.atStartOfDay().minusDays(1);
@@ -174,7 +174,7 @@ public class ScheduleTest {
                 .endTime(tomorrow.withHour(16))
                 .build();
 
-        scheduleDAO.saveAll(List.of(yesterdaySchedule, tomorrowSchedule, dayAfterTomorrowSchedule, differentMovieSchedule));
+        scheduleRepository.saveAll(List.of(yesterdaySchedule, tomorrowSchedule, dayAfterTomorrowSchedule, differentMovieSchedule));
 
         List<ScheduleResponse> response = restTestClient.get().uri(uriBuilder -> uriBuilder
                         .path("/schedules")
