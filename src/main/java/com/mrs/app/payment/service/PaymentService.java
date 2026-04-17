@@ -9,16 +9,18 @@ import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionRepository;
 import com.mrs.app.payment.repository.IntentRepository;
-import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
+import com.mrs.app.shared.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class PaymentService {
@@ -42,8 +44,11 @@ public class PaymentService {
                 .createdAt(createdAt)
                 .expiresAt(createdAt.plus(configProps.timeout()))
                 .build());
+        IntentCreateResponse response = paymentMapper.toCreateResponse(intent);
 
-        return paymentMapper.toCreateResponse(intent);
+        log.info("Internal intent created: {}.", response);
+
+        return response;
     }
 
     /**
@@ -80,6 +85,8 @@ public class PaymentService {
      * Otherwise, a new completion is created and persisted.</p>
      */
     public CompletionCreateResponse completeIntent(CompletionCreateRequest createRequest) {
+        log.info("Completing intent with id {}.", createRequest.internalIntentId());
+
         Completion completion = completionRepository
                 .findByIntentId(createRequest.internalIntentId())
                 .orElse(completionRepository.save(Completion.builder()
@@ -89,8 +96,11 @@ public class PaymentService {
                         .gatewayIntentId(createRequest.gatewayIntentId())
                         .createdAt(LocalDateTime.now())
                         .build()));
+        CompletionCreateResponse response = paymentMapper.toCompletionCreateResponse(completion);
 
-        return paymentMapper.toCompletionCreateResponse(completion);
+        log.info("Intent completion created: {}.", response);
+
+        return response;
     }
 
     /**
