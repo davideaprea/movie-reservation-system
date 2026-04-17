@@ -3,17 +3,18 @@ package com.mrs.app.order.service;
 import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.booking.service.BookingService;
-import com.mrs.app.order.repository.OrderRepository;
 import com.mrs.app.order.dto.BookingTransactionResult;
 import com.mrs.app.order.dto.OrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.dto.OrderGetResponse;
 import com.mrs.app.order.entity.Order;
+import com.mrs.app.order.repository.OrderRepository;
 import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * It serves as the main entry point for order-related operations,
  * coordinating the interaction between involved modules.
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OrderService {
@@ -74,6 +76,8 @@ public class OrderService {
      * </ul>
      */
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
+        log.info("Creating order with params {}.", createRequest);
+
         BookingTransactionResult result = transactionTemplate.execute(status -> {
             BookingResponse booking = bookingService.create(new BookingCreateRequest(
                     createRequest.scheduleId(),
@@ -97,13 +101,16 @@ public class OrderService {
         });
         IntentSubmissionRequest request = new IntentSubmissionRequest(result.intent().id());
         IntentSubmissionResponse submittedIntent = paymentService.submitIntent(request);
-
-        return new OrderCreateResponse(
+        OrderCreateResponse response = new OrderCreateResponse(
                 result.order().getId(),
                 result.booking(),
                 result.intent(),
                 submittedIntent
         );
+
+        log.info("Order created with id {}.", response.id());
+
+        return response;
     }
 
     /**
@@ -147,6 +154,8 @@ public class OrderService {
                 .stream()
                 .map(IntentCreateResponse::id)
                 .toList();
+
+        log.info("Deleting {} expired orders.", expiredPaymentsIds.size());
 
         orderRepository.deleteAllByIntentIdIn(expiredPaymentsIds);
     }
