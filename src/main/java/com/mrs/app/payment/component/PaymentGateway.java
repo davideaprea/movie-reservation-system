@@ -11,12 +11,14 @@ import com.stripe.net.RequestOptions.RequestOptionsBuilder;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.RefundCreateParams;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Handles interactions with the external intent gateway,
  * providing abstractions over the service payloads and exceptions.
  */
+@Slf4j
 @AllArgsConstructor
 @Component
 public class PaymentGateway {
@@ -28,6 +30,8 @@ public class PaymentGateway {
      * The returned {@link GatewayIntentCreateResponse#id()} should be stored to allow payment completion.
      */
     public GatewayIntentCreateResponse createIntent(GatewayIntentCreateRequest request) {
+        log.info("Creating an intent via the payment gateway with params {}.", request);
+
         PaymentIntent intent;
 
         try {
@@ -45,6 +49,11 @@ public class PaymentGateway {
         } catch (Exception e) {
             throw new PaymentGatewayException(e.getMessage());
         }
+
+        log.info("""
+                The payment gateway has successfully created
+                the intent with id {} and status {}.
+                """, intent.getId(), intent.getStatus());
 
         return new GatewayIntentCreateResponse(
                 intent.getId(),
