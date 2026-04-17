@@ -13,7 +13,7 @@ import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.shared.exception.ConflictingEntityException;
 import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -77,7 +77,7 @@ public class ScheduleService {
         return scheduleDAO
                 .findById(id)
                 .map(scheduleMapper::toResponse)
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
                         Schedule.class.getSimpleName(),
                         Map.of("id", id)
                 )));

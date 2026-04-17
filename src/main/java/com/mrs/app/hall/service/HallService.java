@@ -8,7 +8,7 @@ import com.mrs.app.hall.entity.Seat;
 import com.mrs.app.hall.entity.SeatType;
 import com.mrs.app.hall.mapper.HallMapper;
 import com.mrs.app.hall.repository.HallDAO;
-import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,7 +54,7 @@ public class HallService {
         return hallDAO
                 .findById(id)
                 .map(hallMapper::toResponse)
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
                         Hall.class.getSimpleName(),
                         Map.of("id", id)
                 )));

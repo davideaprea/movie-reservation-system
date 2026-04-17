@@ -6,7 +6,7 @@ import com.mrs.app.movie.entity.Genre;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.mapper.MovieMapper;
 import com.mrs.app.movie.repository.MovieDAO;
-import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class MovieService {
         return movieDAO
                 .findById(id)
                 .map(movieMapper::toResponse)
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
                         Movie.class.getSimpleName(),
                         Map.of("id", id)
                 )));

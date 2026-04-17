@@ -9,7 +9,7 @@ import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionDAO;
 import com.mrs.app.payment.repository.IntentDAO;
-import com.mrs.app.shared.exception.EntityNotFondException;
+import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -57,7 +57,7 @@ public class PaymentService {
         Intent intent = intentDAO
                 .findById(request.intentId())
                 .filter(i -> i.getExpiresAt().isAfter(LocalDateTime.now()))
-                .orElseThrow(() -> new EntityNotFondException(new EntityNotFoundError(
+                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
                         Intent.class.getSimpleName(),
                         request
                 )));

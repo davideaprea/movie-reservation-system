@@ -38,8 +38,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getError(), HttpStatus.UNPROCESSABLE_CONTENT);
     }
 
-    @ExceptionHandler(EntityNotFondException.class)
-    public ResponseEntity<EntityNotFoundError> handle(EntityNotFondException exception) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<EntityNotFoundError> handle(EntityNotFoundException exception) {
         return new ResponseEntity<>(exception.getError(), HttpStatus.NOT_FOUND);
     }
 
