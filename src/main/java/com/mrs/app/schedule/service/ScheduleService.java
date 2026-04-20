@@ -16,6 +16,7 @@ import com.mrs.app.shared.exception.ConflictingEntityException;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.mrs.app.shared.exception.EntityNotFoundException;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,7 @@ public class ScheduleService {
      *
      * @throws ConflictingEntityException if the hall is already occupied during the requested time
      */
+    @Observed(name = "schedule.create", contextualName = "Schedule creation")
     @Transactional
     public ScheduleResponse create(ScheduleCreateRequest dto) {
         log.info("Creating schedule with params {}", dto);

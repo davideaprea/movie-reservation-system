@@ -19,3 +19,9 @@ app:
     timeout: ${PAYMENT_TIMEOUT}
   order:
     cleanup-delay: ${EXPIRED_ORDER_CLEANUP_DELAY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,scheduledtasks"

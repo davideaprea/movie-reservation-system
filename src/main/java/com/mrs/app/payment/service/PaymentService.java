@@ -11,6 +11,7 @@ import com.mrs.app.payment.repository.CompletionRepository;
 import com.mrs.app.payment.repository.IntentRepository;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.mrs.app.shared.exception.EntityNotFoundException;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class PaymentService {
      * <p>The intent is persisted with the provided amount and initialized with
      * a creation timestamp and an expiration timestamp based on the configured timeout.</p>
      */
+    @Observed(name = "intent.create", contextualName = "Internal intent creation")
     public IntentCreateResponse createIntent(@Valid IntentCreateRequest createRequest) {
         LocalDateTime createdAt = LocalDateTime.now();
         Intent intent = intentRepository.save(Intent.builder()
@@ -58,6 +60,7 @@ public class PaymentService {
      * <p>The response includes gateway-specific information required by the client
      * to proceed with the payment.</p>
      */
+    @Observed(name = "intent.submission", contextualName = "Internal intent submission")
     public IntentSubmissionResponse submitIntent(IntentSubmissionRequest request) {
         Intent intent = intentRepository
                 .findById(request.intentId())
@@ -84,6 +87,7 @@ public class PaymentService {
      * <p>If a completion record for the given intent already exists, it is returned.
      * Otherwise, a new completion is created and persisted.</p>
      */
+    @Observed(name = "intent.complete", contextualName = "Internal intent completion")
     public CompletionCreateResponse completeIntent(CompletionCreateRequest createRequest) {
         log.info("Completing intent with id {}.", createRequest.internalIntentId());
 

@@ -13,6 +13,7 @@ import com.mrs.app.shared.exception.ConflictingEntityException;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,6 +39,7 @@ public class BookingService {
      * @throws DomainRequirementException if the selected schedule has already started
      * @throws ConflictingEntityException if any of the requested seats are already booked
      */
+    @Observed(name = "booking.create", contextualName = "Booking creation")
     @Transactional
     public BookingResponse create(BookingCreateRequest createRequest) {
         log.info("Creating booking with params: {}", createRequest);

@@ -13,6 +13,7 @@ import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -75,6 +76,7 @@ public class OrderService {
      *     <li>Duplicate requests should be handled upstream or via idempotency keys when interacting with the payment provider.</li>
      * </ul>
      */
+    @Observed(name = "order.create", contextualName = "Order creation")
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
         log.info("Creating order with params {}.", createRequest);
 
@@ -146,6 +148,7 @@ public class OrderService {
      * This task is part of the system's SAGA-based recovery and resource management:
      * it ensures that stale orders do not block business operations and frees up reserved seats.
      */
+    @Observed(name = "order.expired.removal", contextualName = "Expired order removal")
     @Scheduled(fixedDelayString = "${app.order.cleanup-delay}")
     @Transactional
     protected void deleteUncompletedOrders() {
