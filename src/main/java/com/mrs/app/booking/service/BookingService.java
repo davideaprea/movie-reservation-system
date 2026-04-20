@@ -6,14 +6,16 @@ import com.mrs.app.booking.dto.SeatReservationResponse;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.mapper.BookingMapper;
-import com.mrs.app.booking.repository.BookingDAO;
+import com.mrs.app.booking.repository.BookingRepository;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
 import com.mrs.app.shared.exception.ConflictingEntityException;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +24,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class BookingService {
-    private final BookingDAO bookingDAO;
+    private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ScheduleService scheduleService;
 
@@ -36,11 +39,20 @@ public class BookingService {
      * @throws DomainRequirementException if the selected schedule has already started
      * @throws ConflictingEntityException if any of the requested seats are already booked
      */
+    @Observed(name = "booking.create", contextualName = "Booking creation")
     @Transactional
     public BookingResponse create(BookingCreateRequest createRequest) {
-        ScheduleResponse selectedSchedule = scheduleService.findById(createRequest.scheduleId());
+        log.info("Creating booking with params: {}", createRequest);
 
-        if (LocalDateTime.now().isAfter(selectedSchedule.startTime())) {
+        ScheduleResponse selectedSchedule = scheduleService.findById(createRequest.scheduleId());
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isAfter(selectedSchedule.startTime())) {
+            log.warn("""
+                    Couldn't create any booking because the selected schedule is already over.
+                    Selected schedule start time: {}. Submission time: {}.
+                    """, selectedSchedule.startTime(), now);
+
             throw new DomainRequirementException(new DomainRequirementError(
                     "The selected schedule is already over.",
                     BookingCreateRequest.Fields.scheduleId
@@ -57,14 +69,18 @@ public class BookingService {
         Booking savedBooking;
 
         try {
-            savedBooking = bookingDAO.save(bookingToSave);
+            savedBooking = bookingRepository.save(bookingToSave);
         } catch (DataIntegrityViolationException e) {
+            log.warn("The selected seats {} are already booked.", createRequest.scheduleSeatIds());
+
             throw new ConflictingEntityException(new ConflictingResourceError<>(
                     List.of(),
                     List.of(BookingCreateRequest.Fields.scheduleSeatIds),
                     "These seats are already booked."
             ));
         }
+
+        log.info("Created booking with id {}.", savedBooking.getId());
 
         return bookingMapper.toResponse(savedBooking);
     }
@@ -76,7 +92,7 @@ public class BookingService {
      */
     @Transactional
     public void deleteById(long id) {
-        Booking bookingToDelete = bookingDAO.findById(id).orElseThrow();
+        Booking bookingToDelete = bookingRepository.findById(id).orElseThrow();
         ScheduleResponse bookingSchedule = scheduleService.findById(bookingToDelete.getScheduleId());
 
         if (LocalDateTime.now().isAfter(bookingSchedule.startTime())) {
@@ -86,11 +102,11 @@ public class BookingService {
             ));
         }
 
-        bookingDAO.deleteById(id);
+        bookingRepository.deleteById(id);
     }
 
     public List<SeatReservationResponse> findSeatReservationsByScheduleId(long scheduleId) {
-        return bookingDAO
+        return bookingRepository
                 .findAllByScheduleId(scheduleId)
                 .stream().map(bookingMapper::toResponse)
                 .toList();
@@ -98,7 +114,7 @@ public class BookingService {
 
     public List<BookingResponse> findAllById(List<Long> bookingIds) {
         return StreamSupport.stream(
-                bookingDAO.findAllById(bookingIds).spliterator(),
+                bookingRepository.findAllById(bookingIds).spliterator(),
                 false
         ).map(bookingMapper::toResponse).toList();
     }

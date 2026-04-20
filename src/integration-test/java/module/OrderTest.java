@@ -3,15 +3,15 @@ package module;
 import annotation.ContainerizedContextTest;
 import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
-import com.mrs.app.booking.repository.BookingDAO;
-import com.mrs.app.booking.repository.SeatReservationDAO;
+import com.mrs.app.booking.repository.BookingRepository;
+import com.mrs.app.booking.repository.SeatReservationRepository;
 import com.mrs.app.hall.entity.Hall;
 import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.HallDAO;
-import com.mrs.app.hall.repository.SeatTypeDAO;
+import com.mrs.app.hall.repository.HallRepository;
+import com.mrs.app.hall.repository.SeatTypeRepository;
 import com.mrs.app.movie.entity.Movie;
-import com.mrs.app.movie.repository.MovieDAO;
-import com.mrs.app.order.dao.OrderDAO;
+import com.mrs.app.movie.repository.MovieRepository;
+import com.mrs.app.order.repository.OrderRepository;
 import com.mrs.app.order.dto.HTTPOrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.dto.OrderGetResponse;
@@ -19,13 +19,13 @@ import com.mrs.app.order.entity.Order;
 import com.mrs.app.payment.component.PaymentGateway;
 import com.mrs.app.payment.dto.gateway.GatewayIntentCreateResponse;
 import com.mrs.app.payment.entity.Intent;
-import com.mrs.app.payment.repository.CompletionDAO;
-import com.mrs.app.payment.repository.IntentDAO;
-import com.mrs.app.schedule.dao.ScheduleDAO;
+import com.mrs.app.payment.repository.CompletionRepository;
+import com.mrs.app.payment.repository.IntentRepository;
+import com.mrs.app.schedule.repository.ScheduleRepository;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.shared.exception.ConflictingResourceError;
@@ -52,27 +52,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrderTest {
     private RestTestClient restTestClient;
     @Autowired
-    private ScheduleDAO scheduleDAO;
+    private ScheduleRepository scheduleRepository;
     @Autowired
-    private MovieDAO movieDAO;
+    private MovieRepository movieRepository;
     @Autowired
-    private HallDAO hallDAO;
+    private HallRepository hallRepository;
     @Autowired
-    private SeatTypeDAO seatTypeDAO;
+    private SeatTypeRepository seatTypeRepository;
     @Autowired
-    private OrderDAO orderDAO;
+    private OrderRepository orderRepository;
     @Autowired
-    private IntentDAO intentDAO;
+    private IntentRepository intentRepository;
     @Autowired
-    private BookingDAO bookingDAO;
+    private BookingRepository bookingRepository;
     @Autowired
-    private CompletionDAO completionDAO;
+    private CompletionRepository completionRepository;
     @Autowired
-    private SeatReservationDAO seatReservationDAO;
+    private SeatReservationRepository seatReservationRepository;
     @Autowired
     private PaymentGateway paymentGateway;
     @Autowired
-    private UserDAO userDAO;
+    private UserRepository userRepository;
     @Autowired
     private JWTCreator jwtCreator;
     @LocalServerPort
@@ -85,17 +85,17 @@ public class OrderTest {
 
     @BeforeEach
     void setup() {
-        loggedUser = userDAO.save(UserFactory.createUser());
+        loggedUser = userRepository.save(UserFactory.createUser());
         String jwt = jwtCreator.withSubject(new JWTClaims(loggedUser.getEmail(), List.of(loggedUser.getRole().getValue())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d".formatted(port))
                 .defaultHeader("Authorization", "Bearer " + jwt)
                 .build();
-        SeatType seatType = seatTypeDAO.save(new SeatType(null, "STANDARD"));
-        Movie movie = movieDAO.save(MovieFactory.create());
-        Hall hall = hallDAO.save(HallFactory.create(seatType));
-        schedule = scheduleDAO.save(ScheduleFactory.create(hall, movie));
+        SeatType seatType = seatTypeRepository.save(new SeatType(null, "STANDARD"));
+        Movie movie = movieRepository.save(MovieFactory.create());
+        Hall hall = hallRepository.save(HallFactory.create(seatType));
+        schedule = scheduleRepository.save(ScheduleFactory.create(hall, movie));
     }
 
     @SneakyThrows
@@ -119,38 +119,42 @@ public class OrderTest {
                 .expectBody(OrderCreateResponse.class)
                 .returnResult().getResponseBody();
 
-        Order order = orderDAO.findById(response.id()).get();
+        Order order = orderRepository.findById(response.id()).get();
 
-        assertThat(orderDAO.count()).isEqualTo(1);
+        assertThat(orderRepository.count()).isEqualTo(1);
         assertThat(order.getUserId()).isEqualTo(loggedUser.getId());
 
-        Intent intent = intentDAO.findById(response.intent().id()).get();
+        Intent intent = intentRepository.findById(response.intent().id()).get();
 
-        assertThat(intentDAO.count()).isEqualTo(1);
+        assertThat(intentRepository.count()).isEqualTo(1);
         assertThat(intent.getAmount()).isEqualByComparingTo(selectedSeats.stream()
                 .map(ScheduleSeat::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
         assertThat(Duration.between(intent.getCreatedAt(), intent.getExpiresAt())).isEqualTo(paymentTimeout);
 
-        Booking booking = bookingDAO.findById(response.booking().id()).get();
+        Booking booking = bookingRepository.findById(response.booking().id()).get();
 
-        assertThat(bookingDAO.count()).isEqualTo(1);
-        assertThat(seatReservationDAO.count()).isEqualTo(selectedSeats.size());
+        assertThat(bookingRepository.count()).isEqualTo(1);
+        assertThat(seatReservationRepository.count()).isEqualTo(selectedSeats.size());
         assertThat(booking.getScheduleId()).isEqualTo(schedule.getId());
-        assertThat(booking.getSeatReservations().size()).isEqualTo(selectedSeats.size());
-        assertThat(booking.getSeatReservations())
+
+        List<SeatReservation> seatReservations = seatReservationRepository.findAllByBookingId(booking.getId());
+
+        assertThat(seatReservations.size()).isEqualTo(selectedSeats.size());
+        assertThat(seatReservations)
                 .extracting(SeatReservation::getScheduleSeatId)
                 .containsExactlyInAnyOrderElementsOf(request.seatIds());
 
-        assertThat(completionDAO.count()).isEqualTo(0);
+        assertThat(completionRepository.count()).isEqualTo(0);
     }
 
     @Test
     void givenAlreadyBookedSeats_whenBookingScheduleSeats_thenStatusConflict() {
-        Booking booking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getFirst().getId())));
+        long selectedSeatId = schedule.getSeats().getFirst().getId();
+        Booking booking = bookingRepository.save(BookingFactory.create(schedule, List.of(selectedSeatId)));
         HTTPOrderCreateRequest request = new HTTPOrderCreateRequest(
                 schedule.getId(),
-                List.of(booking.getSeatReservations().getFirst().getId())
+                List.of(schedule.getSeats().getFirst().getId())
         );
 
         restTestClient.post().uri("/orders")
@@ -158,29 +162,29 @@ public class OrderTest {
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(ConflictingResourceError.class);
 
-        assertThat(bookingDAO.count()).isEqualTo(1);
-        assertThat(bookingDAO.existsById(booking.getId()));
-        assertThat(seatReservationDAO.count()).isEqualTo(booking.getSeatReservations().size());
-        assertThat(orderDAO.count()).isEqualTo(0);
-        assertThat(intentDAO.count()).isEqualTo(0);
+        assertThat(bookingRepository.count()).isEqualTo(1);
+        assertThat(bookingRepository.existsById(booking.getId()));
+        assertThat(seatReservationRepository.count()).isEqualTo(1);
+        assertThat(orderRepository.count()).isEqualTo(0);
+        assertThat(intentRepository.count()).isEqualTo(0);
     }
 
     @Test
     void givenAuthenticatedUser_whenRetrievingOrders_thenStatusOk() {
-        Booking loggedUserBooking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getFirst().getId())));
-        Intent loggedUserIntent = intentDAO.save(PaymentFactory.create(paymentTimeout));
-        Order loggedUserOrder = orderDAO.save(Order.builder()
+        Booking loggedUserBooking = bookingRepository.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getFirst().getId())));
+        Intent loggedUserIntent = intentRepository.save(PaymentFactory.create(paymentTimeout));
+        Order loggedUserOrder = orderRepository.save(Order.builder()
                 .userId(loggedUser.getId())
                 .createdAt(LocalDateTime.now())
                 .bookingId(loggedUserBooking.getId())
                 .intentId(loggedUserIntent.getId())
                 .build());
 
-        User differentUser = userDAO.save(UserFactory.createUser());
-        Booking differentUserBooking = bookingDAO.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getLast().getId())));
-        Intent differentUserIntent = intentDAO.save(PaymentFactory.create(paymentTimeout));
+        User differentUser = userRepository.save(UserFactory.createUser());
+        Booking differentUserBooking = bookingRepository.save(BookingFactory.create(schedule, List.of(schedule.getSeats().getLast().getId())));
+        Intent differentUserIntent = intentRepository.save(PaymentFactory.create(paymentTimeout));
 
-        orderDAO.save(Order.builder()
+        orderRepository.save(Order.builder()
                 .userId(differentUser.getId())
                 .createdAt(LocalDateTime.now())
                 .bookingId(differentUserBooking.getId())

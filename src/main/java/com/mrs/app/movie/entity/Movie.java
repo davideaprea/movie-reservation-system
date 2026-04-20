@@ -33,9 +33,10 @@ public class Movie {
     @JoinTable(
             name = "movies_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
+            inverseJoinColumns = @JoinColumn(name = "genre_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"movie_id", "genre_id"})}
     )
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     private List<Genre> genres;
 
     public void addGenre(Genre genre) {

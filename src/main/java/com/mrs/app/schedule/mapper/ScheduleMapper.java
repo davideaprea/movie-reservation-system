@@ -1,6 +1,7 @@
 package com.mrs.app.schedule.mapper;
 
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
+import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.entity.Schedule;
 import org.mapstruct.Mapper;
@@ -12,4 +13,6 @@ public interface ScheduleMapper {
     Schedule toEntity(ScheduleCreateRequest createRequest, LocalDateTime endTime);
 
     ScheduleResponse toResponse(Schedule schedule);
+
+    ScheduleGetResponse toGetResponse(Schedule schedule);
 }

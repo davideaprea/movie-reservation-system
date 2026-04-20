@@ -6,7 +6,7 @@ import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
 import com.mrs.app.security.dto.LoginCreateRequest;
 import com.mrs.app.security.dto.UserCreateRequest;
-import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,13 +20,13 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Service
 public class AuthService {
-    private final UserDAO userDao;
+    private final UserRepository userRepository;
     private final JWTCreator jwtCreator;
     private final AuthenticationManager authManager;
     private final PasswordEncoder encoder;
 
     public User register(UserCreateRequest credentials) {
-        return userDao.save(User.builder()
+        return userRepository.save(User.builder()
                 .email(credentials.email())
                 .password(encoder.encode(credentials.password()))
                 .role(Role.USER)

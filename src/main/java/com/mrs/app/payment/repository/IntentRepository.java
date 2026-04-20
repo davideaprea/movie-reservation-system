@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface IntentDAO extends CrudRepository<Intent, String> {
+public interface IntentRepository extends CrudRepository<Intent, String> {
     @Query("""
             SELECT i
             FROM Intent i

@@ -5,10 +5,10 @@ import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.entity.Genre;
 import com.mrs.app.movie.entity.Movie;
-import com.mrs.app.movie.repository.GenreDAO;
-import com.mrs.app.movie.repository.MovieDAO;
+import com.mrs.app.movie.repository.GenreRepository;
+import com.mrs.app.movie.repository.MovieRepository;
 import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dao.UserDAO;
+import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
 import factory.MovieFactory;
@@ -30,28 +30,28 @@ import static org.assertj.core.api.Assertions.*;
 public class MovieTest {
     private RestTestClient restTestClient;
     @Autowired
-    private UserDAO userDAO;
+    private UserRepository userRepository;
     @Autowired
     private JWTCreator jwtCreator;
     @LocalServerPort
     private int port;
     @Autowired
-    private GenreDAO genreDAO;
+    private GenreRepository genreRepository;
     @Autowired
-    private MovieDAO movieDAO;
+    private MovieRepository movieRepository;
 
     private Genre genre;
 
     @BeforeEach
     void setup() {
-        User user = userDAO.save(UserFactory.createAdmin());
+        User user = userRepository.save(UserFactory.createAdmin());
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d".formatted(port))
                 .defaultHeader("Authorization", "Bearer " + jwt)
                 .build();
-        genre = genreDAO.save(new Genre(null, "ACTION"));
+        genre = genreRepository.save(new Genre(null, "ACTION"));
     }
 
     @SneakyThrows
@@ -69,9 +69,9 @@ public class MovieTest {
                 .expectStatus().isCreated()
                 .expectBody(MovieResponse.class)
                 .returnResult().getResponseBody();
-        Movie createdMovie = movieDAO.findById(response.id()).get();
+        Movie createdMovie = movieRepository.findById(response.id()).get();
 
-        assertThat(movieDAO.count()).isEqualTo(1);
+        assertThat(movieRepository.count()).isEqualTo(1);
         assertThat(request.duration()).isEqualTo(createdMovie.getDuration());
         assertThat(request.genreIds()).containsExactlyInAnyOrderElementsOf(createdMovie.getGenres().stream().map(Genre::getId).toList());
     }
@@ -82,7 +82,7 @@ public class MovieTest {
         String title = "Title";
         String randomString = "lorem";
 
-        movieDAO.saveAll(List.of(
+        movieRepository.saveAll(List.of(
                 MovieFactory.create(title + " " + randomString),
                 MovieFactory.create(randomString + " " + title),
                 MovieFactory.create(randomString + " " + title + " " + randomString),

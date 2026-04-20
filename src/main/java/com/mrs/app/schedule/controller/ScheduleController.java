@@ -1,6 +1,7 @@
 package com.mrs.app.schedule.controller;
 
 import com.mrs.app.schedule.apidoc.ScheduleControllerDoc;
+import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
@@ -25,7 +26,7 @@ public class ScheduleController implements ScheduleControllerDoc {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findAllByFilters(@ModelAttribute @Valid ScheduleGetRequestFilters filters) {
+    public ResponseEntity<List<ScheduleGetResponse>> findAllByFilters(@ModelAttribute @Valid ScheduleGetRequestFilters filters) {
         return new ResponseEntity<>(scheduleService.findAllByFilters(filters), HttpStatus.OK);
     }
 

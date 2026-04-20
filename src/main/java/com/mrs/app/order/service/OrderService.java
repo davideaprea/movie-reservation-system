@@ -3,17 +3,19 @@ package com.mrs.app.order.service;
 import com.mrs.app.booking.dto.BookingCreateRequest;
 import com.mrs.app.booking.dto.BookingResponse;
 import com.mrs.app.booking.service.BookingService;
-import com.mrs.app.order.dao.OrderDAO;
 import com.mrs.app.order.dto.BookingTransactionResult;
 import com.mrs.app.order.dto.OrderCreateRequest;
 import com.mrs.app.order.dto.OrderCreateResponse;
 import com.mrs.app.order.dto.OrderGetResponse;
 import com.mrs.app.order.entity.Order;
+import com.mrs.app.order.repository.OrderRepository;
 import com.mrs.app.payment.dto.*;
 import com.mrs.app.payment.service.PaymentService;
 import com.mrs.app.schedule.dto.ScheduleSeatResponse;
 import com.mrs.app.schedule.service.ScheduleSeatService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +34,11 @@ import java.util.stream.Collectors;
  * It serves as the main entry point for order-related operations,
  * coordinating the interaction between involved modules.
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OrderService {
-    private final OrderDAO orderDAO;
+    private final OrderRepository orderRepository;
     private final BookingService bookingService;
     private final PaymentService paymentService;
     private final ScheduleSeatService scheduleSeatService;
@@ -73,7 +76,10 @@ public class OrderService {
      *     <li>Duplicate requests should be handled upstream or via idempotency keys when interacting with the payment provider.</li>
      * </ul>
      */
+    @Observed(name = "order.create", contextualName = "Order creation")
     public OrderCreateResponse create(OrderCreateRequest createRequest) {
+        log.info("Creating order with params {}.", createRequest);
+
         BookingTransactionResult result = transactionTemplate.execute(status -> {
             BookingResponse booking = bookingService.create(new BookingCreateRequest(
                     createRequest.scheduleId(),
@@ -86,7 +92,7 @@ public class OrderService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             IntentCreateResponse intent = paymentService.createIntent(new IntentCreateRequest(amount));
 
-            Order order = orderDAO.save(Order.builder()
+            Order order = orderRepository.save(Order.builder()
                     .createdAt(LocalDateTime.now())
                     .userId(createRequest.userId())
                     .bookingId(booking.id())
@@ -97,13 +103,16 @@ public class OrderService {
         });
         IntentSubmissionRequest request = new IntentSubmissionRequest(result.intent().id());
         IntentSubmissionResponse submittedIntent = paymentService.submitIntent(request);
-
-        return new OrderCreateResponse(
+        OrderCreateResponse response = new OrderCreateResponse(
                 result.order().getId(),
                 result.booking(),
                 result.intent(),
                 submittedIntent
         );
+
+        log.info("Order created with id {}.", response.id());
+
+        return response;
     }
 
     /**
@@ -111,7 +120,7 @@ public class OrderService {
      * including booking and payment information.
      */
     public List<OrderGetResponse> findAllByUserId(long userId) {
-        List<Order> orders = orderDAO.findAllByUserId(userId);
+        List<Order> orders = orderRepository.findAllByUserId(userId);
         Map<Long, BookingResponse> bookingsIndexedById = bookingService
                 .findAllById(orders.stream().map(Order::getBookingId).toList())
                 .stream().collect(Collectors.toMap(
@@ -139,6 +148,7 @@ public class OrderService {
      * This task is part of the system's SAGA-based recovery and resource management:
      * it ensures that stale orders do not block business operations and frees up reserved seats.
      */
+    @Observed(name = "order.expired.removal", contextualName = "Expired order removal")
     @Scheduled(fixedDelayString = "${app.order.cleanup-delay}")
     @Transactional
     protected void deleteUncompletedOrders() {
@@ -148,6 +158,10 @@ public class OrderService {
                 .map(IntentCreateResponse::id)
                 .toList();
 
-        orderDAO.deleteAllByIntentIdIn(expiredPaymentsIds);
+        if (!expiredPaymentsIds.isEmpty()) {
+            log.info("Deleting {} expired orders.", expiredPaymentsIds.size());
+
+            orderRepository.deleteAllByIntentIdIn(expiredPaymentsIds);
+        }
     }
 }
