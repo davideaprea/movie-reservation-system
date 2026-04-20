@@ -158,8 +158,10 @@ public class OrderService {
                 .map(IntentCreateResponse::id)
                 .toList();
 
-        log.info("Deleting {} expired orders.", expiredPaymentsIds.size());
+        if (!expiredPaymentsIds.isEmpty()) {
+            log.info("Deleting {} expired orders.", expiredPaymentsIds.size());
 
-        orderRepository.deleteAllByIntentIdIn(expiredPaymentsIds);
+            orderRepository.deleteAllByIntentIdIn(expiredPaymentsIds);
+        }
     }
 }

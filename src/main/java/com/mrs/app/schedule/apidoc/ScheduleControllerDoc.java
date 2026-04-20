@@ -2,6 +2,7 @@ package com.mrs.app.schedule.apidoc;
 
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
+import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
@@ -63,7 +64,7 @@ public interface ScheduleControllerDoc {
                     )
             }
     )
-    ResponseEntity<List<ScheduleResponse>> findAllByFilters(
+    ResponseEntity<List<ScheduleGetResponse>> findAllByFilters(
             @Parameter(
                     required = true
             )
