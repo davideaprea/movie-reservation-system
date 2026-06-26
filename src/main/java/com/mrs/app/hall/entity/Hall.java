@@ -27,6 +27,9 @@ public class Hall {
     )
     private List<Seat> seats;
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Cinema cinema;
+
     public void addSeat(Seat seat) {
         if (seats == null) {
             seats = new ArrayList<>();
