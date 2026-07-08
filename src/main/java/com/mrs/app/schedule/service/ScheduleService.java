@@ -1,5 +1,6 @@
 package com.mrs.app.schedule.service;
 
+import com.mrs.app.location.dto.HallGetResponse;
 import com.mrs.app.location.dto.HallResponse;
 import com.mrs.app.location.service.HallService;
 import com.mrs.app.movie.dto.MovieResponse;
@@ -98,8 +99,16 @@ public class ScheduleService {
     }
 
     public List<ScheduleGetResponse> findAllByFilters(ScheduleGetRequestFilters filters) {
+        List<Long> cinemaHallsIds = hallService.findAllByCinemaId(filters.cinemaId())
+                .stream().map(HallGetResponse::id).toList();
+
         return scheduleRepository
-                .findAll(ScheduleSpecificationBuilder.fromFilters(filters))
+                .findAll(new ScheduleSpecificationBuilder()
+                        .movieId(filters.movieId())
+                        .startTimeFrom(filters.startTimeFrom())
+                        .endTimeTo(filters.endTimeTo())
+                        .hallIdIn(cinemaHallsIds)
+                        .build())
                 .stream()
                 .map(scheduleMapper::toGetResponse)
                 .toList();

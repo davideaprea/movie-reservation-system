@@ -17,6 +17,6 @@ public record ScheduleGetRequestFilters(
         LocalDateTime endTimeTo,
 
         @Positive
-        Long hallId
+        long cinemaId
 ) {
 }

@@ -57,12 +57,15 @@ public class ScheduleTest {
 
     private Movie movie;
     private Hall hall;
+    private Cinema cinema;
+    private SeatType seatType;
+
     @Autowired
     private CinemaRepository cinemaRepository;
 
     @BeforeEach
     void setup() {
-        Cinema cinema = cinemaRepository.save(CinemaFactory.create());
+        cinema = cinemaRepository.save(CinemaFactory.create());
         User user = userRepository.save(UserFactory.createOperator(cinema.getId()));
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().toString())));
         restTestClient = RestTestClient
@@ -70,7 +73,7 @@ public class ScheduleTest {
                 .baseUrl("http://localhost:%d".formatted(port))
                 .defaultHeader("Authorization", "Bearer " + jwt)
                 .build();
-        SeatType seatType = seatTypeRepository.save(new SeatType(null, "STANDARD"));
+        seatType = seatTypeRepository.save(new SeatType(null, "STANDARD"));
         movie = movieRepository.save(MovieFactory.create());
         hall = hallRepository.save(HallFactory.create(cinema, seatType));
     }
@@ -175,11 +178,20 @@ public class ScheduleTest {
                 .startTime(tomorrow.withHour(14))
                 .endTime(tomorrow.withHour(16))
                 .build();
+        Cinema differentCinema = cinemaRepository.save(CinemaFactory.create());
+        Hall differentHall = hallRepository.save(HallFactory.create(differentCinema, seatType));
+        Schedule differentCinemaSchedule = Schedule.builder()
+                .hallId(differentHall.getId())
+                .movieId(movie.getId())
+                .startTime(tomorrow.withHour(14))
+                .endTime(tomorrow.withHour(16))
+                .build();
 
-        scheduleRepository.saveAll(List.of(yesterdaySchedule, tomorrowSchedule, dayAfterTomorrowSchedule, differentMovieSchedule));
+        scheduleRepository.saveAll(List.of(yesterdaySchedule, tomorrowSchedule, dayAfterTomorrowSchedule, differentMovieSchedule, differentCinemaSchedule));
 
         List<ScheduleResponse> response = restTestClient.get().uri(uriBuilder -> uriBuilder
                         .path("/schedules")
+                        .queryParam("cinemaId", cinema.getId())
                         .queryParam("movieId", movie.getId())
                         .queryParam("startTimeFrom", tomorrow)
                         .queryParam("endTimeTo", tomorrow.withHour(23)).build())
@@ -191,6 +203,7 @@ public class ScheduleTest {
 
         assertThat(response.size()).isEqualTo(1);
         assertThat(response.stream().allMatch(schedule ->
+                schedule.hallId() == hall.getId() &&
                 schedule.movieId() == movie.getId() &&
                         schedule.startTime().isAfter(tomorrow) &&
                         schedule.endTime().isBefore(tomorrow.withHour(23))
