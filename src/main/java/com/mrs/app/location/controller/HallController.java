@@ -1,10 +1,9 @@
 package com.mrs.app.location.controller;
 
 import com.mrs.app.location.apidoc.HallControllerDoc;
-import com.mrs.app.location.dto.HTTPHallCreateRequest;
+import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.dto.HallGetResponse;
 import com.mrs.app.location.dto.HallResponse;
-import com.mrs.app.location.mapper.HallMapper;
 import com.mrs.app.location.service.HallService;
 import com.mrs.app.security.dto.LoggedUser;
 import jakarta.validation.Valid;
@@ -22,17 +21,13 @@ import java.util.List;
 @RequestMapping
 public class HallController implements HallControllerDoc {
     private final HallService hallService;
-    private final HallMapper hallMapper;
 
     @PostMapping("/halls")
     public ResponseEntity<HallResponse> create(
-            @RequestBody @Valid HTTPHallCreateRequest createRequest,
-            @AuthenticationPrincipal(expression = "cinemaId") long operatorCinemaId
+            @RequestBody @Valid HallCreateRequest createRequest,
+            @AuthenticationPrincipal LoggedUser loggedUser
     ) {
-        return new ResponseEntity<>(
-                hallService.create(hallMapper.toRequest(createRequest, operatorCinemaId)),
-                HttpStatus.CREATED
-        );
+        return new ResponseEntity<>(hallService.create(loggedUser, createRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/cinemas/{cinemaId}/halls")

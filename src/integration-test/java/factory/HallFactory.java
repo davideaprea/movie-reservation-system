@@ -1,6 +1,5 @@
 package factory;
 
-import com.mrs.app.location.dto.HTTPHallCreateRequest;
 import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.entity.Cinema;
 import com.mrs.app.location.entity.Hall;
@@ -32,19 +31,19 @@ public class HallFactory {
         return hall;
     }
 
-    public static HTTPHallCreateRequest createRequest(long seatTypeId, int rowsNumber, int seatsPerRow) {
-        List<List<HTTPHallCreateRequest.SeatCreateRequest>> seats = new ArrayList<>();
+    public static HallCreateRequest createRequest(long cinemaId, long seatTypeId, int rowsNumber, int seatsPerRow) {
+        List<List<HallCreateRequest.SeatCreateRequest>> seats = new ArrayList<>();
 
         for (int rowNumber = 1; rowNumber <= rowsNumber; rowNumber++) {
-            List<HTTPHallCreateRequest.SeatCreateRequest> row = new ArrayList<>();
+            List<HallCreateRequest.SeatCreateRequest> row = new ArrayList<>();
 
             for (int seatNumber = 1; seatNumber <= seatsPerRow; seatNumber++) {
-                row.add(new HTTPHallCreateRequest.SeatCreateRequest(seatTypeId));
+                row.add(new HallCreateRequest.SeatCreateRequest(seatTypeId));
             }
 
             seats.add(row);
         }
 
-        return new HTTPHallCreateRequest("Hall name", seats);
+        return new HallCreateRequest(cinemaId, "Hall name", seats);
     }
 }

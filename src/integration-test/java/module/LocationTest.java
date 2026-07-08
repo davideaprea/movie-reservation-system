@@ -1,7 +1,7 @@
 package module;
 
 import annotation.ContainerizedContextTest;
-import com.mrs.app.location.dto.HTTPHallCreateRequest;
+import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.dto.HallResponse;
 import com.mrs.app.location.entity.Cinema;
 import com.mrs.app.location.entity.SeatType;
@@ -45,10 +45,11 @@ public class LocationTest {
     private SeatType standardSeatType;
     @Autowired
     private CinemaRepository cinemaRepository;
+    private Cinema cinema;
 
     @BeforeEach
     void setup() {
-        Cinema cinema = cinemaRepository.save(CinemaFactory.create());
+        cinema = cinemaRepository.save(CinemaFactory.create());
         User user = userRepository.save(UserFactory.createOperator(cinema.getId()));
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().toString())));
         restTestClient = RestTestClient
@@ -64,7 +65,7 @@ public class LocationTest {
     void givenValidPayload_whenCreatingHall_thenStatusCreated() {
         int rowsNumber = 5;
         int seatsPerRow = 5;
-        HTTPHallCreateRequest request = HallFactory.createRequest(standardSeatType.getId(), rowsNumber, seatsPerRow);
+        HallCreateRequest request = HallFactory.createRequest(cinema.getId(), standardSeatType.getId(), rowsNumber, seatsPerRow);
 
         restTestClient.post().uri("/halls")
                 .body(request).exchange()

@@ -1,6 +1,6 @@
 package com.mrs.app.location.apidoc;
 
-import com.mrs.app.location.dto.HTTPHallCreateRequest;
+import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.dto.HallGetResponse;
 import com.mrs.app.location.dto.HallResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
@@ -46,9 +46,9 @@ public interface HallControllerDoc {
                     description = "The hall creation request containing name and seat layout.",
                     required = true
             )
-            HTTPHallCreateRequest createRequest,
+            HallCreateRequest createRequest,
             @Parameter(hidden = true)
-            long operatorCinemaId
+            LoggedUser loggedUser
     );
 
     @Operation(

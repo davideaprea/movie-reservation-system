@@ -9,7 +9,6 @@ import com.mrs.app.location.entity.Seat;
 import com.mrs.app.location.entity.SeatType;
 import com.mrs.app.location.mapper.HallMapper;
 import com.mrs.app.location.repository.HallRepository;
-import com.mrs.app.security.dto.AuthUserDetails;
 import com.mrs.app.security.dto.LoggedUser;
 import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.shared.exception.EntityNotFoundException;
@@ -33,7 +32,11 @@ public class HallService {
      * forming a grid where each seat is assigned a progressive (rowNumber, seatNumber) starting from 1.
      */
     @Transactional
-    public HallResponse create(HallCreateRequest createRequest) {
+    public HallResponse create(LoggedUser loggedUser, HallCreateRequest createRequest) {
+        if (Role.OPERATOR.equals(loggedUser.role()) && loggedUser.cinemaId() != createRequest.cinemaId()) {
+            throw new UnauthorizedOperationException("You don't have any access to this cinema.");
+        }
+
         Hall hallToSave = Hall.builder()
                 .cinema(Cinema.builder().id(createRequest.cinemaId()).build())
                 .name(createRequest.name())
