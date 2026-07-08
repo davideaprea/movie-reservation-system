@@ -1,11 +1,12 @@
 package com.mrs.app.location.apidoc;
 
-import com.mrs.app.location.dto.HallCreateRequest;
+import com.mrs.app.location.dto.HTTPHallCreateRequest;
 import com.mrs.app.location.dto.HallGetResponse;
 import com.mrs.app.location.dto.HallResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,7 +45,9 @@ public interface HallControllerDoc {
                     description = "The hall creation request containing name and seat layout.",
                     required = true
             )
-            HallCreateRequest createRequest
+            HTTPHallCreateRequest createRequest,
+            @Parameter(hidden = true)
+            long operatorCinemaId
     );
 
     @Operation(
@@ -60,5 +63,8 @@ public interface HallControllerDoc {
                     )
             }
     )
-    ResponseEntity<List<HallGetResponse>> findAll();
+    ResponseEntity<List<HallGetResponse>> findAllCinemaHalls(
+            @Parameter(hidden = true)
+            long operatorCinemaId
+    );
 }

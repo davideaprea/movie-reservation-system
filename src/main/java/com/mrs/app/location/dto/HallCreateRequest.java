@@ -1,22 +1,13 @@
 package com.mrs.app.location.dto;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-
 import java.util.List;
 
 public record HallCreateRequest(
-        @NotBlank
+        long cinemaId,
         String name,
-
-        @NotEmpty
-        List<@NotEmpty @Valid List<@NotNull @Valid SeatCreateRequest>> seatRows
+        List<List<SeatCreateRequest>> seatRows
 ) {
     public record SeatCreateRequest(
-            @Positive
             long seatTypeId
     ) {
     }

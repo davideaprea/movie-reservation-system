@@ -60,8 +60,8 @@ public class HallService {
                 )));
     }
 
-    public List<HallGetResponse> findAll() {
-        return StreamSupport.stream(hallRepository.findAll().spliterator(), false)
+    public List<HallGetResponse> findAllByCinemaId(long cinemaId) {
+        return hallRepository.findAllByCinemaId(cinemaId).stream()
                 .map(hallMapper::toGetResponse)
                 .toList();
     }
