@@ -4,6 +4,7 @@ import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.security.dto.LoggedUser;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.mrs.app.shared.exception.FieldValidationError;
@@ -48,7 +49,7 @@ public interface ScheduleControllerDoc {
                     )
             }
     )
-    ResponseEntity<ScheduleResponse> create(ScheduleCreateRequest dto, @Parameter(hidden = true) long operatorCinemaId);
+    ResponseEntity<ScheduleResponse> create(ScheduleCreateRequest dto, @Parameter(hidden = true) LoggedUser loggedUser);
 
     @Operation(
             summary = "Get schedules by filters",

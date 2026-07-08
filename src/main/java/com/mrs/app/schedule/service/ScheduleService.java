@@ -14,6 +14,8 @@ import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.schedule.repository.ScheduleRepository;
 import com.mrs.app.schedule.repository.ScheduleSpecificationBuilder;
+import com.mrs.app.security.dto.LoggedUser;
+import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.shared.exception.*;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
@@ -45,7 +47,7 @@ public class ScheduleService {
      */
     @Observed(name = "schedule.create", contextualName = "Schedule creation")
     @Transactional
-    public ScheduleResponse create(long operatorCinemaId, ScheduleCreateRequest dto) {
+    public ScheduleResponse create(LoggedUser loggedUser, ScheduleCreateRequest dto) {
         log.info("Creating schedule with params {}", dto);
 
         MovieResponse movieToSchedule = movieService.findById(dto.movieId());
@@ -67,7 +69,7 @@ public class ScheduleService {
 
         HallResponse hall = hallService.findById(dto.hallId());
 
-        if (hall.cinemaId() != operatorCinemaId) {
+        if (Role.OPERATOR.equals(loggedUser.role()) && hall.cinemaId() != loggedUser.cinemaId()) {
             throw new UnauthorizedOperationException("The selected hall is from a different cinema.");
         }
 
