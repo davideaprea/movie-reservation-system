@@ -40,6 +40,11 @@ public interface ScheduleControllerDoc {
                             responseCode = "409",
                             description = "The hall is already booked for the requested time slot.",
                             content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "The selected hall doesn't belong to the authenticated operator's cinema.",
+                            content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
                     )
             }
     )
