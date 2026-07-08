@@ -34,7 +34,7 @@ public class SecurityFilterChainConfig {
                                 "/halls/**",
                                 "/seat-types/**",
                                 "/movies/**",
-                                "/auth/admins"
+                                "/auth/operators"
                         ).hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )

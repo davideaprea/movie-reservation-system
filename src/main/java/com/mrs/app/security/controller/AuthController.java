@@ -2,7 +2,6 @@ package com.mrs.app.security.controller;
 
 import com.mrs.app.security.doc.AuthControllerDocs;
 import com.mrs.app.security.dto.*;
-import com.mrs.app.security.entity.User;
 import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.security.service.AuthService;
 import jakarta.validation.Valid;
@@ -33,12 +32,12 @@ public class AuthController implements AuthControllerDocs {
         )), HttpStatus.CREATED);
     }
 
-    @PostMapping("/admins")
-    public ResponseEntity<UserCreateResponse> registerAdmin(@RequestBody @Valid HTTPAdminCreateRequest dto) {
+    @PostMapping("/operators")
+    public ResponseEntity<UserCreateResponse> registerAdmin(@RequestBody @Valid HTTPOperatorCreateRequest dto) {
         return new ResponseEntity<>(authService.register(new UserCreateRequest(
                 dto.email(),
                 dto.password(),
-                Role.ADMIN,
+                dto.role(),
                 dto.cinemaId()
         )), HttpStatus.CREATED);
     }
