@@ -29,13 +29,10 @@ public class SecurityFilterChainConfig {
                                 "/movies/**",
                                 "/schedules/**"
                         ).permitAll()
-                        .requestMatchers(
-                                "/schedules/**",
-                                "/halls/**",
-                                "/seat-types/**",
-                                "/movies/**",
-                                "/auth/operators"
-                        ).hasRole(Role.ADMIN.toString())
+                        .requestMatchers("/halls/**").hasRole(Role.OPERATOR.getValue())
+                        .requestMatchers(HttpMethod.POST, "/schedules/**").hasRole(Role.OPERATOR.getValue())
+                        .requestMatchers(HttpMethod.POST, "/seat-types/**", "/auth/operators", "/movies/**").hasRole(Role.ADMIN.toString())
+                        .requestMatchers("/seat-types/**").hasAnyRole(Role.ADMIN.toString(), Role.OPERATOR.getValue())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
