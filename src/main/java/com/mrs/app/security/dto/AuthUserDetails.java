@@ -15,7 +15,7 @@ public class AuthUserDetails implements UserDetails {
     @Override
     public Collection<SimpleGrantedAuthority> getAuthorities() {
         return List.of(
-                new SimpleGrantedAuthority(user.getRole().getValue())
+                new SimpleGrantedAuthority("ROLE_" + user.getRole())
         );
     }
 

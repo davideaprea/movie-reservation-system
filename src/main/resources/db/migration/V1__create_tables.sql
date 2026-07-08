@@ -1,6 +1,18 @@
 -- =========================
--- HALL MODULE TABLES
+-- LOCATION MODULE TABLES
 -- =========================
+CREATE TABLE cinemas (
+    id BIGSERIAL PRIMARY KEY,
+
+    city VARCHAR(255) NOT NULL,
+    zip_code VARCHAR(255) NOT NULL,
+    street_name VARCHAR(255) NOT NULL,
+    number VARCHAR(255) NOT NULL,
+
+    name VARCHAR(255) NOT NULL,
+
+    CONSTRAINT uk_address UNIQUE (zip_code, street_name, number)
+);
 
 CREATE TABLE seat_types (
     id BIGSERIAL PRIMARY KEY,
@@ -9,7 +21,12 @@ CREATE TABLE seat_types (
 
 CREATE TABLE halls (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL UNIQUE,
+    cinema_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_hall_cinema
+        FOREIGN KEY (cinema_id)
+            REFERENCES cinemas (id)
 );
 
 CREATE TABLE seats (
@@ -51,7 +68,7 @@ CREATE TABLE users (
 
     CONSTRAINT fk_admin_cinema
        FOREIGN KEY (cinema_id)
-           REFERENCES cinema(id)
+           REFERENCES cinemas(id)
 );
 
 CREATE INDEX idx_users_email ON users(email);

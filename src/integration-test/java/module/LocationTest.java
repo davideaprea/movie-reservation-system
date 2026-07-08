@@ -50,7 +50,7 @@ public class LocationTest {
     void setup() {
         Cinema cinema = cinemaRepository.save(CinemaFactory.create());
         User user = userRepository.save(UserFactory.createOperator(cinema.getId()));
-        String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
+        String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().toString())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d".formatted(port))

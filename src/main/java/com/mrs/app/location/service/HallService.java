@@ -3,6 +3,7 @@ package com.mrs.app.location.service;
 import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.dto.HallGetResponse;
 import com.mrs.app.location.dto.HallResponse;
+import com.mrs.app.location.entity.Cinema;
 import com.mrs.app.location.entity.Hall;
 import com.mrs.app.location.entity.Seat;
 import com.mrs.app.location.entity.SeatType;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
@@ -30,7 +30,10 @@ public class HallService {
      */
     @Transactional
     public HallResponse create(HallCreateRequest createRequest) {
-        Hall hallToSave = Hall.builder().name(createRequest.name()).build();
+        Hall hallToSave = Hall.builder()
+                .cinema(Cinema.builder().id(createRequest.cinemaId()).build())
+                .name(createRequest.name())
+                .build();
 
         for (int rowNumber = 0; rowNumber < createRequest.seatRows().size(); rowNumber++) {
             List<HallCreateRequest.SeatCreateRequest> row = createRequest.seatRows().get(rowNumber);

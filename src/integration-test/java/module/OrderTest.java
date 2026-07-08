@@ -91,7 +91,7 @@ public class OrderTest {
     void setup() {
         Cinema cinema = cinemaRepository.save(CinemaFactory.create());
         loggedUser = userRepository.save(UserFactory.createUser());
-        String jwt = jwtCreator.withSubject(new JWTClaims(loggedUser.getEmail(), List.of(loggedUser.getRole().getValue())));
+        String jwt = jwtCreator.withSubject(new JWTClaims(loggedUser.getEmail(), List.of(loggedUser.getRole().toString())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d".formatted(port))

@@ -9,7 +9,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cinemas", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_address", columnNames = {"zip_code", "name", "number"})
+        @UniqueConstraint(name = "uk_address", columnNames = {"zip_code", "street_name", "number"})
 })
 public class Cinema {
     @Id
@@ -22,6 +22,7 @@ public class Cinema {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     @Embeddable
     public static final class Address {
@@ -31,7 +32,7 @@ public class Cinema {
         @Column(nullable = false)
         private String zipCode;
 
-        @Column(nullable = false)
+        @Column(nullable = false, name = "street_name")
         private String name;
 
         @Column(nullable = false)
