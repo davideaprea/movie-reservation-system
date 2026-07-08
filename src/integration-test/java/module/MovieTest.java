@@ -1,6 +1,8 @@
 package module;
 
 import annotation.ContainerizedContextTest;
+import com.mrs.app.location.entity.Cinema;
+import com.mrs.app.location.repository.CinemaRepository;
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.entity.Genre;
@@ -11,6 +13,7 @@ import com.mrs.app.security.component.JWTCreator;
 import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
+import factory.CinemaFactory;
 import factory.MovieFactory;
 import factory.UserFactory;
 import lombok.SneakyThrows;
@@ -41,10 +44,13 @@ public class MovieTest {
     private MovieRepository movieRepository;
 
     private Genre genre;
+    @Autowired
+    private CinemaRepository cinemaRepository;
 
     @BeforeEach
     void setup() {
-        User user = userRepository.save(UserFactory.createAdmin());
+        Cinema cinema = cinemaRepository.save(CinemaFactory.create());
+        User user = userRepository.save(UserFactory.createAdmin(cinema.getId()));
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().getValue())));
         restTestClient = RestTestClient
                 .bindToServer()

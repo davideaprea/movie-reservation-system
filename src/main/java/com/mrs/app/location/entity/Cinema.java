@@ -22,6 +22,7 @@ public class Cinema {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @AllArgsConstructor
     @Embeddable
     public static final class Address {
         @Column(nullable = false)
