@@ -64,7 +64,7 @@ public interface HallControllerDoc {
             }
     )
     ResponseEntity<List<HallGetResponse>> findAllCinemaHalls(
-            long cinemaId,
-            @Parameter(hidden = true) LoggedUser loggedUser
+            @Parameter(hidden = true) LoggedUser loggedUser,
+            long cinemaId
     );
 }
