@@ -52,7 +52,7 @@ public interface HallControllerDoc {
 
     @Operation(
             summary = "Get all halls",
-            description = "Retrieves the list of all halls with their details, seats excluded.",
+            description = "Retrieves every hall belonging to the authenticated operator's cinema.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
