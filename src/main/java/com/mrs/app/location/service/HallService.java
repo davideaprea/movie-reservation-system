@@ -72,6 +72,10 @@ public class HallService {
             throw new UnauthorizedOperationException("You don't have any access to this cinema.");
         }
 
+        return findAllByCinemaId(cinemaId);
+    }
+
+    public List<HallGetResponse> findAllByCinemaId(long cinemaId) {
         return hallRepository.findAllByCinemaId(cinemaId).stream()
                 .map(hallMapper::toGetResponse)
                 .toList();
