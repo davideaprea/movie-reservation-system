@@ -43,7 +43,7 @@ public interface ScheduleControllerDoc {
                     )
             }
     )
-    ResponseEntity<ScheduleResponse> create(ScheduleCreateRequest dto);
+    ResponseEntity<ScheduleResponse> create(ScheduleCreateRequest dto, @Parameter(hidden = true) long operatorCinemaId);
 
     @Operation(
             summary = "Get schedules by filters",

@@ -1,5 +1,6 @@
 package com.mrs.app.schedule.service;
 
+import com.mrs.app.location.dto.HallResponse;
 import com.mrs.app.location.service.HallService;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.service.MovieService;
@@ -12,10 +13,7 @@ import com.mrs.app.schedule.entity.ScheduleSeat;
 import com.mrs.app.schedule.mapper.ScheduleMapper;
 import com.mrs.app.schedule.repository.ScheduleRepository;
 import com.mrs.app.schedule.repository.ScheduleSpecificationBuilder;
-import com.mrs.app.shared.exception.ConflictingEntityException;
-import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.EntityNotFoundError;
-import com.mrs.app.shared.exception.EntityNotFoundException;
+import com.mrs.app.shared.exception.*;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +44,7 @@ public class ScheduleService {
      */
     @Observed(name = "schedule.create", contextualName = "Schedule creation")
     @Transactional
-    public ScheduleResponse create(ScheduleCreateRequest dto) {
+    public ScheduleResponse create(long operatorCinemaId, ScheduleCreateRequest dto) {
         log.info("Creating schedule with params {}", dto);
 
         MovieResponse movieToSchedule = movieService.findById(dto.movieId());
@@ -66,18 +64,21 @@ public class ScheduleService {
             throw new ConflictingEntityException(error);
         }
 
-        hallService
-                .findById(dto.hallId())
-                .seats()
-                .forEach(seat -> {
-                    BigDecimal seatPrice = dto.seatPriceOptions().get(seat.type().name());
+        HallResponse hall = hallService.findById(dto.hallId());
 
-                    scheduleToSave.addSeat(ScheduleSeat.builder()
-                            .price(seatPrice)
-                            .seatId(seat.id())
-                            .schedule(scheduleToSave)
-                            .build());
-                });
+        if (hall.cinemaId() != operatorCinemaId) {
+            throw new UnauthorizedOperationException("The selected hall is from a different cinema.");
+        }
+
+        hall.seats().forEach(seat -> {
+            BigDecimal seatPrice = dto.seatPriceOptions().get(seat.type().name());
+
+            scheduleToSave.addSeat(ScheduleSeat.builder()
+                    .price(seatPrice)
+                    .seatId(seat.id())
+                    .schedule(scheduleToSave)
+                    .build());
+        });
 
         ScheduleResponse savedSchedule = scheduleMapper.toResponse(scheduleRepository.save(scheduleToSave));
 
