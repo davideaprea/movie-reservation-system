@@ -1,10 +1,8 @@
 package com.mrs.app.security.controller;
 
 import com.mrs.app.security.doc.AuthControllerDocs;
-import com.mrs.app.security.dto.UserCreateResponse;
-import com.mrs.app.security.entity.User;
-import com.mrs.app.security.dto.LoginCreateRequest;
-import com.mrs.app.security.dto.UserCreateRequest;
+import com.mrs.app.security.dto.*;
+import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.security.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,16 +22,24 @@ import java.util.List;
 public class AuthController implements AuthControllerDocs {
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserCreateResponse> register(@RequestBody @Valid UserCreateRequest dto) {
-        User newUser = authService.register(dto);
+    @PostMapping("/users")
+    public ResponseEntity<UserCreateResponse> registerUser(@RequestBody @Valid HTTPUserCreateRequest dto) {
+        return new ResponseEntity<>(authService.register(new UserCreateRequest(
+                dto.email(),
+                dto.password(),
+                Role.USER,
+                null
+        )), HttpStatus.CREATED);
+    }
 
-        UserCreateResponse res = new UserCreateResponse(
-                newUser.getId(),
-                newUser.getEmail()
-        );
-
-        return new ResponseEntity<>(res, HttpStatus.CREATED);
+    @PostMapping("/operators")
+    public ResponseEntity<UserCreateResponse> registerAdmin(@RequestBody @Valid HTTPOperatorCreateRequest dto) {
+        return new ResponseEntity<>(authService.register(new UserCreateRequest(
+                dto.email(),
+                dto.password(),
+                dto.role(),
+                dto.cinemaId()
+        )), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

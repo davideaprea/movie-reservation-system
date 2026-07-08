@@ -1,21 +1,18 @@
 -- =========================
--- AUTH MODULE TABLES
+-- LOCATION MODULE TABLES
 -- =========================
-
-CREATE TABLE users (
+CREATE TABLE cinemas (
     id BIGSERIAL PRIMARY KEY,
 
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL
+    city VARCHAR(255) NOT NULL,
+    zip_code VARCHAR(255) NOT NULL,
+    street_name VARCHAR(255) NOT NULL,
+    number VARCHAR(255) NOT NULL,
+
+    name VARCHAR(255) NOT NULL,
+
+    CONSTRAINT uk_address UNIQUE (zip_code, street_name, number)
 );
-
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(role);
-
--- =========================
--- HALL MODULE TABLES
--- =========================
 
 CREATE TABLE seat_types (
     id BIGSERIAL PRIMARY KEY,
@@ -24,7 +21,12 @@ CREATE TABLE seat_types (
 
 CREATE TABLE halls (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL UNIQUE,
+    cinema_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_hall_cinema
+        FOREIGN KEY (cinema_id)
+            REFERENCES cinemas (id)
 );
 
 CREATE TABLE seats (
@@ -52,6 +54,25 @@ CREATE TABLE seats (
 
 CREATE INDEX idx_seats_hall_id ON seats(hall_id);
 CREATE INDEX idx_seats_type_id ON seats(type_id);
+
+-- =========================
+-- AUTH MODULE TABLES
+-- =========================
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    cinema_id BIGINT,
+
+    CONSTRAINT fk_admin_cinema
+       FOREIGN KEY (cinema_id)
+           REFERENCES cinemas(id)
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role ON users(role);
 
 -- =========================
 -- MOVIE MODULE TABLES

@@ -4,6 +4,7 @@ import com.mrs.app.schedule.dto.ScheduleCreateRequest;
 import com.mrs.app.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.app.schedule.dto.ScheduleGetResponse;
 import com.mrs.app.schedule.dto.ScheduleResponse;
+import com.mrs.app.security.dto.LoggedUser;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.mrs.app.shared.exception.FieldValidationError;
@@ -40,10 +41,15 @@ public interface ScheduleControllerDoc {
                             responseCode = "409",
                             description = "The hall is already booked for the requested time slot.",
                             content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "The selected hall doesn't belong to the authenticated operator's cinema.",
+                            content = @Content(schema = @Schema(implementation = ConflictingResourceError.class))
                     )
             }
     )
-    ResponseEntity<ScheduleResponse> create(ScheduleCreateRequest dto);
+    ResponseEntity<ScheduleResponse> create(ScheduleCreateRequest dto, @Parameter(hidden = true) LoggedUser loggedUser);
 
     @Operation(
             summary = "Get schedules by filters",

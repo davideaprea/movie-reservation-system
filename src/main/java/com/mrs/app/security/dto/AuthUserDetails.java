@@ -1,6 +1,7 @@
 package com.mrs.app.security.dto;
 
 import com.mrs.app.security.entity.User;
+import com.mrs.app.security.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,7 @@ public class AuthUserDetails implements UserDetails {
     @Override
     public Collection<SimpleGrantedAuthority> getAuthorities() {
         return List.of(
-                new SimpleGrantedAuthority(user.getRole().getValue())
+                new SimpleGrantedAuthority("ROLE_" + user.getRole())
         );
     }
 
@@ -31,5 +32,13 @@ public class AuthUserDetails implements UserDetails {
 
     public Long getId() {
         return user.getId();
+    }
+
+    public Long getCinemaId() {
+        return user.getCinemaId();
+    }
+
+    public Role getRole() {
+        return user.getRole();
     }
 }

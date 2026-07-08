@@ -5,10 +5,12 @@ import com.mrs.app.booking.entity.Booking;
 import com.mrs.app.booking.entity.SeatReservation;
 import com.mrs.app.booking.repository.BookingRepository;
 import com.mrs.app.booking.repository.SeatReservationRepository;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.HallRepository;
-import com.mrs.app.hall.repository.SeatTypeRepository;
+import com.mrs.app.location.entity.Cinema;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.location.entity.SeatType;
+import com.mrs.app.location.repository.CinemaRepository;
+import com.mrs.app.location.repository.HallRepository;
+import com.mrs.app.location.repository.SeatTypeRepository;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.repository.MovieRepository;
 import com.mrs.app.order.repository.OrderRepository;
@@ -82,11 +84,14 @@ public class OrderTest {
 
     private Schedule schedule;
     private User loggedUser;
+    @Autowired
+    private CinemaRepository cinemaRepository;
 
     @BeforeEach
     void setup() {
+        Cinema cinema = cinemaRepository.save(CinemaFactory.create());
         loggedUser = userRepository.save(UserFactory.createUser());
-        String jwt = jwtCreator.withSubject(new JWTClaims(loggedUser.getEmail(), List.of(loggedUser.getRole().getValue())));
+        String jwt = jwtCreator.withSubject(new JWTClaims(loggedUser.getEmail(), List.of(loggedUser.getRole().toString())));
         restTestClient = RestTestClient
                 .bindToServer()
                 .baseUrl("http://localhost:%d".formatted(port))
@@ -94,7 +99,7 @@ public class OrderTest {
                 .build();
         SeatType seatType = seatTypeRepository.save(new SeatType(null, "STANDARD"));
         Movie movie = movieRepository.save(MovieFactory.create());
-        Hall hall = hallRepository.save(HallFactory.create(seatType));
+        Hall hall = hallRepository.save(HallFactory.create(cinema, seatType));
         schedule = scheduleRepository.save(ScheduleFactory.create(hall, movie));
     }
 

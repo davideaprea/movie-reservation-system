@@ -2,9 +2,8 @@ package com.mrs.app.security.dto;
 
 import com.mrs.app.security.enumeration.Role;
 
-public record UserCreateResponse(
+public record LoggedUser(
         long id,
-        String email,
         Role role,
         Long cinemaId
 ) {

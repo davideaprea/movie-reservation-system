@@ -14,13 +14,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityFilterChainConfig {
     @Bean
-    public SecurityFilterChain configFilterChain(HttpSecurity http, UserAuthenticationFilter userAuthenticationFilter) throws Exception {
+    public SecurityFilterChain configFilterChain(HttpSecurity http, UserAuthenticationFilter userAuthenticationFilter) {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/users").permitAll()
                         .requestMatchers(
-                                "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/actuator/**"
@@ -29,12 +29,10 @@ public class SecurityFilterChainConfig {
                                 "/movies/**",
                                 "/schedules/**"
                         ).permitAll()
-                        .requestMatchers(
-                                "/schedules/**",
-                                "/halls/**",
-                                "/seat-types/**",
-                                "/movies/**"
-                        ).hasRole(Role.ADMIN.toString())
+                        .requestMatchers("/halls/**").hasRole(Role.OPERATOR.toString())
+                        .requestMatchers(HttpMethod.POST, "/schedules/**").hasRole(Role.OPERATOR.toString())
+                        .requestMatchers(HttpMethod.POST, "/seat-types/**", "/auth/operators", "/movies/**").hasRole(Role.ADMIN.toString())
+                        .requestMatchers("/seat-types/**").hasAnyRole(Role.ADMIN.toString(), Role.OPERATOR.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

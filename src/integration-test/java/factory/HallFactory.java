@@ -1,19 +1,21 @@
 package factory;
 
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.Seat;
-import com.mrs.app.hall.entity.SeatType;
+import com.mrs.app.location.dto.HallCreateRequest;
+import com.mrs.app.location.entity.Cinema;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.location.entity.Seat;
+import com.mrs.app.location.entity.SeatType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HallFactory {
-    public static Hall create(SeatType seatType) {
-        Hall hall = new Hall(null, "Name", new ArrayList<>());
+    public static Hall create(Cinema cinema, SeatType seatType) {
+        Hall hall = new Hall(null, UUID.randomUUID().toString(), new ArrayList<>(), cinema);
 
         for (int i = 1; i <= 5; i++) {
             for (int j = 1; j <= 5; j++) {
@@ -29,7 +31,7 @@ public class HallFactory {
         return hall;
     }
 
-    public static HallCreateRequest createRequest(long seatTypeId, int rowsNumber, int seatsPerRow) {
+    public static HallCreateRequest createRequest(long cinemaId, long seatTypeId, int rowsNumber, int seatsPerRow) {
         List<List<HallCreateRequest.SeatCreateRequest>> seats = new ArrayList<>();
 
         for (int rowNumber = 1; rowNumber <= rowsNumber; rowNumber++) {
@@ -42,6 +44,6 @@ public class HallFactory {
             seats.add(row);
         }
 
-        return new HallCreateRequest("Hall name", seats);
+        return new HallCreateRequest(cinemaId, "Hall name", seats);
     }
 }
