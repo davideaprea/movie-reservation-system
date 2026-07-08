@@ -1,19 +1,4 @@
 -- =========================
--- AUTH MODULE TABLES
--- =========================
-
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL
-);
-
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(role);
-
--- =========================
 -- HALL MODULE TABLES
 -- =========================
 
@@ -52,6 +37,25 @@ CREATE TABLE seats (
 
 CREATE INDEX idx_seats_hall_id ON seats(hall_id);
 CREATE INDEX idx_seats_type_id ON seats(type_id);
+
+-- =========================
+-- AUTH MODULE TABLES
+-- =========================
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    cinema_id BIGINT,
+
+    CONSTRAINT fk_admin_cinema
+       FOREIGN KEY (cinema_id)
+           REFERENCES cinema(id)
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role ON users(role);
 
 -- =========================
 -- MOVIE MODULE TABLES

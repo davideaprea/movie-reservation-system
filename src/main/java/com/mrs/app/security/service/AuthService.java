@@ -1,13 +1,10 @@
 package com.mrs.app.security.service;
 
 import com.mrs.app.security.component.JWTCreator;
-import com.mrs.app.security.dto.AuthUserDetails;
-import com.mrs.app.security.dto.JWTClaims;
+import com.mrs.app.security.dto.*;
 import com.mrs.app.security.entity.User;
-import com.mrs.app.security.dto.LoginCreateRequest;
-import com.mrs.app.security.dto.UserCreateRequest;
+import com.mrs.app.security.mapper.UserMapper;
 import com.mrs.app.security.repository.UserRepository;
-import com.mrs.app.security.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -24,13 +21,17 @@ public class AuthService {
     private final JWTCreator jwtCreator;
     private final AuthenticationManager authManager;
     private final PasswordEncoder encoder;
+    private final UserMapper userMapper;
 
-    public User register(UserCreateRequest credentials) {
-        return userRepository.save(User.builder()
-                .email(credentials.email())
-                .password(encoder.encode(credentials.password()))
-                .role(Role.USER)
+    public UserCreateResponse register(UserCreateRequest request) {
+        User user = userRepository.save(User.builder()
+                .email(request.email())
+                .password(encoder.encode(request.password()))
+                .role(request.role())
+                .cinemaId(request.cinemaId())
                 .build());
+
+        return userMapper.toResponse(user);
     }
 
     public String login(LoginCreateRequest credentials) {

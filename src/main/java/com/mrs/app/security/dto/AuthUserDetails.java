@@ -32,4 +32,8 @@ public class AuthUserDetails implements UserDetails {
     public Long getId() {
         return user.getId();
     }
+
+    public Long getCinemaId() {
+        return user.getCinemaId();
+    }
 }

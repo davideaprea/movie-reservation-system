@@ -1,7 +1,7 @@
 package com.mrs.app.security.doc;
 
 import com.mrs.app.security.dto.LoginCreateRequest;
-import com.mrs.app.security.dto.UserCreateRequest;
+import com.mrs.app.security.dto.HTTPUserCreateRequest;
 import com.mrs.app.security.dto.UserCreateResponse;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,7 +32,7 @@ public interface AuthControllerDocs {
                     content = @Content
             )
     })
-    ResponseEntity<UserCreateResponse> register(UserCreateRequest dto);
+    ResponseEntity<UserCreateResponse> registerUser(HTTPUserCreateRequest dto);
 
     @ApiResponses(value = {
             @ApiResponse(

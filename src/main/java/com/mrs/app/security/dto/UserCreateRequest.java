@@ -1,12 +1,11 @@
 package com.mrs.app.security.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import com.mrs.app.security.enumeration.Role;
 
 public record UserCreateRequest(
-    @Email
-    @NotBlank
-    String email,
-    @NotBlank
-    String password
-) {}
+        String email,
+        String password,
+        Role role,
+        Long cinemaId
+) {
+}

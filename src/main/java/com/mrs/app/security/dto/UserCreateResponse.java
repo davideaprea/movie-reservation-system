@@ -1,3 +1,11 @@
 package com.mrs.app.security.dto;
 
-public record UserCreateResponse(long id, String username) {}
+import com.mrs.app.security.enumeration.Role;
+
+public record UserCreateResponse(
+        long id,
+        String email,
+        Role role,
+        Long cinemaId
+) {
+}

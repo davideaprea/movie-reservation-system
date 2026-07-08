@@ -14,13 +14,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityFilterChainConfig {
     @Bean
-    public SecurityFilterChain configFilterChain(HttpSecurity http, UserAuthenticationFilter userAuthenticationFilter) throws Exception {
+    public SecurityFilterChain configFilterChain(HttpSecurity http, UserAuthenticationFilter userAuthenticationFilter) {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reqMatcher -> reqMatcher
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/users").permitAll()
                         .requestMatchers(
-                                "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/actuator/**"
@@ -33,7 +33,8 @@ public class SecurityFilterChainConfig {
                                 "/schedules/**",
                                 "/halls/**",
                                 "/seat-types/**",
-                                "/movies/**"
+                                "/movies/**",
+                                "/auth/admins"
                         ).hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
