@@ -9,8 +9,12 @@ import com.mrs.app.location.entity.Seat;
 import com.mrs.app.location.entity.SeatType;
 import com.mrs.app.location.mapper.HallMapper;
 import com.mrs.app.location.repository.HallRepository;
+import com.mrs.app.security.dto.AuthUserDetails;
+import com.mrs.app.security.dto.LoggedUser;
+import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
+import com.mrs.app.shared.exception.UnauthorizedOperationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +67,11 @@ public class HallService {
                 )));
     }
 
-    public List<HallGetResponse> findAllByCinemaId(long cinemaId) {
+    public List<HallGetResponse> findAllByCinemaId(LoggedUser loggedUser, long cinemaId) {
+        if (Role.OPERATOR.equals(loggedUser.role()) && loggedUser.cinemaId() != cinemaId) {
+            throw new UnauthorizedOperationException("You don't have any access to this cinema.");
+        }
+
         return hallRepository.findAllByCinemaId(cinemaId).stream()
                 .map(hallMapper::toGetResponse)
                 .toList();

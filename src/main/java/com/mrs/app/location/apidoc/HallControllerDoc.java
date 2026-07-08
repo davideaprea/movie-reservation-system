@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import com.mrs.app.security.dto.LoggedUser;
 
 import java.util.List;
 
@@ -51,8 +52,7 @@ public interface HallControllerDoc {
     );
 
     @Operation(
-            summary = "Get all halls",
-            description = "Retrieves every hall belonging to the authenticated operator's cinema.",
+            summary = "Get all cinema halls",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -64,7 +64,7 @@ public interface HallControllerDoc {
             }
     )
     ResponseEntity<List<HallGetResponse>> findAllCinemaHalls(
-            @Parameter(hidden = true)
-            long operatorCinemaId
+            long cinemaId,
+            @Parameter(hidden = true) LoggedUser loggedUser
     );
 }

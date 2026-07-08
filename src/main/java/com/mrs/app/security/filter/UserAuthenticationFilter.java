@@ -1,6 +1,8 @@
 package com.mrs.app.security.filter;
 
 import com.mrs.app.security.component.JWTValidator;
+import com.mrs.app.security.dto.AuthUserDetails;
+import com.mrs.app.security.dto.LoggedUser;
 import com.mrs.app.security.service.AuthUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,8 +40,12 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
                     }
                 })
                 .ifPresent(email -> {
-                    UserDetails userDetails = authUserDetailsService.loadUserByUsername(email);
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    AuthUserDetails userDetails = authUserDetailsService.loadUserByUsername(email);
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(new LoggedUser(
+                            userDetails.getId(),
+                            userDetails.getRole(),
+                            userDetails.getCinemaId()
+                    ), null, userDetails.getAuthorities());
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

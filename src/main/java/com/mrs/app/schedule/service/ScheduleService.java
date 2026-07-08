@@ -99,7 +99,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleGetResponse> findAllByFilters(ScheduleGetRequestFilters filters) {
-        List<Long> cinemaHallsIds = hallService.findAllByCinemaId(filters.cinemaId())
+        List<Long> cinemaHallsIds = hallService.findAllByCinemaId(loggedUser, filters.cinemaId())
                 .stream().map(HallGetResponse::id).toList();
 
         return scheduleRepository
