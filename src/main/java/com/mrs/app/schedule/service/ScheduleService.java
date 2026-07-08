@@ -1,6 +1,6 @@
 package com.mrs.app.schedule.service;
 
-import com.mrs.app.hall.service.HallService;
+import com.mrs.app.location.service.HallService;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.service.MovieService;
 import com.mrs.app.schedule.dto.ScheduleCreateRequest;

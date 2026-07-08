@@ -1,9 +1,9 @@
 package factory;
 
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.Seat;
-import com.mrs.app.hall.entity.SeatType;
+import com.mrs.app.location.dto.HallCreateRequest;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.location.entity.Seat;
+import com.mrs.app.location.entity.SeatType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

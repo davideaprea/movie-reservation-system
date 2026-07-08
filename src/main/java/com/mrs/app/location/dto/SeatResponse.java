@@ -1,4 +1,4 @@
-package com.mrs.app.hall.dto;
+package com.mrs.app.location.dto;
 
 public record SeatResponse(
         long id,

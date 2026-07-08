@@ -1,4 +1,4 @@
-package com.mrs.app.hall.entity;
+package com.mrs.app.location.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

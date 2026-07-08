@@ -1,12 +1,12 @@
 package module;
 
 import annotation.ContainerizedContextTest;
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.HallRepository;
-import com.mrs.app.hall.repository.SeatRepository;
-import com.mrs.app.hall.repository.SeatTypeRepository;
+import com.mrs.app.location.dto.HallCreateRequest;
+import com.mrs.app.location.dto.HallResponse;
+import com.mrs.app.location.entity.SeatType;
+import com.mrs.app.location.repository.HallRepository;
+import com.mrs.app.location.repository.SeatRepository;
+import com.mrs.app.location.repository.SeatTypeRepository;
 import com.mrs.app.security.component.JWTCreator;
 import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
@@ -25,7 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @ContainerizedContextTest
-public class HallTest {
+public class LocationTest {
     private RestTestClient restTestClient;
     @Autowired
     private HallRepository hallRepository;

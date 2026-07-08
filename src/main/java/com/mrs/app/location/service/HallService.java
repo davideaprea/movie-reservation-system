@@ -1,13 +1,13 @@
-package com.mrs.app.hall.service;
+package com.mrs.app.location.service;
 
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.dto.HallGetResponse;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.Seat;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.mapper.HallMapper;
-import com.mrs.app.hall.repository.HallRepository;
+import com.mrs.app.location.dto.HallCreateRequest;
+import com.mrs.app.location.dto.HallGetResponse;
+import com.mrs.app.location.dto.HallResponse;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.location.entity.Seat;
+import com.mrs.app.location.entity.SeatType;
+import com.mrs.app.location.mapper.HallMapper;
+import com.mrs.app.location.repository.HallRepository;
 import com.mrs.app.shared.exception.EntityNotFoundException;
 import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
-package com.mrs.app.hall.mapper;
+package com.mrs.app.location.mapper;
 
-import com.mrs.app.hall.dto.HallGetResponse;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.entity.Hall;
+import com.mrs.app.location.dto.HallGetResponse;
+import com.mrs.app.location.dto.HallResponse;
+import com.mrs.app.location.entity.Hall;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {SeatMapper.class})

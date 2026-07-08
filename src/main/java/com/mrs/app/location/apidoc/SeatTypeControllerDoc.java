@@ -1,7 +1,7 @@
-package com.mrs.app.hall.apidoc;
+package com.mrs.app.location.apidoc;
 
-import com.mrs.app.hall.dto.SeatTypeCreateRequest;
-import com.mrs.app.hall.dto.SeatTypeResponse;
+import com.mrs.app.location.dto.SeatTypeCreateRequest;
+import com.mrs.app.location.dto.SeatTypeResponse;
 import com.mrs.app.shared.exception.ConflictingResourceError;
 import com.mrs.app.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;

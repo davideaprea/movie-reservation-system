@@ -1,6 +1,6 @@
 package factory;
 
-import com.mrs.app.hall.entity.Hall;
+import com.mrs.app.location.entity.Hall;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.schedule.entity.Schedule;
 import com.mrs.app.schedule.entity.ScheduleSeat;

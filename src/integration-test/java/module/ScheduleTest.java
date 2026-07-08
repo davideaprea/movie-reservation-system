@@ -1,10 +1,10 @@
 package module;
 
 import annotation.ContainerizedContextTest;
-import com.mrs.app.hall.entity.Hall;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.HallRepository;
-import com.mrs.app.hall.repository.SeatTypeRepository;
+import com.mrs.app.location.entity.Hall;
+import com.mrs.app.location.entity.SeatType;
+import com.mrs.app.location.repository.HallRepository;
+import com.mrs.app.location.repository.SeatTypeRepository;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.repository.MovieRepository;
 import com.mrs.app.schedule.repository.ScheduleRepository;

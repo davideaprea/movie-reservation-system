@@ -1,10 +1,10 @@
-package com.mrs.app.hall.controller;
+package com.mrs.app.location.controller;
 
-import com.mrs.app.hall.apidoc.SeatTypeControllerDoc;
-import com.mrs.app.hall.dto.SeatTypeCreateRequest;
-import com.mrs.app.hall.dto.SeatTypeResponse;
-import com.mrs.app.hall.entity.SeatType;
-import com.mrs.app.hall.repository.SeatTypeRepository;
+import com.mrs.app.location.apidoc.SeatTypeControllerDoc;
+import com.mrs.app.location.dto.SeatTypeCreateRequest;
+import com.mrs.app.location.dto.SeatTypeResponse;
+import com.mrs.app.location.entity.SeatType;
+import com.mrs.app.location.repository.SeatTypeRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

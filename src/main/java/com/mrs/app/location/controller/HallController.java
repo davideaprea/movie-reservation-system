@@ -1,10 +1,10 @@
-package com.mrs.app.hall.controller;
+package com.mrs.app.location.controller;
 
-import com.mrs.app.hall.apidoc.HallControllerDoc;
-import com.mrs.app.hall.dto.HallCreateRequest;
-import com.mrs.app.hall.dto.HallGetResponse;
-import com.mrs.app.hall.dto.HallResponse;
-import com.mrs.app.hall.service.HallService;
+import com.mrs.app.location.apidoc.HallControllerDoc;
+import com.mrs.app.location.dto.HallCreateRequest;
+import com.mrs.app.location.dto.HallGetResponse;
+import com.mrs.app.location.dto.HallResponse;
+import com.mrs.app.location.service.HallService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
