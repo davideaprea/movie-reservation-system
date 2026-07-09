@@ -1,5 +1,6 @@
 package com.mrs.app.location.service;
 
+import com.mrs.app.location.dto.AddressResponse;
 import com.mrs.app.location.dto.CinemaCreateRequest;
 import com.mrs.app.location.dto.CinemaResponse;
 import com.mrs.app.location.entity.Cinema;
@@ -20,6 +21,7 @@ import java.util.List;
 public class CinemaService {
     private final CinemaRepository cinemaRepository;
     private final CinemaMapper cinemaMapper;
+    private final AddressService addressService;
 
     public CinemaResponse create(CinemaCreateRequest request) {
         Cinema cinema = cinemaMapper.toEntity(request);
@@ -37,7 +39,11 @@ public class CinemaService {
         return cinemaMapper.toResponse(cinema);
     }
 
-    public Page<CinemaResponse> findAll(Pageable pageable) {
-        return cinemaRepository.findAll(pageable).map(cinemaMapper::toResponse);
+    public Page<CinemaResponse> findAllByCityId(Pageable pageable, long cityId) {
+        List<Long> addressIds = addressService.findAllByCityId(pageable, cityId)
+                .map(AddressResponse::id)
+                .stream().toList();
+
+        return cinemaRepository.findAllByAddressIdIn(pageable, addressIds).map(cinemaMapper::toResponse);
     }
 }

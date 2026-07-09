@@ -23,7 +23,10 @@ public class CinemaController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CinemaResponse>> findAll(Pageable pageable) {
-        return new ResponseEntity<>(cinemaService.findAll(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<CinemaResponse>> findAllByCityId(
+            Pageable pageable,
+            @RequestParam long cityId
+    ) {
+        return new ResponseEntity<>(cinemaService.findAllByCityId(pageable, cityId), HttpStatus.OK);
     }
 }
