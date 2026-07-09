@@ -12,7 +12,6 @@ import com.mrs.app.location.repository.HallRepository;
 import com.mrs.app.security.dto.LoggedUser;
 import com.mrs.app.security.enumeration.Role;
 import com.mrs.app.shared.exception.EntityNotFoundException;
-import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.mrs.app.shared.exception.UnauthorizedOperationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -64,10 +63,10 @@ public class HallService {
         return hallRepository
                 .findById(id)
                 .map(hallMapper::toResponse)
-                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
-                        Hall.class.getSimpleName(),
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Hall.class,
                         Map.of("id", id)
-                )));
+                ));
     }
 
     public List<HallGetResponse> findAllByCinemaId(LoggedUser loggedUser, long cinemaId) {

@@ -37,17 +37,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainRequirementException.class)
     public ResponseEntity<DomainRequirementError> handle(DomainRequirementException exception) {
-        return new ResponseEntity<>(exception.getError(), HttpStatus.UNPROCESSABLE_CONTENT);
+        return new ResponseEntity<>(new DomainRequirementError(
+                exception.getReason(),
+                exception.getFieldName()
+        ), HttpStatus.UNPROCESSABLE_CONTENT);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<EntityNotFoundError> handle(EntityNotFoundException exception) {
-        return new ResponseEntity<>(exception.getError(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new EntityNotFoundError(
+                exception.getRequestedEntity().getSimpleName(),
+                exception.getUsedParams()
+        ), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ConflictingEntityException.class)
     public ResponseEntity<ConflictingResourceError<?>> handle(ConflictingEntityException exception) {
-        return new ResponseEntity<>(exception.getError(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ConflictingResourceError<>(
+                exception.getConflictingResources(),
+                exception.getViolatingFields(),
+                exception.getReason()
+        ), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnauthorizedOperationException.class)
+    public ResponseEntity<ConflictingResourceError<?>> handle(UnauthorizedOperationException exception) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(PaymentGatewayException.class)

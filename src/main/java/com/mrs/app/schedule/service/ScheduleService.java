@@ -58,13 +58,11 @@ public class ScheduleService {
         if (!conflictingSchedules.isEmpty()) {
             log.warn("Couldn't save the schedule due to conflicting resources: {}", conflictingSchedules);
 
-            ConflictingResourceError<ScheduleGetResponse> error = new ConflictingResourceError<>(
+            throw new ConflictingEntityException(
                     conflictingSchedules,
                     List.of(ScheduleCreateRequest.Fields.startTime, ScheduleCreateRequest.Fields.hallId),
                     "This hall is already taken."
             );
-
-            throw new ConflictingEntityException(error);
         }
 
         HallResponse hall = hallService.findById(dto.hallId());
@@ -94,10 +92,10 @@ public class ScheduleService {
         return scheduleRepository
                 .findById(id)
                 .map(scheduleMapper::toResponse)
-                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
-                        Schedule.class.getSimpleName(),
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Schedule.class,
                         Map.of("id", id)
-                )));
+                ));
     }
 
     public List<ScheduleGetResponse> findAllByFilters(ScheduleGetRequestFilters filters) {

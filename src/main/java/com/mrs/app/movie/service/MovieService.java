@@ -7,7 +7,6 @@ import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.mapper.MovieMapper;
 import com.mrs.app.movie.repository.MovieRepository;
 import com.mrs.app.shared.exception.EntityNotFoundException;
-import com.mrs.app.shared.exception.EntityNotFoundError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +33,10 @@ public class MovieService {
         return movieRepository
                 .findById(id)
                 .map(movieMapper::toResponse)
-                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
-                        Movie.class.getSimpleName(),
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Movie.class,
                         Map.of("id", id)
-                )));
+                ));
     }
 
     public List<MovieResponse> findAllByTitle(String title) {
