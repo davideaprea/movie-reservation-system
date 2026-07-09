@@ -2,7 +2,6 @@ package com.mrs.app.location.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldNameConstants;
 
 @Builder
 @AllArgsConstructor
@@ -10,34 +9,16 @@ import lombok.experimental.FieldNameConstants;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cinemas", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_address", columnNames = {"zip_code", "street_name", "number"})
+        @UniqueConstraint(name = "uk_cinema_address", columnNames = {"address_id"})
 })
 public class Cinema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Address address;
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    @FieldNameConstants
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @AllArgsConstructor
-    @Embeddable
-    public static final class Address {
-        @Column(nullable = false)
-        private String city;
-
-        @Column(nullable = false)
-        private String zipCode;
-
-        @Column(nullable = false, name = "street_name")
-        private String name;
-
-        @Column(nullable = false)
-        private String number;
-    }
 }

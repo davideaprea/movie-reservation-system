@@ -29,11 +29,7 @@ public class CinemaService {
         } catch (DataIntegrityViolationException e) {
             throw new ConflictingEntityException(new ConflictingResourceError<>(
                     List.of(),
-                    List.of(
-                            Cinema.Address.Fields.zipCode,
-                            Cinema.Address.Fields.name,
-                            Cinema.Address.Fields.number
-                    ),
+                    List.of(CinemaCreateRequest.Fields.addressId),
                     "This address is already taken."
             ));
         }
