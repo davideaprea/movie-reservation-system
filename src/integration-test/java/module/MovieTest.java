@@ -1,8 +1,14 @@
 package module;
 
 import annotation.ContainerizedContextTest;
+import com.mrs.app.location.entity.Address;
 import com.mrs.app.location.entity.Cinema;
+import com.mrs.app.location.entity.City;
+import com.mrs.app.location.entity.Region;
+import com.mrs.app.location.repository.AddressRepository;
 import com.mrs.app.location.repository.CinemaRepository;
+import com.mrs.app.location.repository.CityRepository;
+import com.mrs.app.location.repository.RegionRepository;
 import com.mrs.app.movie.dto.MovieCreateRequest;
 import com.mrs.app.movie.dto.MovieResponse;
 import com.mrs.app.movie.entity.Genre;
@@ -13,7 +19,7 @@ import com.mrs.app.security.component.JWTCreator;
 import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
-import factory.CinemaFactory;
+import factory.LocationFactory;
 import factory.MovieFactory;
 import factory.UserFactory;
 import lombok.SneakyThrows;
@@ -46,10 +52,19 @@ public class MovieTest {
     private Genre genre;
     @Autowired
     private CinemaRepository cinemaRepository;
+    @Autowired
+    private RegionRepository regionRepository;
+    @Autowired
+    private CityRepository cityRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
     @BeforeEach
     void setup() {
-        Cinema cinema = cinemaRepository.save(CinemaFactory.create());
+        Region region = regionRepository.save(LocationFactory.createRegion());
+        City city = cityRepository.save(LocationFactory.createCity(region));
+        Address address = addressRepository.save(LocationFactory.createAddress(city));
+        Cinema cinema = cinemaRepository.save(LocationFactory.createCinema(address));
         User user = userRepository.save(UserFactory.createAdmin(cinema.getId()));
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().toString())));
         restTestClient = RestTestClient

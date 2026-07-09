@@ -1,7 +1,18 @@
 package com.mrs.app.location.repository;
 
 import com.mrs.app.location.entity.Cinema;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface CinemaRepository extends CrudRepository<Cinema, Long> {
+import java.util.List;
+
+public interface CinemaRepository extends JpaRepository<Cinema, Long> {
+    @Query("""
+            SELECT c
+            FROM Cinema c
+            WHERE c.address.city.id = :cityId
+            """)
+    Page<Cinema> findAllByCityId(Pageable pageable, long cityId);
 }

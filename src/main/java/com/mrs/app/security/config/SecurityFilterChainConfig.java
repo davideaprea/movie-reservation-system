@@ -27,11 +27,18 @@ public class SecurityFilterChainConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/movies/**",
-                                "/schedules/**"
+                                "/schedules/**",
+                                "/cinemas"
                         ).permitAll()
                         .requestMatchers("/halls/**").hasRole(Role.OPERATOR.toString())
                         .requestMatchers(HttpMethod.POST, "/schedules/**").hasRole(Role.OPERATOR.toString())
-                        .requestMatchers(HttpMethod.POST, "/seat-types/**", "/auth/operators", "/movies/**").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/seat-types/**",
+                                "/auth/operators",
+                                "/movies/**",
+                                "/cinemas/**"
+                        ).hasRole(Role.ADMIN.toString())
                         .requestMatchers("/seat-types/**").hasAnyRole(Role.ADMIN.toString(), Role.OPERATOR.toString())
                         .anyRequest().authenticated()
                 )
