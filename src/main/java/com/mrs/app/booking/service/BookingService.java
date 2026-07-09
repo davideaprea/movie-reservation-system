@@ -10,8 +10,6 @@ import com.mrs.app.booking.repository.BookingRepository;
 import com.mrs.app.schedule.dto.ScheduleResponse;
 import com.mrs.app.schedule.service.ScheduleService;
 import com.mrs.app.shared.exception.ConflictingEntityException;
-import com.mrs.app.shared.exception.ConflictingResourceError;
-import com.mrs.app.shared.exception.DomainRequirementError;
 import com.mrs.app.shared.exception.DomainRequirementException;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
@@ -53,10 +51,10 @@ public class BookingService {
                     Selected schedule start time: {}. Submission time: {}.
                     """, selectedSchedule.startTime(), now);
 
-            throw new DomainRequirementException(new DomainRequirementError(
+            throw new DomainRequirementException(
                     "The selected schedule is already over.",
                     BookingCreateRequest.Fields.scheduleId
-            ));
+            );
         }
 
         Booking bookingToSave = Booking.builder().scheduleId(createRequest.scheduleId()).build();
@@ -73,11 +71,10 @@ public class BookingService {
         } catch (DataIntegrityViolationException e) {
             log.warn("The selected seats {} are already booked.", createRequest.scheduleSeatIds());
 
-            throw new ConflictingEntityException(new ConflictingResourceError<>(
-                    List.of(),
+            throw new ConflictingEntityException(
                     List.of(BookingCreateRequest.Fields.scheduleSeatIds),
                     "These seats are already booked."
-            ));
+            );
         }
 
         log.info("Created booking with id {}.", savedBooking.getId());
@@ -96,10 +93,10 @@ public class BookingService {
         ScheduleResponse bookingSchedule = scheduleService.findById(bookingToDelete.getScheduleId());
 
         if (LocalDateTime.now().isAfter(bookingSchedule.startTime())) {
-            throw new DomainRequirementException(new DomainRequirementError(
+            throw new DomainRequirementException(
                     "The selected schedule is already over.",
                     "scheduleId"
-            ));
+            );
         }
 
         bookingRepository.deleteById(id);

@@ -4,11 +4,12 @@ import lombok.Getter;
 
 @Getter
 public class EntityNotFoundException extends RuntimeException {
-    private final EntityNotFoundError error;
+    private final Class<?> requestedEntity;
+    private final Object usedParams;
 
-    public EntityNotFoundException(EntityNotFoundError error) {
-        super("Couldn't find any entity with the given parameters. Details: %s".formatted(error));
-
-        this.error = error;
+    public EntityNotFoundException(Class<?> requestedEntity, Object usedParams) {
+        super("Couldn't find any %s with the given parameters: %s".formatted(requestedEntity.getSimpleName(), usedParams));
+        this.requestedEntity = requestedEntity;
+        this.usedParams = usedParams;
     }
 }

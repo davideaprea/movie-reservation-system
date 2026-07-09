@@ -9,7 +9,6 @@ import com.mrs.app.payment.entity.Intent;
 import com.mrs.app.payment.mapper.PaymentMapper;
 import com.mrs.app.payment.repository.CompletionRepository;
 import com.mrs.app.payment.repository.IntentRepository;
-import com.mrs.app.shared.exception.EntityNotFoundError;
 import com.mrs.app.shared.exception.EntityNotFoundException;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
@@ -65,10 +64,10 @@ public class PaymentService {
         Intent intent = intentRepository
                 .findById(request.intentId())
                 .filter(i -> i.getExpiresAt().isAfter(LocalDateTime.now()))
-                .orElseThrow(() -> new EntityNotFoundException(new EntityNotFoundError(
-                        Intent.class.getSimpleName(),
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Intent.class,
                         request
-                )));
+                ));
         GatewayIntentCreateResponse response = paymentGateway.createIntent(new GatewayIntentCreateRequest(
                 intent.getAmount(),
                 "EUR",

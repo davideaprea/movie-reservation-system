@@ -1,13 +1,11 @@
 package com.mrs.app.location.service;
 
-import com.mrs.app.location.dto.AddressResponse;
 import com.mrs.app.location.dto.CinemaCreateRequest;
 import com.mrs.app.location.dto.CinemaResponse;
 import com.mrs.app.location.entity.Cinema;
 import com.mrs.app.location.mapper.CinemaMapper;
 import com.mrs.app.location.repository.CinemaRepository;
 import com.mrs.app.shared.exception.ConflictingEntityException;
-import com.mrs.app.shared.exception.ConflictingResourceError;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -28,11 +26,10 @@ public class CinemaService {
         try {
             cinema = cinemaRepository.save(cinema);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictingEntityException(new ConflictingResourceError<>(
-                    List.of(),
+            throw new ConflictingEntityException(
                     List.of(CinemaCreateRequest.Fields.addressId),
                     "This address is already taken."
-            ));
+            );
         }
 
         return cinemaMapper.toResponse(cinema);
