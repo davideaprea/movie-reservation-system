@@ -2,6 +2,7 @@ package com.mrs.app.location.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 @Builder
 @AllArgsConstructor
@@ -22,6 +23,7 @@ public class Cinema {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @FieldNameConstants
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     @Embeddable
