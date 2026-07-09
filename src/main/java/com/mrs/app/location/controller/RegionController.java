@@ -1,5 +1,6 @@
 package com.mrs.app.location.controller;
 
+import com.mrs.app.location.apidoc.RegionControllerDoc;
 import com.mrs.app.location.dto.RegionResponse;
 import com.mrs.app.location.mapper.RegionMapper;
 import com.mrs.app.location.repository.RegionRepository;
@@ -16,7 +17,7 @@ import java.util.stream.StreamSupport;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/regions")
-public class RegionController {
+public class RegionController implements RegionControllerDoc {
     private final RegionRepository regionRepository;
     private final RegionMapper regionMapper;
 

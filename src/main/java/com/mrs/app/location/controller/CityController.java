@@ -1,5 +1,6 @@
 package com.mrs.app.location.controller;
 
+import com.mrs.app.location.apidoc.CityControllerDoc;
 import com.mrs.app.location.dto.CityResponse;
 import com.mrs.app.location.service.CityService;
 import jakarta.validation.Valid;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 @AllArgsConstructor
-public class CityController {
+public class CityController implements CityControllerDoc {
     private final CityService cityService;
 
     @GetMapping("/{regionId}/cities")

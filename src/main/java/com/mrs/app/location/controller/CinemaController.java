@@ -1,5 +1,6 @@
 package com.mrs.app.location.controller;
 
+import com.mrs.app.location.apidoc.CinemaControllerDoc;
 import com.mrs.app.location.dto.CinemaCreateRequest;
 import com.mrs.app.location.dto.CinemaResponse;
 import com.mrs.app.location.service.CinemaService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/cinemas")
-public class CinemaController {
+public class CinemaController implements CinemaControllerDoc {
     private final CinemaService cinemaService;
 
     @PostMapping

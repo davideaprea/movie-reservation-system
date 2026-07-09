@@ -21,7 +21,6 @@ import java.util.List;
 public class CinemaService {
     private final CinemaRepository cinemaRepository;
     private final CinemaMapper cinemaMapper;
-    private final AddressService addressService;
 
     public CinemaResponse create(CinemaCreateRequest request) {
         Cinema cinema = cinemaMapper.toEntity(request);
@@ -40,10 +39,6 @@ public class CinemaService {
     }
 
     public Page<CinemaResponse> findAllByCityId(Pageable pageable, long cityId) {
-        List<Long> addressIds = addressService.findAllByCityId(pageable, cityId)
-                .map(AddressResponse::id)
-                .stream().toList();
-
-        return cinemaRepository.findAllByAddressIdIn(pageable, addressIds).map(cinemaMapper::toResponse);
+        return cinemaRepository.findAllByCityId(pageable, cityId).map(cinemaMapper::toResponse);
     }
 }
