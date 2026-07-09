@@ -5,7 +5,7 @@ CREATE TABLE regions (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     code VARCHAR(255) NOT NULL UNIQUE
-)
+);
 
 CREATE TABLE cities (
     id BIGSERIAL PRIMARY KEY,
@@ -16,7 +16,7 @@ CREATE TABLE cities (
     CONSTRAINT fk_region
         FOREIGN KEY (region_id)
             REFERENCES regions (id)
-)
+);
 
 CREATE TABLE addresses (
     id BIGSERIAL PRIMARY KEY,
@@ -29,19 +29,17 @@ CREATE TABLE addresses (
             REFERENCES cities (id),
 
     CONSTRAINT uk_address UNIQUE (city_id, name, number)
-)
+);
 
 CREATE TABLE cinemas (
     id BIGSERIAL PRIMARY KEY,
 
-    city VARCHAR(255) NOT NULL,
-    zip_code VARCHAR(255) NOT NULL,
-    street_name VARCHAR(255) NOT NULL,
-    number VARCHAR(255) NOT NULL,
+    address_id BIGINT NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE,
 
-    name VARCHAR(255) NOT NULL,
-
-    CONSTRAINT uk_address UNIQUE (zip_code, street_name, number)
+    CONSTRAINT uk_cinema_address
+        FOREIGN KEY (address_id)
+            REFERENCES addresses (id)
 );
 
 CREATE TABLE seat_types (

@@ -1,7 +1,9 @@
 package com.mrs.app.location.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Entity
 @Table(name = "addresses", uniqueConstraints = {
         @UniqueConstraint(name = "uk_address", columnNames = {"city_id", "name", "number"})

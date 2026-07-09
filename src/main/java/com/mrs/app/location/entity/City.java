@@ -1,8 +1,10 @@
 package com.mrs.app.location.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.Immutable;
 
+@AllArgsConstructor
 @Entity
 @Table(name = "cities")
 @Immutable

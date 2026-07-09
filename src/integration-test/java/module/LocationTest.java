@@ -3,17 +3,13 @@ package module;
 import annotation.ContainerizedContextTest;
 import com.mrs.app.location.dto.HallCreateRequest;
 import com.mrs.app.location.dto.HallResponse;
-import com.mrs.app.location.entity.Cinema;
-import com.mrs.app.location.entity.SeatType;
-import com.mrs.app.location.repository.CinemaRepository;
-import com.mrs.app.location.repository.HallRepository;
-import com.mrs.app.location.repository.SeatRepository;
-import com.mrs.app.location.repository.SeatTypeRepository;
+import com.mrs.app.location.entity.*;
+import com.mrs.app.location.repository.*;
 import com.mrs.app.security.component.JWTCreator;
 import com.mrs.app.security.repository.UserRepository;
 import com.mrs.app.security.dto.JWTClaims;
 import com.mrs.app.security.entity.User;
-import factory.CinemaFactory;
+import factory.LocationFactory;
 import factory.HallFactory;
 import factory.UserFactory;
 import lombok.SneakyThrows;
@@ -46,10 +42,19 @@ public class LocationTest {
     @Autowired
     private CinemaRepository cinemaRepository;
     private Cinema cinema;
+    @Autowired
+    private RegionRepository regionRepository;
+    @Autowired
+    private CityRepository cityRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
     @BeforeEach
     void setup() {
-        cinema = cinemaRepository.save(CinemaFactory.create());
+        Region region = regionRepository.save(LocationFactory.createRegion());
+        City city = cityRepository.save(LocationFactory.createCity(region));
+        Address address = addressRepository.save(LocationFactory.createAddress(city));
+        cinema = cinemaRepository.save(LocationFactory.createCinema(address));
         User user = userRepository.save(UserFactory.createOperator(cinema.getId()));
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().toString())));
         restTestClient = RestTestClient

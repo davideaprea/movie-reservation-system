@@ -1,12 +1,8 @@
 package module;
 
 import annotation.ContainerizedContextTest;
-import com.mrs.app.location.entity.Cinema;
-import com.mrs.app.location.entity.Hall;
-import com.mrs.app.location.entity.SeatType;
-import com.mrs.app.location.repository.CinemaRepository;
-import com.mrs.app.location.repository.HallRepository;
-import com.mrs.app.location.repository.SeatTypeRepository;
+import com.mrs.app.location.entity.*;
+import com.mrs.app.location.repository.*;
 import com.mrs.app.movie.entity.Movie;
 import com.mrs.app.movie.repository.MovieRepository;
 import com.mrs.app.schedule.repository.ScheduleRepository;
@@ -62,10 +58,19 @@ public class ScheduleTest {
 
     @Autowired
     private CinemaRepository cinemaRepository;
+    @Autowired
+    private RegionRepository regionRepository;
+    @Autowired
+    private CityRepository cityRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
     @BeforeEach
     void setup() {
-        cinema = cinemaRepository.save(CinemaFactory.create());
+        Region region = regionRepository.save(LocationFactory.createRegion());
+        City city = cityRepository.save(LocationFactory.createCity(region));
+        Address address = addressRepository.save(LocationFactory.createAddress(city));
+        cinema = cinemaRepository.save(LocationFactory.createCinema(address));
         User user = userRepository.save(UserFactory.createOperator(cinema.getId()));
         String jwt = jwtCreator.withSubject(new JWTClaims(user.getEmail(), List.of(user.getRole().toString())));
         restTestClient = RestTestClient
@@ -178,7 +183,10 @@ public class ScheduleTest {
                 .startTime(tomorrow.withHour(14))
                 .endTime(tomorrow.withHour(16))
                 .build();
-        Cinema differentCinema = cinemaRepository.save(CinemaFactory.create());
+        Region region = regionRepository.save(LocationFactory.createRegion());
+        City city = cityRepository.save(LocationFactory.createCity(region));
+        Address address = addressRepository.save(LocationFactory.createAddress(city));
+        Cinema differentCinema = cinemaRepository.save(LocationFactory.createCinema(address));
         Hall differentHall = hallRepository.save(HallFactory.create(differentCinema, seatType));
         Schedule differentCinemaSchedule = Schedule.builder()
                 .hallId(differentHall.getId())
