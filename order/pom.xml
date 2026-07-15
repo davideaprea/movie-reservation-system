@@ -29,5 +29,11 @@
             <artifactId>payment</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.davideaprea</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>
