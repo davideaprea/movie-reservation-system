@@ -15,19 +15,16 @@
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>booking</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>payment</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>shared</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -43,7 +40,6 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.1</version>
         </dependency>
 
         <dependency>
@@ -71,7 +67,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.6.3</version>
         </dependency>
     </dependencies>
 

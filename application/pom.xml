@@ -42,49 +42,41 @@
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>booking</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>location</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>movie</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>order</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>payment</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>schedule</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>security</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>shared</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>

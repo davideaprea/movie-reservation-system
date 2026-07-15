@@ -21,7 +21,6 @@
         <dependency>
             <groupId>io.github.davideaprea</groupId>
             <artifactId>shared</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -54,7 +53,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.6.3</version>
         </dependency>
 
         <dependency>
