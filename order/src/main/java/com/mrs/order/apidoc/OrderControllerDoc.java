@@ -48,7 +48,7 @@ public interface OrderControllerDoc {
                     )
             }
     )
-    ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request, @Parameter(hidden = true) long loggedUserId);
+    ResponseEntity<OrderCreateResponse> create(HTTPOrderCreateRequest request);
 
     @Operation(
             summary = "Find all by logged user id",
@@ -60,5 +60,5 @@ public interface OrderControllerDoc {
                     )
             }
     )
-    ResponseEntity<List<OrderGetResponse>> findAllByUserId(@Parameter(hidden = true) long loggedUserId);
+    ResponseEntity<List<OrderGetResponse>> findAllByUserId();
 }

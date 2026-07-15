@@ -1,6 +1,6 @@
 package annotation;
 
-import com.mrs.MRSApplication;
+import com.mrs.application.MRSApplication;
 import config.DataBaseCleaner;
 import config.MockPaymentGateway;
 import config.TestContainersConfiguration;

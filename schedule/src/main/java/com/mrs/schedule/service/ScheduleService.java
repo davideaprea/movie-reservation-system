@@ -14,8 +14,8 @@ import com.mrs.schedule.entity.ScheduleSeat;
 import com.mrs.schedule.mapper.ScheduleMapper;
 import com.mrs.schedule.repository.ScheduleRepository;
 import com.mrs.schedule.repository.ScheduleSpecificationBuilder;
-import com.mrs.security.dto.LoggedUser;
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.CurrentUserProvider;
+import com.mrs.shared.model.Role;
 import com.mrs.shared.exception.*;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
@@ -36,6 +36,7 @@ public class ScheduleService {
     private final ScheduleMapper scheduleMapper;
     private final MovieService movieService;
     private final HallService hallService;
+    private final CurrentUserProvider currentUserProvider;
 
     /**
      * When creating a schedule, this method automatically calculates
@@ -47,7 +48,7 @@ public class ScheduleService {
      */
     @Observed(name = "schedule.create", contextualName = "Schedule creation")
     @Transactional
-    public ScheduleResponse create(LoggedUser loggedUser, ScheduleCreateRequest dto) {
+    public ScheduleResponse create(ScheduleCreateRequest dto) {
         log.info("Creating schedule with params {}", dto);
 
         MovieResponse movieToSchedule = movieService.findById(dto.movieId());
@@ -67,9 +68,11 @@ public class ScheduleService {
 
         HallResponse hall = hallService.findById(dto.hallId());
 
-        if (Role.OPERATOR.equals(loggedUser.role()) && hall.cinemaId() != loggedUser.cinemaId()) {
-            throw new UnauthorizedOperationException("The selected hall is from a different cinema.");
-        }
+        currentUserProvider.get().ifPresent(loggedUser -> {
+            if (Role.OPERATOR.equals(loggedUser.role()) && hall.cinemaId() != loggedUser.cinemaId()) {
+                throw new UnauthorizedOperationException("The selected hall is from a different cinema.");
+            }
+        });
 
         hall.seats().forEach(seat -> {
             BigDecimal seatPrice = dto.seatPriceOptions().get(seat.type().name());

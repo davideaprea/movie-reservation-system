@@ -1,4 +1,4 @@
-package com.mrs.security.enumeration;
+package com.mrs.shared.model;
 
 import lombok.Getter;
 

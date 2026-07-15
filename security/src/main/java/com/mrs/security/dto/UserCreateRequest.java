@@ -1,6 +1,6 @@
 package com.mrs.security.dto;
 
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 
 public record UserCreateRequest(
         String email,

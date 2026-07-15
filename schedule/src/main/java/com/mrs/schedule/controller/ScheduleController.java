@@ -6,12 +6,10 @@ import com.mrs.schedule.dto.ScheduleResponse;
 import com.mrs.schedule.dto.ScheduleCreateRequest;
 import com.mrs.schedule.dto.ScheduleGetRequestFilters;
 import com.mrs.schedule.service.ScheduleService;
-import com.mrs.security.dto.LoggedUser;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +22,9 @@ public class ScheduleController implements ScheduleControllerDoc {
 
     @PostMapping
     public ResponseEntity<ScheduleResponse> create(
-            @Valid @RequestBody ScheduleCreateRequest dto,
-            @AuthenticationPrincipal LoggedUser loggedUser
+            @Valid @RequestBody ScheduleCreateRequest dto
     ) {
-        return new ResponseEntity<>(scheduleService.create(loggedUser, dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(scheduleService.create(dto), HttpStatus.CREATED);
     }
 
     @GetMapping

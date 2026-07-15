@@ -1,8 +1,8 @@
-package com.mrs.shared.dto;
+package com.mrs.shared.model;
 
 public record LoggedUser(
         long id,
-        String role,
+        Role role,
         Long cinemaId
 ) {
 }

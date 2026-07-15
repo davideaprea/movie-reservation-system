@@ -1,6 +1,6 @@
 package com.mrs.security.entity;
 
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

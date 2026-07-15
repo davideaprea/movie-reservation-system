@@ -1,7 +1,7 @@
 package com.mrs.security.dto;
 
 import com.mrs.security.entity.User;
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

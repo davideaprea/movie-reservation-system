@@ -5,13 +5,11 @@ import com.mrs.location.dto.HallCreateRequest;
 import com.mrs.location.dto.HallGetResponse;
 import com.mrs.location.dto.HallResponse;
 import com.mrs.location.service.HallService;
-import com.mrs.security.dto.LoggedUser;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,17 +22,15 @@ public class HallController implements HallControllerDoc {
 
     @PostMapping("/halls")
     public ResponseEntity<HallResponse> create(
-            @RequestBody @Valid HallCreateRequest createRequest,
-            @AuthenticationPrincipal LoggedUser loggedUser
+            @RequestBody @Valid HallCreateRequest createRequest
     ) {
-        return new ResponseEntity<>(hallService.create(loggedUser, createRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(hallService.create(createRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/cinemas/{cinemaId}/halls")
     public ResponseEntity<List<HallGetResponse>> findAllCinemaHalls(
-            @AuthenticationPrincipal LoggedUser loggedUser,
             @PathVariable @Valid @Positive long cinemaId
     ) {
-        return new ResponseEntity<>(hallService.findAllByCinemaId(loggedUser, cinemaId), HttpStatus.OK);
+        return new ResponseEntity<>(hallService.findAllByCinemaId(cinemaId), HttpStatus.OK);
     }
 }

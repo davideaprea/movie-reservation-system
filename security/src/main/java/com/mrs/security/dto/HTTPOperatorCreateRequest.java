@@ -1,6 +1,6 @@
 package com.mrs.security.dto;
 
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

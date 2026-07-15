@@ -2,8 +2,8 @@ package com.mrs.security.filter;
 
 import com.mrs.security.component.JWTValidator;
 import com.mrs.security.dto.AuthUserDetails;
-import com.mrs.shared.dto.LoggedUser;
 import com.mrs.security.service.AuthUserDetailsService;
+import com.mrs.shared.model.LoggedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

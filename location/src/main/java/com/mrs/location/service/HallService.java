@@ -9,8 +9,9 @@ import com.mrs.location.entity.Seat;
 import com.mrs.location.entity.SeatType;
 import com.mrs.location.mapper.HallMapper;
 import com.mrs.location.repository.HallRepository;
-import com.mrs.security.dto.LoggedUser;
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.CurrentUserProvider;
+import com.mrs.shared.model.LoggedUser;
+import com.mrs.shared.model.Role;
 import com.mrs.shared.exception.EntityNotFoundException;
 import com.mrs.shared.exception.UnauthorizedOperationException;
 import lombok.AllArgsConstructor;
@@ -25,16 +26,19 @@ import java.util.Map;
 public class HallService {
     private final HallRepository hallRepository;
     private final HallMapper hallMapper;
+    private final CurrentUserProvider currentUserProvider;
 
     /**
      * When creating a hall, seats are generated from the provided rows ({@link HallCreateRequest#seatRows()}),
      * forming a grid where each seat is assigned a progressive (rowNumber, seatNumber) starting from 1.
      */
     @Transactional
-    public HallResponse create(LoggedUser loggedUser, HallCreateRequest createRequest) {
-        if (Role.OPERATOR.equals(loggedUser.role()) && loggedUser.cinemaId() != createRequest.cinemaId()) {
-            throw new UnauthorizedOperationException("You don't have any access to this cinema.");
-        }
+    public HallResponse create(HallCreateRequest createRequest) {
+        currentUserProvider.get().ifPresent(loggedUser -> {
+            if (Role.OPERATOR.equals(loggedUser.role()) && loggedUser.cinemaId() != createRequest.cinemaId()) {
+                throw new UnauthorizedOperationException("You don't have any access to this cinema.");
+            }
+        });
 
         Hall hallToSave = Hall.builder()
                 .cinema(Cinema.builder().id(createRequest.cinemaId()).build())
@@ -69,15 +73,13 @@ public class HallService {
                 ));
     }
 
-    public List<HallGetResponse> findAllByCinemaId(LoggedUser loggedUser, long cinemaId) {
-        if (Role.OPERATOR.equals(loggedUser.role()) && loggedUser.cinemaId() != cinemaId) {
-            throw new UnauthorizedOperationException("You don't have any access to this cinema.");
-        }
-
-        return findAllByCinemaId(cinemaId);
-    }
-
     public List<HallGetResponse> findAllByCinemaId(long cinemaId) {
+        currentUserProvider.get().ifPresent(loggedUser -> {
+            if (Role.OPERATOR.equals(loggedUser.role()) && loggedUser.cinemaId() != cinemaId) {
+                throw new UnauthorizedOperationException("You don't have any access to this cinema.");
+            }
+        });
+
         return hallRepository.findAllByCinemaId(cinemaId).stream()
                 .map(hallMapper::toGetResponse)
                 .toList();

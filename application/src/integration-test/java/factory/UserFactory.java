@@ -1,7 +1,7 @@
 package factory;
 
 import com.mrs.security.entity.User;
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

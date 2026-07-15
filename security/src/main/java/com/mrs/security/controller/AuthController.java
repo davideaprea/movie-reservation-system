@@ -2,7 +2,7 @@ package com.mrs.security.controller;
 
 import com.mrs.security.doc.AuthControllerDocs;
 import com.mrs.security.dto.*;
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 import com.mrs.security.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

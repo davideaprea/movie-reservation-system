@@ -1,6 +1,6 @@
 package com.mrs.security.config;
 
-import com.mrs.security.enumeration.Role;
+import com.mrs.shared.model.Role;
 import com.mrs.security.filter.UserAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

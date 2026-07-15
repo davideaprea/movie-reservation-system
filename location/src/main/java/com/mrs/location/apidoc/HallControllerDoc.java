@@ -6,7 +6,6 @@ import com.mrs.location.dto.HallResponse;
 import com.mrs.shared.exception.ConflictingResourceError;
 import com.mrs.shared.exception.FieldValidationError;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import com.mrs.security.dto.LoggedUser;
 
 import java.util.List;
 
@@ -46,9 +44,7 @@ public interface HallControllerDoc {
                     description = "The hall creation request containing name and seat layout.",
                     required = true
             )
-            HallCreateRequest createRequest,
-            @Parameter(hidden = true)
-            LoggedUser loggedUser
+            HallCreateRequest createRequest
     );
 
     @Operation(
@@ -64,7 +60,6 @@ public interface HallControllerDoc {
             }
     )
     ResponseEntity<List<HallGetResponse>> findAllCinemaHalls(
-            @Parameter(hidden = true) LoggedUser loggedUser,
             long cinemaId
     );
 }
