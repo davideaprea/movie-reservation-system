@@ -1,0 +1,49 @@
+package com.mrs.movie.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
+@AllArgsConstructor
+@Builder
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "movies")
+public class Movie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String title;
+
+    @Column(nullable = false)
+    private Duration duration;
+
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private String coverImageLink;
+
+    @JoinTable(
+            name = "movies_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"movie_id", "genre_id"})}
+    )
+    @ManyToMany
+    private List<Genre> genres;
+
+    public void addGenre(Genre genre) {
+        if (genres == null) {
+            genres = new ArrayList<>();
+        }
+
+        genres.add(genre);
+    }
+}

@@ -1,0 +1,48 @@
+package com.mrs.movie.service;
+
+import com.mrs.movie.dto.MovieCreateRequest;
+import com.mrs.movie.dto.MovieResponse;
+import com.mrs.movie.entity.Genre;
+import com.mrs.movie.entity.Movie;
+import com.mrs.movie.mapper.MovieMapper;
+import com.mrs.movie.repository.MovieRepository;
+import com.mrs.shared.exception.EntityNotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+@AllArgsConstructor
+@Service
+public class MovieService {
+    private final MovieRepository movieRepository;
+    private final MovieMapper movieMapper;
+
+    public MovieResponse create(MovieCreateRequest createRequest) {
+        Movie movieToSave = movieMapper.toEntity(createRequest);
+
+        createRequest.genreIds().forEach(id -> movieToSave.addGenre(new Genre(id, null)));
+
+        Movie savedMovie = movieRepository.save(movieToSave);
+
+        return movieMapper.toResponse(savedMovie);
+    }
+
+    public MovieResponse findById(long id) {
+        return movieRepository
+                .findById(id)
+                .map(movieMapper::toResponse)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Movie.class,
+                        Map.of("id", id)
+                ));
+    }
+
+    public List<MovieResponse> findAllByTitle(String title) {
+        return movieRepository.findByTitle(title)
+                .stream()
+                .map(movieMapper::toResponse)
+                .toList();
+    }
+}

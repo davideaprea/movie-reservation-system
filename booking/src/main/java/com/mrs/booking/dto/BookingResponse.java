@@ -1,0 +1,10 @@
+package com.mrs.booking.dto;
+
+import java.util.List;
+
+public record BookingResponse(
+        long id,
+        long scheduleId,
+        List<SeatReservationResponse> seatReservations
+) {
+}
